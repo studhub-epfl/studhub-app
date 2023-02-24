@@ -21,14 +21,13 @@ public class GreetActivityTest {
     public void correctGreetingIsDisplayed() {
         String key = "name";
         String value = "Bob";
+        String message = String.format("Hello my dear %s, how is you?", value);
+
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GreetActivity.class);
         intent.putExtra(key, value);
 
         try (ActivityScenario<GreetActivity> activity = ActivityScenario.launch(intent)) {
-            onView(withId(R.id.greetingMessage))
-                    .check(matches(withText(String.format(
-                                    "Hello my dear %s, how is you?",
-                                    intent.getStringExtra(key)))));
+            onView(withId(R.id.greetingMessage)).check(matches(withText(message)));
         }
     }
 }

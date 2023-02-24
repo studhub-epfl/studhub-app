@@ -2,6 +2,7 @@ package com.github.emicheli.bootcamp;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
@@ -27,12 +28,17 @@ public class MainActivityTest {
 
     @Test
     public void intentIsCreatedWhenNameFormIsSubmitted() {
-
         String key = "name";
         String value = "Bob";
+
         Intents.init();
-        onView(withId(R.id.mainName)).perform(typeText(value));
-        onView(withId(R.id.mainGoButton)).perform(click());
+
+        onView(withId(R.id.mainName))
+                .perform(typeText(value))
+                .perform(closeSoftKeyboard());
+
+        onView(withId(R.id.mainGoButton))
+                .perform(click());
 
         ActivityResult result = new ActivityResult(Activity.RESULT_OK, new Intent().putExtra(key, value));
         intending(toPackage(GreetActivity.class.getName())).respondWith(result);

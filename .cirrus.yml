@@ -4,6 +4,9 @@ container:
   memory: 16G
   kvm: true
 
+env:
+  CC_TEST_REPORTER_ID: ENCRYPTED[!b727eac11fa856971d42f1a96970cebc6bdb15ff9de9f68f2ceb99550f1924754c886ac55cbb260377c4ca5990c568f2!]
+
 check_android_task:
   name: Run Android tests
   install_emulator_script:
@@ -59,5 +62,3 @@ check_android_task:
       androidtest_artifacts:
         path: "./app/build/outputs/**/*.xml"
         format: junit
-  env:
-    CC_TEST_REPORTER_ID: ENCRYPTED[!b727eac11fa856971d42f1a96970cebc6bdb15ff9de9f68f2ceb99550f1924754c886ac55cbb260377c4ca5990c568f2!]
