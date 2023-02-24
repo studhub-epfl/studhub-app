@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.github.emicheli.bootcamp'
+    namespace 'com.studhub.app'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.github.emicheli.bootcamp"
+        applicationId 'com.studhub.app'
         minSdk 24
         targetSdk 33
         versionCode 1
