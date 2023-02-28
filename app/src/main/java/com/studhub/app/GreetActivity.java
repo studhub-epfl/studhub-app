@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class GreetActivity extends AppCompatActivity {
@@ -15,7 +17,15 @@ public class GreetActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
-        String message = String.format("Hello my dear %s, how is you?", name);
+        String message = String.format("Hello my dear %s, how are you?", name);
         ((TextView) findViewById(R.id.greetingMessage)).setText(message);
+
+
     }
+
+    public void handleContinue(View view) {
+        Intent intent = new Intent(this, NavigationDrawer.class);
+        this.startActivity(intent);
+    }
+;
 }
