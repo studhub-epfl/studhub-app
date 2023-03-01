@@ -1,4 +1,4 @@
-package com.studhub.app.ui.home;
+package com.studhub.app.ui.Home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

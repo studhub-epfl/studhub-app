@@ -1,4 +1,4 @@
-package com.studhub.app.ui.home;
+package com.studhub.app.ui.Home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
