@@ -9,10 +9,13 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.studhub.app.database.Database;
+import com.studhub.app.database.FireDatabase;
+
 import java.util.concurrent.CompletableFuture;
 
 public class FirebaseActivity extends AppCompatActivity {
-    private final DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+    private final Database db = new FireDatabase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,27 +32,8 @@ public class FirebaseActivity extends AppCompatActivity {
         TextView emailInput = findViewById(R.id.firebase_input_email);
         TextView phoneInput = findViewById(R.id.firebase_input_phone);
 
-        // CompletableFuture<String> emailFuture = new CompletableFuture<>();
-        // CompletableFuture<String> phoneFuture = new CompletableFuture<>();
-
-        db.child("/users/user1/email").get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.getValue() == null) {
-                        emailInput.setText("");
-                    } else {
-                        emailInput.setText(snapshot.getValue(String.class));
-                    }
-                    })
-                .addOnFailureListener(error -> emailInput.setText(""));
-
-        db.child("/users/user1/phone").get()
-                .addOnSuccessListener(snapshot -> {
-                    if (snapshot.getValue() == null) {
-                        phoneInput.setText("");
-                    } else {
-                        phoneInput.setText(snapshot.getValue(String.class));
-                    }})
-                .addOnFailureListener(error -> phoneInput.setText(""));
+        db.get("/users/user1/email", String.class).thenAccept(emailInput::setText);
+        db.get("/users/user1/phone", String.class).thenAccept(phoneInput::setText);
     }
 
     /**
@@ -64,7 +48,7 @@ public class FirebaseActivity extends AppCompatActivity {
         String emailValue = emailInput.getText().toString();
         String phoneValue = phoneInput.getText().toString();
 
-        db.child("/users/user1/email").setValue(emailValue);
-        db.child("/users/user1/phone").setValue(phoneValue);
+        db.set("/users/user1/email", emailValue);
+        db.set("/users/user1/phone", phoneValue);
     }
 }
