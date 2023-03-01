@@ -1,6 +1,5 @@
 package com.studhub.app.ui.Cart;
 
-import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,10 +10,10 @@ import android.view.ViewGroup;
 
 import com.studhub.app.R;
 
-public class Cart extends Fragment {
+public class CartFragment extends Fragment {
 
-    public static Cart newInstance() {
-        return new Cart();
+    public static CartFragment newInstance() {
+        return new CartFragment();
     }
 
     private CartViewModel mViewModel;
