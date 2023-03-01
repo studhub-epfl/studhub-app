@@ -33,7 +33,7 @@ public class NavigationDrawer extends AppCompatActivity {
         binding.appBarNavigationDrawer.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "No new notifications", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
