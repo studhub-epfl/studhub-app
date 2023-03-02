@@ -11,6 +11,14 @@ public class FireDatabase implements Database {
 
     @Override
     public <T> CompletableFuture<T> get(String path, Class<T> type) {
+        if (path == null)
+            throw new IllegalArgumentException("path cannot be null");
+
+        if (type == null)
+            throw new IllegalArgumentException("type cannot be null");
+
+
+
         CompletableFuture<T> future = new CompletableFuture<>();
 
         db.child(path).get()
@@ -27,6 +35,9 @@ public class FireDatabase implements Database {
 
     @Override
     public <T> CompletableFuture<Boolean> set(String path, T data) {
+        if (path == null)
+            throw new IllegalArgumentException("path cannot be null");
+
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
         db.child(path).setValue(data)
