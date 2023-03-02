@@ -1,10 +1,11 @@
 package com.studhub.app;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,6 +16,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.studhub.app.databinding.ActivityMapsBinding;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -53,18 +58,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng epfl = new LatLng(46.520536, 6.568318);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(epfl, 15f));
 
-        // Add a marker at satellite location
+        // Add a customized marker at satellite location
         LatLng satellite = new LatLng(46.520544, 6.567825);
-        Marker marker = mMap.addMarker(new MarkerOptions().position(satellite).title("Satellite"));
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(satellite)
+                .title("Satellite")
+                .alpha(0.8f);
+        Marker marker = mMap.addMarker(markerOptions);
+
+        // Convert longitude and latitude coordinates to an address
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(46.520536, 6.568318, 1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String address = addresses.get(0).getAddressLine(0);
+
+        // Add a listener to the click of the information window of the marker
         if (marker != null) {
             marker.setTag(new LatLng(46.520544, 6.567825));
-            // Add a listener to the click of the information window of the marker
             mMap.setOnMarkerClickListener(marker1 -> {
                 LatLng position = (LatLng) marker1.getTag();
                 if (position != null) {
                     // Print a message with the coordinates of the Marker
                     Toast.makeText(MapsActivity.this, "Marker clicked at: " +
-                            position.latitude + ", " + position.longitude, Toast.LENGTH_SHORT).show();
+                            address, Toast.LENGTH_SHORT).show();
                 }
                 return false;
             });
