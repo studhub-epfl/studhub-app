@@ -66,16 +66,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .alpha(0.8f);
         Marker marker = mMap.addMarker(markerOptions);
 
-        // Convert longitude and latitude coordinates to an address
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        List<Address> addresses;
-        try {
-            addresses = geocoder.getFromLocation(46.520536, 6.568318, 1);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String address = addresses.get(0).getAddressLine(0);
-
         // Add a listener to the click of the information window of the marker
         if (marker != null) {
             marker.setTag(new LatLng(46.520544, 6.567825));
@@ -84,13 +74,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (position != null) {
                     // Print a message with the coordinates of the Marker
                     Toast.makeText(MapsActivity.this, "Marker clicked at: " +
-                            address, Toast.LENGTH_SHORT).show();
+                            convertToAddress(), Toast.LENGTH_SHORT).show();
                 }
                 return false;
             });
         }
 
-        // Limit the zoom and set a bound that the map cannot cross
+       limitMap();
+    }
+
+    /**
+     * Convert longitude and latitude coordinates to an address
+     * @return the address converted
+     */
+    private String convertToAddress(){
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(46.520536, 6.568318, 1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return addresses.get(0).getAddressLine(0);
+    }
+
+    /**
+     * Limit the zoom and set a bound that the map cannot cross
+     */
+    private void limitMap(){
         LatLngBounds bounds = new LatLngBounds(
                 new LatLng(46.515086, 6.561732),       // Southwest corner
                 new LatLng(46.526764, 6.578053));      // Northeast corner
