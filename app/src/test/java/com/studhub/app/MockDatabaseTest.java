@@ -45,4 +45,22 @@ public class MockDatabaseTest {
 
         assertEquals((int) db.get(key, Integer.class).join(), value2);
     }
+
+    @Test
+    public void nullPathInGetThrowsIllegalArgumentException() {
+        Database db = new MockDatabase();
+        assertThrows(IllegalArgumentException.class, () -> db.get(null, String.class));
+    }
+
+    @Test
+    public void nullTypeInGetThrowsIllegalArgumentException() {
+        Database db = new MockDatabase();
+        assertThrows(IllegalArgumentException.class, () -> db.get("path", null));
+    }
+
+    @Test
+    public void nullPathInSetThrowsIllegalArgumentException() {
+        Database db = new MockDatabase();
+        assertThrows(IllegalArgumentException.class, () -> db.set(null, ""));
+    }
 }
