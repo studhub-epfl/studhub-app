@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng epfl = new LatLng(46.520536, 6.568318);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(epfl, 15f));
 
-        // Add a customized marker at satellite location
+        // Add a customized marker at Satellite bar location
         LatLng satellite = new LatLng(46.520544, 6.567825);
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(satellite)
