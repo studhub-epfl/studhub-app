@@ -1,14 +1,18 @@
 package com.studhub.app;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.studhub.app.databinding.ActivityMapsBinding;
 
@@ -27,7 +31,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     /**
@@ -45,11 +51,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Move camera to EPFL location
         LatLng epfl = new LatLng(46.520536, 6.568318);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(epfl, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(epfl, 15f));
 
         // Add a marker at satellite location
         LatLng satellite = new LatLng(46.520544, 6.567825);
-        mMap.addMarker(new MarkerOptions().position(satellite).title("Satellite"));
+        Marker marker = mMap.addMarker(new MarkerOptions().position(satellite).title("Satellite"));
+        if (marker != null) {
+            marker.setTag(new LatLng(46.520544, 6.567825));
+            // Add a listener to the click of the information window of the marker
+            mMap.setOnMarkerClickListener(marker1 -> {
+                LatLng position = (LatLng) marker1.getTag();
+                if (position != null) {
+                    // Print a message with the coordinates of the Marker
+                    Toast.makeText(MapsActivity.this, "Marker clicked at: " +
+                            position.latitude + ", " + position.longitude, Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            });
+        }
 
+        // Limit the zoom and set a bound that the map cannot cross
+        LatLngBounds bounds = new LatLngBounds(
+                new LatLng(46.515086, 6.561732),       // Southwest corner
+                new LatLng(46.526764, 6.578053));      // Northeast corner
+        mMap.setLatLngBoundsForCameraTarget(bounds);
+        mMap.setMinZoomPreference(14.0f);
+        mMap.setMaxZoomPreference(18.0f);
     }
 }
