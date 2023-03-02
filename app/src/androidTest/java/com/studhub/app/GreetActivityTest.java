@@ -21,7 +21,7 @@ public class GreetActivityTest {
     public void correctGreetingIsDisplayed() {
         String key = "name";
         String value = "Bob";
-        String message = String.format("Hello my dear %s, how is you?", value);
+        String message = String.format("Hello my dear %s, how are you?", value);
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GreetActivity.class);
         intent.putExtra(key, value);
