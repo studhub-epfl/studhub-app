@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
-    id 'jacoco'
     id 'com.google.gms.google-services'
+    id 'jacoco'
 }
 
 android {
