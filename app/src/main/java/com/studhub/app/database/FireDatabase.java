@@ -30,7 +30,7 @@ public class FireDatabase implements Database {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
         db.child(path).setValue(data)
-                .addOnSuccessListener(x ->future.complete(true))
+                .addOnSuccessListener(x -> future.complete(true))
                 .addOnFailureListener(future::completeExceptionally);
 
         return future;
