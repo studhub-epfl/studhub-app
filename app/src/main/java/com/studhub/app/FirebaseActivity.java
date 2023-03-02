@@ -1,22 +1,14 @@
 package com.studhub.app;
 
+import static com.studhub.app.Globals.DATABASE;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import com.studhub.app.database.Database;
-import com.studhub.app.database.FireDatabase;
-
-import java.util.concurrent.CompletableFuture;
-
 public class FirebaseActivity extends AppCompatActivity {
-    private final Database db = new FireDatabase();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,8 +24,8 @@ public class FirebaseActivity extends AppCompatActivity {
         TextView emailInput = findViewById(R.id.firebase_input_email);
         TextView phoneInput = findViewById(R.id.firebase_input_phone);
 
-        db.get("/users/user1/email", String.class).thenAccept(emailInput::setText);
-        db.get("/users/user1/phone", String.class).thenAccept(phoneInput::setText);
+        DATABASE.get("/users/user1/email", String.class).thenAccept(emailInput::setText);
+        DATABASE.get("/users/user1/phone", String.class).thenAccept(phoneInput::setText);
     }
 
     /**
@@ -48,7 +40,7 @@ public class FirebaseActivity extends AppCompatActivity {
         String emailValue = emailInput.getText().toString();
         String phoneValue = phoneInput.getText().toString();
 
-        db.set("/users/user1/email", emailValue);
-        db.set("/users/user1/phone", phoneValue);
+        DATABASE.set("/users/user1/email", emailValue);
+        DATABASE.set("/users/user1/phone", phoneValue);
     }
 }
