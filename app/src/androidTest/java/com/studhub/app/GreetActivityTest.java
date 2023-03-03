@@ -19,7 +19,6 @@ public class GreetActivityTest {
 
     @Test
     public void correctGreetingIsDisplayed() {
-       //.
         String key = "name";
         String value = "Bob";
         String message = String.format("Hello my dear %s, how are you?", value);

@@ -27,5 +27,4 @@ public class GreetActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NavigationDrawer.class);
         this.startActivity(intent);
     }
-;
 }
