@@ -26,4 +26,9 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("name", nameField.getText().toString());
         this.startActivity(intent);
     }
+
+    public void showMap(View view) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
 }
