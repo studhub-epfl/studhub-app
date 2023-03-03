@@ -8,49 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:498909302481:android:4813918f46450c30147ff0",
-        "android_client_info": {
-          "package_name": "com.github.tepoorte.bootcamp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "498909302481-3sfufkegmtcb20edv9e1sg5atm484gng.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.github.tepoorte.bootcamp",
-            "certificate_hash": "89342bb9349ca99d6f4c8c527145f63730262325"
-          }
-        },
-        {
-          "client_id": "498909302481-f9tmmv2ej4c70vkcd3hsell4cp57mpr6.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBGxH8yajeWI_vdzlAtPADWuOB7inDbwbI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "498909302481-f9tmmv2ej4c70vkcd3hsell4cp57mpr6.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:498909302481:android:3eb5b7a47047884b147ff0",
         "android_client_info": {
           "package_name": "com.studhub.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "498909302481-ua72qcffpnope94tcd3iees8angckg1i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "89342bb9349ca99d6f4c8c527145f63730262325"
+          }
+        },
         {
           "client_id": "498909302481-f9tmmv2ej4c70vkcd3hsell4cp57mpr6.apps.googleusercontent.com",
           "client_type": 3
