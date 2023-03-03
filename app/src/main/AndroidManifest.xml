@@ -9,17 +9,18 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Bootcamp"
+        android:theme="@style/Theme.Kotlin_bootcamp"
         tools:targetApi="31">
         <activity
-            android:name=".FirebaseActivity"
-            android:exported="false" />
+            android:name=".GreetingActivity2"
+            android:exported="false"
+            android:label="@string/title_activity_greeting"
+            android:theme="@style/Theme.Kotlin_bootcamp" />
         <activity
-            android:name=".GreetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".MainActivity2"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Kotlin_bootcamp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

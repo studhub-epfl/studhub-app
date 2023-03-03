@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Bootcamp</string>
+    <string name="app_name">kotlin_bootcamp</string>
+    <string name="title_activity_greeting">GreetingActivity</string>
 </resources>
