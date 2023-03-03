@@ -28,6 +28,11 @@ android {
             testCoverageEnabled true
         }
     }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -45,6 +50,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
@@ -53,7 +59,11 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+
+    implementation 'com.google.api-client:google-api-client:1.32.1'
 
 }
 
