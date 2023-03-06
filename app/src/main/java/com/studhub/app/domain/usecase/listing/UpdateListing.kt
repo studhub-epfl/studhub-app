@@ -10,3 +10,4 @@ class UpdateListing(private val repository: ListingRepository) {
         return repository.updateListing(listingId, updatedListing)
     }
 }
+
