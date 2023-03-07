@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.flow
 /**
  * Use case for getting a listing from a given [repository]
  *
- * @param ListingRepository the [repository] which the use case will act on
+ * @param [repository] the repository which the use case will act on
  */
 class GetListing(private val repository: ListingRepository) {
 
     /**
      * Retrieves the listing matching the given [listingId] from the [repository]
      *
-     * @param Long the [listingId] of the listing to retrieve
+     * @param [listingId] the ID of the listing to retrieve
      */
     suspend operator fun invoke(listingId: Long): Flow<ApiResponse<Listing>> {
         return repository.getListing(listingId)

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Use case for getting all listings from a given [repository]
  *
- * @param ListingRepository the [repository] which the use case will act on
+ * @param [repository] the repository which the use case will act on
  */
 class GetListings constructor(private val repository: ListingRepository) {
 

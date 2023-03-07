@@ -18,7 +18,7 @@ import kotlin.random.Random
 class ListingUseCaseTest {
     private val listingDB = HashMap<Long, Listing>()
 
-    private var repository: ListingRepository = object : ListingRepository {
+    private val repository: ListingRepository = object : ListingRepository {
 
         override suspend fun createListing(listing: Listing): Flow<ApiResponse<Boolean>> {
             return flow {
@@ -143,18 +143,17 @@ class ListingUseCaseTest {
 
     @Test
     fun `Update Listing Use Case correctly updates the pointed entry in the given repository`() = runBlocking {
-        val updatedListing = UpdateListing(repository)
+        val updateListing = UpdateListing(repository)
 
         val productId1 = Random.nextLong()
         val productName1 = Random.nextLong().toString()
         val productId2 = Random.nextLong()
         val productName2 = Random.nextLong().toString()
-        val listing = Listing(id = productId1, name = productName1, seller = User())
         listingDB[productId1] = Listing(id = productId1, name = productName1, seller = User())
 
         val updatedProduct = Listing(id = productId2, name = productName2, seller = User())
 
-        updatedListing(productId1, listing).collect { response ->
+        updateListing(productId1, updatedProduct).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val result: Listing = response.data

@@ -9,17 +9,17 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Use case for updating a listing in a given [repository]
  *
- * @param ListingRepository the [repository] which the use case will act on
+ * @param [repository] the repository which the use case will act on
  */
 class UpdateListing(private val repository: ListingRepository) {
 
     /**
-     * Updates the [listing] in the [repository]
+     * Updates the listing with ID [listingId] in the [repository]
      *
      * The ID of the given [updatedListing] shall be discarded
      *
-     * @param Long the [listingId] of the listing to update
-     * @param Listing the [updatedListing] containing all the updated fields - the id of this listing will be discarded
+     * @param [listingId] the ID of the listing to update
+     * @param [updatedListing] the listing containing all the updated fields - the ID of this listing will be discarded
      */
     suspend operator fun invoke(listingId: Long, updatedListing: Listing): Flow<ApiResponse<Listing>> {
         return repository.updateListing(listingId, updatedListing)

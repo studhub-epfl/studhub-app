@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Use case for removing a listing from a given [repository]
  *
- * @param ListingRepository the [repository] which the use case will act on
+ * @param [repository] the repository which the use case will act on
  */
 class RemoveListing(private val repository: ListingRepository) {
 
     /**
      * Removes the [listing] from the [repository]
      *
-     * @param Listing the [listing] to remove
+     * @param [listing] the listing to remove
      */
     suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Boolean>> {
         return repository.removeListing(listing.id)
@@ -25,7 +25,7 @@ class RemoveListing(private val repository: ListingRepository) {
     /**
      * Removes the listing matching the given [listingId] from the [repository]
      *
-     * @param Long the [listingId] of the listing to remove
+     * @param [listingId] the ID of the listing to remove
      */
     suspend operator fun invoke(listingId: Long): Flow<ApiResponse<Boolean>> {
         return repository.removeListing(listingId)

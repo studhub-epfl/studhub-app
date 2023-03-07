@@ -8,14 +8,14 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Use case for creating a listing in a given [repository]
  *
- * @param ListingRepository the [repository] which the use case will act on
+ * @param [repository] the which the use case will act on
  */
 class CreateListing(private val repository: ListingRepository) {
 
     /**
      * Adds the given [listing] to a [repository]
      *
-     * @param Listing the [listing] to create
+     * @param [listing] the listing to create
      */
     suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Boolean>> {
         return repository.createListing(listing)
