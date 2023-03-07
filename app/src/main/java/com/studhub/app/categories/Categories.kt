@@ -9,6 +9,7 @@ enum class Categories(val description: String) {
     ARTDECORATIONS("art decoration"),
     SERVICES("services"),
     OTHER("other")
-
-
 }
+
+
+
