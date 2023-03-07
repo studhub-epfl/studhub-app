@@ -2,7 +2,7 @@ package com.studhub.app.domain.model
 
 import kotlinx.coroutines.Job
 
-class Category(val description: String) : ArrayList<Any>() {
+open class Category(val description: String) : ArrayList<Any>() {
 
 
     override fun toString(): String {
