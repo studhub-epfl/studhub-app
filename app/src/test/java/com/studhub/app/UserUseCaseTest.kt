@@ -49,8 +49,7 @@ class UserUseCaseTest {
                     val newListing = updatedUser.copy(id = userId)
                     userDB[userId] = newListing
                     emit(ApiResponse.Success(userDB.getValue(userId)))
-                }
-                else
+                } else
                     emit(ApiResponse.Failure("No entry for this key"))
             }
         }
@@ -135,7 +134,11 @@ class UserUseCaseTest {
                         expectedResult
                     )
 
-                    Assert.assertEquals("username should be updated", userName2, user1FromDB.userName)
+                    Assert.assertEquals(
+                        "username should be updated",
+                        userName2,
+                        user1FromDB.userName
+                    )
 
                     Assert.assertEquals("id should not be updated", userId1, user1FromDB.id)
                 }

@@ -48,7 +48,10 @@ class ListingUseCaseTest {
             }
         }
 
-        override suspend fun updateListing(listingId: Long, updatedListing: Listing): Flow<ApiResponse<Listing>> {
+        override suspend fun updateListing(
+            listingId: Long,
+            updatedListing: Listing
+        ): Flow<ApiResponse<Listing>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
@@ -56,8 +59,7 @@ class ListingUseCaseTest {
                     val newListing = updatedListing.copy(id = listingId)
                     listingDB[listingId] = newListing
                     emit(ApiResponse.Success(listingDB.getValue(listingId)))
-                }
-                else
+                } else
                     emit(ApiResponse.Failure("No entry for this key"))
             }
         }
@@ -121,98 +123,106 @@ class ListingUseCaseTest {
     }
 
     @Test
-    fun `Create Listing Use Case creates the correct entry in the given repository`() = runBlocking {
-        val createListing = CreateListing(repository)
+    fun `Create Listing Use Case creates the correct entry in the given repository`() =
+        runBlocking {
+            val createListing = CreateListing(repository)
 
-        val productId = Random.nextLong()
-        val productName = Random.nextLong().toString()
-        val listing = Listing(id = productId, name = productName, seller = User())
+            val productId = Random.nextLong()
+            val productName = Random.nextLong().toString()
+            val listing = Listing(id = productId, name = productName, seller = User())
 
-        createListing(listing).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> {
-                    val result = response.data
-                    assertTrue(result)
-                    assertEquals(productName, listingDB.getValue(productId).name)
+            createListing(listing).collect { response ->
+                when (response) {
+                    is ApiResponse.Success -> {
+                        val result = response.data
+                        assertTrue(result)
+                        assertEquals(productName, listingDB.getValue(productId).name)
+                    }
+                    is ApiResponse.Failure -> fail("Request failure")
+                    is ApiResponse.Loading -> {}
                 }
-                is ApiResponse.Failure -> fail("Request failure")
-                is ApiResponse.Loading -> {}
             }
         }
-    }
 
     @Test
-    fun `Update Listing Use Case correctly updates the pointed entry in the given repository`() = runBlocking {
-        val updateListing = UpdateListing(repository)
+    fun `Update Listing Use Case correctly updates the pointed entry in the given repository`() =
+        runBlocking {
+            val updateListing = UpdateListing(repository)
 
-        val productId1 = Random.nextLong()
-        val productName1 = Random.nextLong().toString()
-        val productId2 = Random.nextLong()
-        val productName2 = Random.nextLong().toString()
-        listingDB[productId1] = Listing(id = productId1, name = productName1, seller = User())
+            val productId1 = Random.nextLong()
+            val productName1 = Random.nextLong().toString()
+            val productId2 = Random.nextLong()
+            val productName2 = Random.nextLong().toString()
+            listingDB[productId1] = Listing(id = productId1, name = productName1, seller = User())
 
-        val updatedProduct = Listing(id = productId2, name = productName2, seller = User())
+            val updatedProduct = Listing(id = productId2, name = productName2, seller = User())
 
-        updateListing(productId1, updatedProduct).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> {
-                    val result: Listing = response.data
-                    val expectedResult: Listing = updatedProduct.copy(id = productId1)
-                    val product1FromDB: Listing = listingDB.getValue(productId1)
+            updateListing(productId1, updatedProduct).collect { response ->
+                when (response) {
+                    is ApiResponse.Success -> {
+                        val result: Listing = response.data
+                        val expectedResult: Listing = updatedProduct.copy(id = productId1)
+                        val product1FromDB: Listing = listingDB.getValue(productId1)
 
-                    assertEquals("returned listing should match the updated one", result, expectedResult)
+                        assertEquals(
+                            "returned listing should match the updated one",
+                            result,
+                            expectedResult
+                        )
 
-                    assertEquals("name should be updated", productName2, product1FromDB.name)
+                        assertEquals("name should be updated", productName2, product1FromDB.name)
 
-                    assertEquals("id should not be updated", productId1, product1FromDB.id)
+                        assertEquals("id should not be updated", productId1, product1FromDB.id)
+                    }
+                    is ApiResponse.Failure -> fail("Request failure")
+                    is ApiResponse.Loading -> {}
                 }
-                is ApiResponse.Failure -> fail("Request failure")
-                is ApiResponse.Loading -> {}
             }
         }
-    }
 
     @Test
-    fun `Remove Listing Use Case correctly removes the entry from the given repository`() = runBlocking {
-        val removeListing = RemoveListing(repository)
+    fun `Remove Listing Use Case correctly removes the entry from the given repository`() =
+        runBlocking {
+            val removeListing = RemoveListing(repository)
 
-        val productId = Random.nextLong()
-        val productName = Random.nextLong().toString()
-        val listing = Listing(id = productId, name = productName, seller = User())
-        listingDB[productId] = listing
+            val productId = Random.nextLong()
+            val productName = Random.nextLong().toString()
+            val listing = Listing(id = productId, name = productName, seller = User())
+            listingDB[productId] = listing
 
-        removeListing(listing).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> {
-                    val result = response.data
-                    assertTrue(result)
-                    assertNull(listingDB[productId])
+            removeListing(listing).collect { response ->
+                when (response) {
+                    is ApiResponse.Success -> {
+                        val result = response.data
+                        assertTrue(result)
+                        assertNull(listingDB[productId])
+                    }
+                    is ApiResponse.Failure -> fail("Request failure")
+                    is ApiResponse.Loading -> {}
                 }
-                is ApiResponse.Failure -> fail("Request failure")
-                is ApiResponse.Loading -> {}
             }
         }
-    }
 
     @Test
-    fun `Remove Listing Use Case correctly removes the entry (with given id) from the given repository`() = runBlocking {
-        val removeListing = RemoveListing(repository)
+    fun `Remove Listing Use Case correctly removes the entry (with given id) from the given repository`() =
+        runBlocking {
+            val removeListing = RemoveListing(repository)
 
-        val productId = Random.nextLong()
-        val productName = Random.nextLong().toString()
-        val listing = Listing(id = productId, name = productName, seller = User())
-        listingDB[productId] = listing
+            val productId = Random.nextLong()
+            val productName = Random.nextLong().toString()
+            val listing = Listing(id = productId, name = productName, seller = User())
+            listingDB[productId] = listing
 
-        removeListing(productId).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> {
-                    val result = response.data
-                    assertTrue(result)
-                    assertNull(listingDB[productId])
+            removeListing(productId).collect { response ->
+                when (response) {
+                    is ApiResponse.Success -> {
+                        val result = response.data
+                        assertTrue(result)
+                        assertNull(listingDB[productId])
+                    }
+                    is ApiResponse.Failure -> fail("Request failure")
+                    is ApiResponse.Loading -> {}
                 }
-                is ApiResponse.Failure -> fail("Request failure")
-                is ApiResponse.Loading -> {}
             }
         }
-    }
 }
