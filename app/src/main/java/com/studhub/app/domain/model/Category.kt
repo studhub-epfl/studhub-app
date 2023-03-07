@@ -1,25 +1,7 @@
 package com.studhub.app.domain.model
 
-import kotlinx.coroutines.Job
-
-open class Category(val description: String) : ArrayList<Any>() {
-
-
-    override fun toString(): String {
-        return description
-    }
-
-    fun f1() {
-
-    }
-
-    fun f2() {
-
-    }
-
-    fun f3() {
-
-    }
-
-
-}
+data class Category(
+    var id: Long = 0L,
+    val name: String = "",
+    val description: String = ""
+)
