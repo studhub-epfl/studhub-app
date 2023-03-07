@@ -12,6 +12,5 @@ interface ListingRepository {
 
     suspend fun updateListing(listingId: Long, updatedListing: Listing): Flow<ApiResponse<Listing>>
 
-    suspend fun removeListing(listing: Listing): Flow<ApiResponse<Boolean>>
     suspend fun removeListing(listingId: Long): Flow<ApiResponse<Boolean>>
 }
