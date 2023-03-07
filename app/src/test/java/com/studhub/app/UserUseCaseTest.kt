@@ -1,8 +1,11 @@
 package com.studhub.app
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
+import com.studhub.app.domain.usecase.listing.CreateListing
+import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.UpdateUser
 import kotlinx.coroutines.delay
@@ -63,6 +66,27 @@ class UserUseCaseTest {
     @After
     fun clearDB() {
         userDB.clear()
+    }
+
+    @Test
+    fun `Create User Use Case creates the correct entry in the given repository`() = runBlocking {
+        val createUser = CreateUser(repository)
+
+        val userId = Random.nextLong()
+        val userName = Random.nextLong().toString()
+        val listing = User(id = userId, userName = userName)
+
+        createUser(listing).collect { response ->
+            when (response) {
+                is ApiResponse.Success -> {
+                    val result = response.data
+                    Assert.assertTrue(result)
+                    Assert.assertEquals(userName, userDB.getValue(userId).userName)
+                }
+                is ApiResponse.Failure -> Assert.fail("Request failure")
+                is ApiResponse.Loading -> {}
+            }
+        }
     }
 
     @Test
