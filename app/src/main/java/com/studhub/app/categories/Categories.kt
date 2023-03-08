@@ -3,8 +3,8 @@ package com.studhub.app.categories
 import com.studhub.app.domain.model.Category
 
 class Categories {
-    val Electronics: Category = Category(id = 1, name = "Electronics", "phones/cameras/.. ")
-    val SchoolsItem: Category = Category(id = 2, name = "School items","books/pencils/bags/..")
+    val electronics: Category = Category(id = 1, name = "electronics", "phones/cameras/.. ")
+    val schoolsItem: Category = Category(id = 2, name = "school items","books/pencils/bags/..")
     val accessories: Category = Category(id = 8, name = "accessories","keys/necklaces/..")
     val insruments: Category = Category(id = 3, name = "insruments","ear phones/guitar/..")
     val mobility: Category = Category(id = 4, name = "mobility","bikes/scooter/..")
