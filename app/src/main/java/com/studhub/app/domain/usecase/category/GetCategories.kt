@@ -1,4 +1,4 @@
-package com.studhub.app.domain.usecase.listing
+package com.studhub.app.domain.usecase.category
 
 
 import com.studhub.app.core.utils.ApiResponse
