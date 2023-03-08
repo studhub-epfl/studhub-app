@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
  *
  * @param [repository] the repository which the use case will act on
  */
-class GetListings constructor(private val repository: ListingRepository) {
+class GetListings(private val repository: ListingRepository) {
 
     /**
      * Retrieves all listings from the [repository]
