@@ -14,3 +14,7 @@ val StudHubLightPink = Color (0xF48FB1FF0)
 val StudHubBrightPink = Color (0xF06292FF)
 val StudHubMediumGray = Color(0x424242FF)
 // White Palette
+val StudHubLightGray = Color(0xF5F5F5FF)
+val SutdHubBrightOrange = Color(0xFF5722FF )
+val StudHubSoftOrange = Color(0xFFA07AFF)
+val StudHubGray =  Color(0x212121FF)
