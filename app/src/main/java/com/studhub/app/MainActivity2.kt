@@ -46,7 +46,8 @@ class MainActivity2 : ComponentActivity() {
         }
     }
 }
-@Preview
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -77,11 +78,18 @@ fun HomePage(onAddListingClicked: () -> Unit, onBrowseClicked: () -> Unit) {
                 .fillMaxSize()
                 .background(color = MaterialTheme.colors.background)
         ) {
-            // Horizontal purple stripe
+            // horizontal purple stripe
             Box(
                 modifier = Modifier
                     .height(32.dp)
                     .fillMaxWidth()
+                    .background(color = MaterialTheme.colors.primary)
+            )
+            // vertical stripe
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(32.dp)
                     .background(color = MaterialTheme.colors.primary)
             )
 
@@ -90,12 +98,13 @@ fun HomePage(onAddListingClicked: () -> Unit, onBrowseClicked: () -> Unit) {
                 onClick = { menuExpanded.value = !menuExpanded.value },
                 modifier = Modifier
                     .padding(end = 16.dp, bottom = 16.dp)
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.BottomEnd).background(color = MaterialTheme.colors.secondary, shape = CircleShape)
+
             ) {
                 Icon1(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = "Menu",
-                    tint = MaterialTheme.colors.onBackground
+                    tint = MaterialTheme.colors.secondaryVariant
                 )
             }
 
@@ -171,3 +180,4 @@ fun BrowseScreen() {
         ) {}
     }
 }
+
