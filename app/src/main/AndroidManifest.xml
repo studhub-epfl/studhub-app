@@ -27,17 +27,15 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".GreetActivity2"
             android:exported="false"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_greet2"
+            android:theme="@style/Theme.Bootcamp" />
         <activity
-            android:name=".FirebaseActivity"
+            android:name=".MapsActivity2"
             android:exported="false" />
         <activity
-            android:name=".GreetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".MainActivity2"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,4 +44,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
