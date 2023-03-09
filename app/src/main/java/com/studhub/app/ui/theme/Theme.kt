@@ -1,30 +1,29 @@
 package com.studhub.app.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
-private val DarkColorPalette = darkColorScheme(
-    primary = Purple200,
-    secondary = Purple700,
-    tertiary = Teal200
+private val DarkColorPalette = darkColors(
+    primary = StudHubPurple,
+    primaryVariant = StudHubPurple,
+    secondaryVariant = StudHubPurple,
+    secondary = Teal200
 )
 
-private val LightColorPalette = lightColorScheme(
-    primary = Purple500,
-    secondary = Purple700,
-    tertiary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+private val LightColorPalette = lightColors(
+    primary = StudHubPurple,
+    primaryVariant = StudHubPurple,
+    secondary = Teal200 ,
+    secondaryVariant = StudHubPurple,
+    background = StudHubWhite,
+    surface = StudHubWhite,
+    onPrimary = StudHubWhite,
+    onSecondary = StudHubWhite,
+    onBackground = StudHubWhite,
+    onSurface = StudHubWhite,
 )
 
 @Composable
@@ -36,7 +35,7 @@ fun StudHubTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
     }
 
     MaterialTheme(
-        colorScheme = colors,
+        colors = colors,
         typography = Typography,
         shapes = Shapes,
         content = content
