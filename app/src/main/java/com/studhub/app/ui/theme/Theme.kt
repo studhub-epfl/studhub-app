@@ -1,29 +1,38 @@
 package com.studhub.app.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = StudHubPurple,
-    primaryVariant = StudHubPurple,
-    secondaryVariant = StudHubPurple,
-    secondary = Teal200
-)
-
-private val LightColorPalette = lightColors(
-    primary = StudHubPurple,
-    primaryVariant = StudHubPurple,
-    secondary = Teal200 ,
-    secondaryVariant = StudHubPurple,
-    background = StudHubWhite,
-    surface = StudHubWhite,
+    primary = StudHubDarkGray,
+    primaryVariant = StudHubDarkerGray,
+    secondary = StudHubLightPink ,
+    secondaryVariant = StudHubBrightPink,
+    background = StudHubDarkerGray,
+    surface = StudHubMediumGray,
     onPrimary = StudHubWhite,
-    onSecondary = StudHubWhite,
+    onSecondary = StudHubBlack,
     onBackground = StudHubWhite,
     onSurface = StudHubWhite,
+)
+
+@SuppressLint("ConflictingOnColor")
+private val LightColorPalette = lightColors(
+    primary = StudHubWhite,
+    primaryVariant = StudHubLightGray,
+    secondary = SutdHubBrightOrange ,
+    secondaryVariant = StudHubSoftOrange,
+    background = StudHubGray,
+    surface = StudHubWhite,
+    onPrimary = StudHubDarkGray,
+    onSecondary = StudHubWhite,
+    onBackground = StudHubDarkGray,
+    onSurface = StudHubDarkGray,
 )
 
 @Composable
