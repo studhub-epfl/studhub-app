@@ -10,7 +10,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -18,7 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.ui.theme.StudHubTheme
 
-class MainActivity2 : ComponentActivity() {
+class HomePageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -43,7 +42,7 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "Home") {
         composable("Home") {
-            HomePage(
+            HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
                 onBrowseClick = { navController.navigate("Browse") }
             )
@@ -58,7 +57,7 @@ fun AppNavigation() {
 }
 
 @Composable
-fun HomePage(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit) {
+fun HomeScreen(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit) {
     StudHubTheme() {
         Column(
             modifier = Modifier
@@ -93,27 +92,10 @@ fun HomePage(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit) {
 
 @Composable
 fun AddListingScreen() {
-
-    StudHubTheme {
-        Text(text = "Add Listing")
-        Surface(
-            // Going to change, customize colors later.
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.primary
-
-        ) {}
-    }
+    Text(text = "listing")
 }
 
 @Composable
 fun BrowseScreen() {
-    StudHubTheme {
-        Text(text = "Browse")
-        Surface(
-            // Going to change, customize colors later.
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.secondaryVariant
-
-        ) {}
-    }
+    Text(text = "browse")
 }
