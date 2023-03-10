@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.studhub.app.domain.repository.UserRepository
+import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.ui.theme.BootcampTheme
 
 class RegisterUserActivity : ComponentActivity() {
@@ -45,7 +47,7 @@ fun submit(
     phoneNumber: String,
     profilePic: String
 ) {
-    /* TODO */
+    /*TODO*/
 }
 
 @Composable
