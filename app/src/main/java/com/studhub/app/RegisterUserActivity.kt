@@ -4,22 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.user.CreateUser
+import com.studhub.app.presentation.ui.*
 import com.studhub.app.ui.theme.BootcampTheme
 
 class RegisterUserActivity : ComponentActivity() {
@@ -57,7 +52,7 @@ fun UserForm() {
     val userName = rememberSaveable { mutableStateOf("") }
     val email = rememberSaveable { mutableStateOf("") }
     val phoneNumber = rememberSaveable { mutableStateOf("") }
-    Column{
+    Column {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,47 +85,6 @@ fun UserForm() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BasicTextField(
-    label: String,
-    rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }
-) {
-    OutlinedTextField(
-        value = rememberedValue.value,
-        onValueChange = { rememberedValue.value = it },
-        label = { Text(label) }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EmailTextField(
-    label: String,
-    rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }
-) {
-    OutlinedTextField(
-        value = rememberedValue.value,
-        onValueChange = { rememberedValue.value = it },
-        label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NumericTextField(
-    label: String,
-    rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }
-) {
-    OutlinedTextField(
-        value = rememberedValue.value,
-        onValueChange = { rememberedValue.value = it },
-        label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
-}
-
 @Composable
 fun AddFileButton(label: String) {
     OutlinedButton(
@@ -144,26 +98,6 @@ fun AddFileButton(label: String) {
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(label)
-    }
-}
-
-@Composable
-fun BigLabel(label: String) {
-    Text(
-        text = label,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-fun BasicFilledButton(onClickHandler: () -> Unit, label: String) {
-    Button(
-        onClick = { onClickHandler() },
-        modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
-    ) {
         Text(label)
     }
 }
