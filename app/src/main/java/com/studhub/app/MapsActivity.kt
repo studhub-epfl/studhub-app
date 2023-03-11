@@ -13,7 +13,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
-class MapsActivity2 : ComponentActivity() {
+class MapsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +36,7 @@ class MapsActivity2 : ComponentActivity() {
                     tag = satellite,
                     onInfoWindowClick = { marker ->
                         Toast.makeText(
-                            this@MapsActivity2,
+                            this@MapsActivity,
                             "Marker clicked at ${marker.position}",
                             Toast.LENGTH_SHORT
                         ).show()
