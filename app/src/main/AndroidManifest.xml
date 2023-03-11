@@ -11,6 +11,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bootcamp"
         tools:targetApi="31">
+        <activity
+            android:name=".BrowseScreen"
+            android:exported="false"
+            android:label="@string/title_activity_browse_screen"
+            android:theme="@style/Theme.Bootcamp" />
+        <activity
+            android:name=".HomeScreen"
+            android:exported="false"
+            android:label="@string/title_activity_home_screen"
+            android:theme="@style/Theme.Bootcamp" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -27,15 +37,15 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".GreetActivity2"
+            android:name=".GreetActivity"
             android:exported="false"
             android:label="@string/title_activity_greet2"
             android:theme="@style/Theme.Bootcamp" />
         <activity
-            android:name=".MapsActivity2"
+            android:name=".MapsActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity2"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
