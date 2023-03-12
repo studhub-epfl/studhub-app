@@ -3,5 +3,5 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_main2">MainActivity</string>
     <string name="title_activity_greet">GreetActivity</string>
+    <string name="title_activity_register_user">RegisterUserActivity</string>
 </resources>
-
