@@ -78,24 +78,8 @@ private val repository: UserRepository = object : UserRepository {
 
 }
 
-suspend fun submit(
-    firstName: String,
-    lastName: String,
-    userName: String,
-    email: String,
-    phoneNumber: String,
-    profilePic: String
-) {
+suspend fun submit(user: User) {
     val createUser = CreateUser(repository)
-    val user = User(
-        id = 1,
-        email = email,
-        phoneNumber = phoneNumber,
-        firstName = firstName,
-        lastName = lastName,
-        userName = userName,
-        profilePicture = profilePic
-    )
     createUser(user)
 }
 
@@ -124,16 +108,17 @@ fun UserForm() {
             val scope = rememberCoroutineScope()
             BasicFilledButton(
                 onClickHandler = {
+                    val user = User(
+                        id = 1,
+                        email = email.value,
+                        phoneNumber = phoneNumber.value,
+                        firstName = firstName.value,
+                        lastName = lastName.value,
+                        userName = userName.value,
+                        profilePicture = "pf_placeholder.png"
+                    )
                     scope.launch {
-                        submit(
-                            firstName.value,
-                            lastName.value,
-                            userName.value,
-                            email.value,
-                            phoneNumber.value,
-                            //TODO implement actual profile picture saving
-                            "pf_placeholder.png"
-                        )
+                        submit(user)
                     }
                 },
                 label = "Submit"
@@ -162,13 +147,5 @@ fun AddFileButton(label: String) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    BootcampTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            UserForm()
-        }
-    }
+    RegisterUserActivity()
 }
