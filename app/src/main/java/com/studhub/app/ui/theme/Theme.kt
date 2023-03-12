@@ -28,7 +28,7 @@ private val LightColorPalette = lightColorScheme(
 )
 
 @Composable
-fun BootcampTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun StudHubTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {

@@ -20,7 +20,7 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.presentation.ui.*
-import com.studhub.app.ui.theme.BootcampTheme
+import com.studhub.app.ui.theme.StudHubTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -30,7 +30,7 @@ class RegisterUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BootcampTheme {
+            StudHubTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
