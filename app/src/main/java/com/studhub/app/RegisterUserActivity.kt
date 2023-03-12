@@ -9,13 +9,22 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.UserRepository
+import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.presentation.ui.*
 import com.studhub.app.ui.theme.BootcampTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 class RegisterUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +43,42 @@ class RegisterUserActivity : ComponentActivity() {
     }
 }
 
-fun submit(
+private val repository: UserRepository = object : UserRepository {
+    private val userDB = HashMap<Long, User>()
+
+    override suspend fun createUser(user: User): Flow<ApiResponse<Boolean>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            delay(1000)
+            userDB[user.id] = user
+            emit(ApiResponse.Success(true))
+        }
+    }
+
+    override suspend fun getUser(userId: Long): Flow<ApiResponse<User>> {
+        return flow {
+            // empty implementation
+            emit(ApiResponse.Success(User()))
+        }
+    }
+
+    override suspend fun updateUser(userId: Long, updatedUser: User): Flow<ApiResponse<User>> {
+        return flow {
+            // empty implementation
+            emit(ApiResponse.Success(User()))
+        }
+    }
+
+    override suspend fun removeUser(userId: Long): Flow<ApiResponse<Boolean>> {
+        return flow {
+            // empty implementation
+            emit(ApiResponse.Success(true))
+        }
+    }
+
+}
+
+suspend fun submit(
     firstName: String,
     lastName: String,
     userName: String,
@@ -42,7 +86,17 @@ fun submit(
     phoneNumber: String,
     profilePic: String
 ) {
-    /*TODO*/
+    val createUser = CreateUser(repository)
+    val user = User(
+        id = 1,
+        email = email,
+        phoneNumber = phoneNumber,
+        firstName = firstName,
+        lastName = lastName,
+        userName = userName,
+        profilePicture = profilePic
+    )
+    createUser(user)
 }
 
 @Composable
@@ -67,17 +121,20 @@ fun UserForm() {
             NumericTextField("Phone number", phoneNumber)
             AddFileButton("Add profile picture")
             Spacer(Modifier.size(10.dp))
+            val scope = rememberCoroutineScope()
             BasicFilledButton(
                 onClickHandler = {
-                    submit(
-                        firstName.value,
-                        lastName.value,
-                        userName.value,
-                        email.value,
-                        phoneNumber.value,
-                        //TODO implement actual profile picture saving
-                        "pf_placeholder.png"
-                    )
+                    scope.launch {
+                        submit(
+                            firstName.value,
+                            lastName.value,
+                            userName.value,
+                            email.value,
+                            phoneNumber.value,
+                            //TODO implement actual profile picture saving
+                            "pf_placeholder.png"
+                        )
+                    }
                 },
                 label = "Submit"
             )
