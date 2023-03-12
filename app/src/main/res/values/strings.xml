@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">Bootcamp</string>
+    <string name="app_name">StudHub</string>
     <string name="title_activity_maps">MapsActivity</string>
-    <string name="title_activity_main2">HomePageActivity</string>
+    <string name="title_activity_home_page">HomePageActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_greet">GreetActivity</string>
+    <string name="title_activity_register_user">RegisterUserActivity</string>
 </resources>
