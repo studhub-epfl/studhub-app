@@ -12,6 +12,11 @@
         android:theme="@style/Theme.Bootcamp"
         tools:targetApi="31">
         <activity
+            android:name=".HomePageActivity"
+            android:exported="true"
+            android:label="@string/title_activity_home_page"
+            android:theme="@style/Theme.Bootcamp" />
+        <activity  
             android:name=".RegisterUserActivity"
             android:exported="true"
             android:label="@string/title_activity_register_user"
@@ -48,6 +53,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
