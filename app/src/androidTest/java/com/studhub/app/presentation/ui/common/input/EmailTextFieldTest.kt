@@ -1,4 +1,4 @@
-package com.studhub.app.ui
+package com.studhub.app.presentation.ui.common.input
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

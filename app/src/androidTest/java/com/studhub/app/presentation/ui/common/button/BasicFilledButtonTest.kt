@@ -1,4 +1,4 @@
-package com.studhub.app.ui
+package com.studhub.app.presentation.ui.common.button
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -16,9 +16,9 @@ class BasicFilledButtonTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun componentBasicFilledButtonExistsWithCorrectGivenNameWhenCreated() {
+    fun ComponentBasicFilledButtonExistsWithCorrectGivenNameWhenCreated() {
         composeTestRule.setContent {
-            BasicFilledButton(onClickHandler = { /*TODO*/ }, label = "Test")
+            BasicFilledButton(onClick = { }, label = "Test")
         }
 
         composeTestRule.onNodeWithText("Test").assertExists()
@@ -31,7 +31,7 @@ class BasicFilledButtonTest {
 
         // Render the button composable with the callback method
         composeTestRule.setContent {
-            BasicFilledButton(onClickHandler = { callback() }, label = "Test")
+            BasicFilledButton(onClick = { callback() }, label = "Test")
         }
 
         // Simulate a click on the button

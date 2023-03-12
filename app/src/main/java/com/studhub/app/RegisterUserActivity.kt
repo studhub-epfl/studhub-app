@@ -90,6 +90,7 @@ fun UserForm() {
     val userName = rememberSaveable { mutableStateOf("") }
     val email = rememberSaveable { mutableStateOf("") }
     val phoneNumber = rememberSaveable { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
     Column {
         Column(
             modifier = Modifier
@@ -105,20 +106,18 @@ fun UserForm() {
             NumericTextField("Phone number", phoneNumber)
             AddFileButton("Add profile picture")
             Spacer(Modifier.size(10.dp))
-            val scope = rememberCoroutineScope()
             BasicFilledButton(
-                onClickHandler = {
-                    val user = User(
-                        id = 1,
-                        email = email.value,
-                        phoneNumber = phoneNumber.value,
-                        firstName = firstName.value,
-                        lastName = lastName.value,
-                        userName = userName.value,
-                        profilePicture = "pf_placeholder.png"
-                    )
+                onClick = {
                     scope.launch {
-                        submit(user)
+                        submit(User(
+                            id = 1,
+                            email = email.value,
+                            phoneNumber = phoneNumber.value,
+                            firstName = firstName.value,
+                            lastName = lastName.value,
+                            userName = userName.value,
+                            profilePicture = "pf_placeholder.png"
+                        ))
                     }
                 },
                 label = "Submit"

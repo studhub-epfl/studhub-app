@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BasicFilledButton(onClickHandler: () -> Unit, label: String) {
+fun BasicFilledButton(onClick: () -> Unit, label: String) {
     Button(
-        onClick = { onClickHandler() },
+        onClick = { onClick() },
         modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
     ) {
         Text(label)
