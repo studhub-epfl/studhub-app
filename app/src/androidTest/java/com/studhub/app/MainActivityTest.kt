@@ -7,7 +7,7 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MainActivity2Test {
+class MainActivityTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

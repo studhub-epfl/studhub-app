@@ -2,7 +2,7 @@
     <string name="app_name">Bootcamp</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="title_activity_main2">MainActivity2</string>
-    <string name="title_activity_greet2">GreetActivity2</string>
+    <string name="title_activity_greet">GreetActivity2</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="title_activity_browse_screen">BrowseScreen</string>
 </resources>

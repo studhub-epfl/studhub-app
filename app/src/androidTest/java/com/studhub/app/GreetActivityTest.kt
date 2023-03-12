@@ -7,7 +7,7 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class GreetActivity2Test {
+class GreetActivityTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<GreetActivity>()
