@@ -30,7 +30,7 @@ class RegisterUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            View()
+            RegisterUserView()
         }
     }
 }
@@ -76,7 +76,7 @@ suspend fun submit(user: User) {
 }
 
 @Composable
-fun View(){
+fun RegisterUserView(){
     StudHubTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -151,6 +151,6 @@ fun AddFileButton(label: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    View()
+fun RegisterUserPreview() {
+    RegisterUserView()
 }
