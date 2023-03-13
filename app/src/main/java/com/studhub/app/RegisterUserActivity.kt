@@ -30,15 +30,7 @@ class RegisterUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            StudHubTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    UserForm()
-                }
-            }
+            View()
         }
     }
 }
@@ -81,6 +73,18 @@ private val repository: UserRepository = object : UserRepository {
 suspend fun submit(user: User) {
     val createUser = CreateUser(repository)
     createUser(user)
+}
+
+@Composable
+fun View(){
+    StudHubTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            UserForm()
+        }
+    }
 }
 
 @Composable
@@ -148,5 +152,5 @@ fun AddFileButton(label: String) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    RegisterUserActivity()
+    View()
 }
