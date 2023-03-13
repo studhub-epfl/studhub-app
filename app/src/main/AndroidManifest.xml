@@ -12,11 +12,16 @@
         android:theme="@style/Theme.Bootcamp"
         tools:targetApi="31">
         <activity
+            android:name=".CreateListingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_create_listing"
+            android:theme="@style/Theme.Bootcamp" />
+        <activity
             android:name=".HomePageActivity"
             android:exported="true"
             android:label="@string/title_activity_home_page"
             android:theme="@style/Theme.Bootcamp" />
-        <activity  
+        <activity
             android:name=".RegisterUserActivity"
             android:exported="true"
             android:label="@string/title_activity_register_user"
@@ -35,6 +40,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+
         <activity
             android:name=".MapsActivity"
             android:exported="false"
@@ -53,7 +59,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
