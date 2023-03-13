@@ -31,31 +31,11 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainActivityContent()
+                    AppNavigation()
                 }
             }
         }
     }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun MainActivityContent(navController: NavHostController = rememberNavController()) {
-        NavHost(navController = navController, startDestination = "Home") {
-            composable("Home") {
-                HomeScreen()
-            }
-            composable("Browse") {
-                BrowseScreen()
-            }
-            composable("Cart") {
-                CartScreen()
-            }
-            composable("Cart") {
-                AboutScreen()
-            }
-            composable("Map") {
-                MapsActivity()
-            }
-        }
-    }
 }
+
+
