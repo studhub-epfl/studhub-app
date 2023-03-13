@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColorScheme(
 
-
     background = stud_hub_black ,
     onBackground = stud_hub_white ,
     surface = stud_hub_black,
