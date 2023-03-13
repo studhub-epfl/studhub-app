@@ -35,7 +35,7 @@ class CategoryRepositoryImplTest {
 
         assert(numberOfCats > 0)
 
-        val randomIndex = Random.nextInt(numberOfCats)
+        val randomIndex = Random.nextInt(numberOfCats) + 1 // IDs start at 1
         val expectedCategory = retrievedCategories.first { it.id == randomIndex.toLong() }
         var retrievedCategory = Category(id = -1)
 
