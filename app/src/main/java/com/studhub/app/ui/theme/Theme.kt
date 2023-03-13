@@ -10,43 +10,46 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColorScheme(
 
-    background = Color(0XFF1C1B1F),
-    onBackground = Color(0XFFE6E1E5),
-    surface = Color(0XFF1C1B1F) ,
-    onSurface = Color(0XFFE6E1E5),
-    primary = Color(0XFFD0BCFF),
-    onPrimary = Color(0xFF381E72),
-    primaryContainer = Color(0xFF4F378B),
-    onPrimaryContainer = Color(0xffEADDFF),
-    secondary = Color(0XFFCCC2DC) ,
-    onSecondary = Color(0xFF332D41) ,
-    secondaryContainer = Color (0XFF4A4458),
-    onSecondaryContainer= Color(0xFFE8DEF8),
-    tertiary = Color(0xFFEFB8C8),
-    onTertiary = Color(0Xff492532),
-    tertiaryContainer = Color(0XFF633B48),
-    onTertiaryContainer = Color(0XFFFFD8E4),
+
+    background = stud_hub_black ,
+    onBackground = stud_hub_white ,
+    surface = stud_hub_black,
+    onSurface = stud_hub_white,
+    primary = stud_hub_light_pink,
+    onPrimary = stud_hub_dark_blue,
+    primaryContainer = stud_hub_violet,
+    onPrimaryContainer = stud_hub_white_variant ,
+    secondary = stud_hub_pink_variant,
+    onSecondary = stud_hub_dark_violet ,
+    secondaryContainer = stud_hub_dark_gray,
+    onSecondaryContainer= stud_hub_white_variant_2,
+    tertiary = stud_hub_pink,
+    onTertiary = stud_hub_burgundy,
+    tertiaryContainer = stud_hub_pink_brown,
+    onTertiaryContainer = stud_hub_pink_variant_2
 )
 
 
 private val LightColorPalette = lightColorScheme(
-    background = Color(0xffFFFBFE),
-    onBackground = Color(0xff1C1B1F),
-    surface = Color(0xffFFFBFE) ,
-    onSurface = Color(0xff1C1B1F),
-    primary = Color(0xff6750A4),
-    onPrimary = Color(0xffFFFFFF),
-    primaryContainer = Color(0xffEADDFF),
-    onPrimaryContainer = Color(0xff21005D),
-    secondary = Color(0xff625B71) ,
-    onSecondary = Color(0xffFFFFFF) ,
-    secondaryContainer = Color (0xff7D5260),
-    onSecondaryContainer= Color(0xff7D5260),
-    tertiary = Color(0xff7D5260),
-    onTertiary = Color(0xffFFFFFF),
-    tertiaryContainer = Color(0xffFFD8E4),
-    onTertiaryContainer = Color(0xff31111D)
+    background = stud_hub_white_v ,
+    onBackground = stud_hub_black,
+    surface = stud_hub_white_v ,
+    onSurface = stud_hub_black,
+    primary = stud_hub_violet_v,
+    onPrimary = stud_hub_pure_white,
+    primaryContainer = stud_hub_white_variant,
+    onPrimaryContainer = stud_hub_flashy_blue,
+    secondary = stud_hub_light_gray_v ,
+    onSecondary = stud_hub_pure_white ,
+    secondaryContainer =  stud_hub_burgundy_v,
+    onSecondaryContainer= stud_hub_burgundy_v,
+    tertiary = stud_hub_burgundy_v,
+    onTertiary = stud_hub_burgundy_v,
+    tertiaryContainer = stud_hub_pink_variant_2,
+    onTertiaryContainer = stud_hub_dark_burgundy
 )
+
+
 
 @Composable
 fun StudHubTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
