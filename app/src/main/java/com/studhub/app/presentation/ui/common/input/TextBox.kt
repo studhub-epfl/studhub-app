@@ -1,6 +1,6 @@
 package com.studhub.app.presentation.ui.common.input
 
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +22,9 @@ fun TextBox(
     rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }
 ) {
     OutlinedTextField(
-        modifier = Modifier.width(TextFieldDefaults.MinWidth),
+        modifier = Modifier
+            .width(TextFieldDefaults.MinWidth)
+            .heightIn(min = 150.dp, max = 250.dp),
         value = rememberedValue.value,
         onValueChange = { rememberedValue.value = it },
         label = { Text(label) },
@@ -32,5 +35,5 @@ fun TextBox(
 @Preview(showBackground = true)
 @Composable
 fun TextBoxPeview() {
-    TextBox("test")
+    TextBox("Item description")
 }
