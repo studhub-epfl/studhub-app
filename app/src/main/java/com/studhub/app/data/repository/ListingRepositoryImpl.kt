@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 
 class ListingRepositoryImpl : ListingRepository {
     //private firebaseDB..
-    private val listingDB = HashMap<Long, Listing>()
     private val db = FirebaseDatabase.getInstance().reference
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Boolean>> {
