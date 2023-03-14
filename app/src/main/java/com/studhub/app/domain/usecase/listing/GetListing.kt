@@ -19,7 +19,7 @@ class GetListing(private val repository: ListingRepository) {
      *
      * @param [listingId] the ID of the listing to retrieve
      */
-    suspend operator fun invoke(listingId: Long): Flow<ApiResponse<Listing>> {
+    suspend operator fun invoke(listingId: String): Flow<ApiResponse<Listing>> {
         return repository.getListing(listingId)
     }
 }

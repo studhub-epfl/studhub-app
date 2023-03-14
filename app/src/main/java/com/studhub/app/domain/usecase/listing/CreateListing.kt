@@ -17,7 +17,7 @@ class CreateListing(private val repository: ListingRepository) {
      *
      * @param [listing] the listing to create
      */
-    suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Boolean>> {
+    suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Listing>> {
         return repository.createListing(listing)
     }
 }

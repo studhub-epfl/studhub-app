@@ -1,10 +1,10 @@
 package com.studhub.app.domain.model
 
 data class Listing(
-        var id: Long = 0L,
-        var name: String = "",
-        var description: String = "",
-        var seller: User = User(),
-        var price: Float = 0F,
-        var categories: List<Category> = emptyList()
+        val id: String = "",
+        val name: String = "",
+        val description: String = "",
+        val seller: User = User(),
+        val price: Float = 0F,
+        val categories: List<Category> = emptyList()
 )
