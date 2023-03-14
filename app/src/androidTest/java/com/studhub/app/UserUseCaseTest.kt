@@ -1,10 +1,8 @@
 package com.studhub.app
 
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.listing.CreateListing
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.UpdateUser
@@ -18,19 +16,19 @@ import org.junit.Test
 import kotlin.random.Random
 
 class UserUseCaseTest {
-    private val userDB = HashMap<Long, User>()
+    private val userDB = HashMap<String, User>()
 
     private val repository: UserRepository = object : UserRepository {
-        override suspend fun createUser(user: User): Flow<ApiResponse<Boolean>> {
+        override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
                 userDB[user.id] = user
-                emit(ApiResponse.Success(true))
+                emit(ApiResponse.Success(user))
             }
         }
 
-        override suspend fun getUser(userId: Long): Flow<ApiResponse<User>> {
+        override suspend fun getUser(userId: String): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
@@ -41,7 +39,7 @@ class UserUseCaseTest {
             }
         }
 
-        override suspend fun updateUser(userId: Long, updatedUser: User): Flow<ApiResponse<User>> {
+        override suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
@@ -54,7 +52,7 @@ class UserUseCaseTest {
             }
         }
 
-        override suspend fun removeUser(userId: Long): Flow<ApiResponse<Boolean>> {
+        override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {
             return flow {
                 emit(ApiResponse.Success(true))
             }
@@ -68,10 +66,10 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun `Create User Use Case creates the correct entry in the given repository`() = runBlocking {
+    fun createUserUseCaseCreatesTheCorrectEntryInTheGivenRepository() = runBlocking {
         val createUser = CreateUser(repository)
 
-        val userId = Random.nextLong()
+        val userId = Random.nextLong().toString()
         val userName = Random.nextLong().toString()
         val listing = User(id = userId, userName = userName)
 
@@ -79,7 +77,7 @@ class UserUseCaseTest {
             when (response) {
                 is ApiResponse.Success -> {
                     val result = response.data
-                    Assert.assertTrue(result)
+                    Assert.assertNotNull(result)
                     Assert.assertEquals(userName, userDB.getValue(userId).userName)
                 }
                 is ApiResponse.Failure -> Assert.fail("Request failure")
@@ -89,10 +87,10 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun `Get User Use Case retrieves the correct entry of the given repository`() = runBlocking {
+    fun getUserUseCaseRetrievesTheCorrectEntryOfTheGivenRepository() = runBlocking {
         val getUser = GetUser(repository)
 
-        val userId = Random.nextLong()
+        val userId = Random.nextLong().toString()
         val userName = Random.nextLong().toString()
         userDB[userId] = User(id = userId, userName = userName)
 
@@ -110,12 +108,12 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun `Update User Use Case retrieves the correct entry of the given repository`() = runBlocking {
+    fun updateUserUseCaseUpdatesTheCorrectEntryOfTheGivenRepository() = runBlocking {
         val updateUser = UpdateUser(repository)
 
-        val userId1 = Random.nextLong()
+        val userId1 = Random.nextLong().toString()
         val userName1 = Random.nextLong().toString()
-        val userId2 = Random.nextLong()
+        val userId2 = Random.nextLong().toString()
         val userName2 = Random.nextLong().toString()
         userDB[userId1] = User(id = userId1, userName = userName1)
 

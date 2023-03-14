@@ -80,7 +80,7 @@ class ListingUseCaseTest {
     }
 
     @Test
-    fun `Get Listings Use Case retrieves all entries of the given repository`() = runBlocking {
+    fun getListingsUseCaseRetrievesAllEntriesOfTheGivenRepository() = runBlocking {
         val getListings = GetListings(repository)
 
         val productId = Random.nextLong()
@@ -102,7 +102,7 @@ class ListingUseCaseTest {
     }
 
     @Test
-    fun `Get Listing Use Case retrieves the correct entry of the given repository`() = runBlocking {
+    fun getListingUseCaseRetrievesTheCorrectEntryOfTheGivenRepository() = runBlocking {
         val getListing = GetListing(repository)
 
         val productId = Random.nextLong()
@@ -123,7 +123,7 @@ class ListingUseCaseTest {
     }
 
     @Test
-    fun `Create Listing Use Case creates the correct entry in the given repository`() =
+    fun createListingUseCaseCreatesTheCorrectEntryInTheGivenRepository() =
         runBlocking {
             val createListing = CreateListing(repository)
 
@@ -145,7 +145,7 @@ class ListingUseCaseTest {
         }
 
     @Test
-    fun `Update Listing Use Case correctly updates the pointed entry in the given repository`() =
+    fun updateListingUseCaseCorrectlyUpdatesThePointedEntryInTheGivenRepositoryn() =
         runBlocking {
             val updateListing = UpdateListing(repository)
 
@@ -181,7 +181,7 @@ class ListingUseCaseTest {
         }
 
     @Test
-    fun `Remove Listing Use Case correctly removes the entry from the given repository`() =
+    fun removeListingUseCaseCorrectlyRemovesTheEntryFromTheGivenRepository() =
         runBlocking {
             val removeListing = RemoveListing(repository)
 
@@ -204,7 +204,7 @@ class ListingUseCaseTest {
         }
 
     @Test
-    fun `Remove Listing Use Case correctly removes the entry (with given id) from the given repository`() =
+    fun removeListingUseCaseCorrectlyRemovesTheEntryWithGivenIdFromTheGivenRepository() =
         runBlocking {
             val removeListing = RemoveListing(repository)
 

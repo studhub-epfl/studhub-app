@@ -1,7 +1,7 @@
 package com.studhub.app.domain.model
 
 data class User(
-        var id: Long = 0L,
+        var id: String = "",
         var email: String = "",
         var phoneNumber: String = "",
         var firstName: String = "",

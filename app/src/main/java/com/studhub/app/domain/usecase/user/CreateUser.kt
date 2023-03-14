@@ -17,7 +17,7 @@ class CreateUser(private val repository: UserRepository) {
      *
      * @param [user] the user to create
      */
-    suspend operator fun invoke(user: User): Flow<ApiResponse<Boolean>> {
+    suspend operator fun invoke(user: User): Flow<ApiResponse<User>> {
         return repository.createUser(user)
     }
 }
