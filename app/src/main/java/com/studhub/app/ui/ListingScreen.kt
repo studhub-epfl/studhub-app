@@ -1,15 +1,17 @@
 package com.studhub.app.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.studhub.app.R
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.ui.theme.StudHubTheme
-
 
 @Composable
 fun ListingScreen(listing: Listing) {
@@ -48,6 +50,15 @@ fun ListingScreen(listing: Listing) {
                     modifier = Modifier.padding(vertical = 8.dp)
                         .align(Alignment.CenterHorizontally)
                 )
+                // Add the placeholder image here
+                Image(
+                    painter = painterResource(id = androidx.appcompat.R.drawable.abc_btn_radio_to_on_mtrl_000),
+                    contentDescription = "Listing Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
                 Spacer(modifier = Modifier.height(30.dp))
                 Text(
                     text = "Description:",
@@ -79,7 +90,6 @@ fun ListingScreen(listing: Listing) {
                         .wrapContentHeight(),
                     color = contentColorFor(MaterialTheme.colorScheme.surface)
                 )
-
             }
         }
     }

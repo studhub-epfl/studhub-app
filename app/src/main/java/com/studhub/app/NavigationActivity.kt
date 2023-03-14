@@ -21,41 +21,21 @@ import com.studhub.app.ui.HomeScreen
 import com.studhub.app.ui.theme.StudHubTheme
 import com.studhub.app.ui.ListingScreen
 
-class HomePageActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            StudHubTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    // Going to change, customize colors later.
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-
-                ) {
-                    AppNavigation()
-                }
-            }
-        }
-    }
-}
+// we don't have listings yet so this is mandatory to test, will remove later.
+val listing = Listing(
+    id = 1,
+    name = "iPhone 13",
+    description = "The latest iPhone with a 6.1-inch Super Retina XDR display.",
+    seller = User(),
+    price = 999.99F,
+    categories = listOf(
+        Category(name = "Electronics"),
+        Category(name = "Smartphones")
+    )
+)
 @Preview
 @Composable
 fun AppNavigation() {
-    
-    // we don't have listings yet so this is mandatory to test, will remove later.
-    val listing = Listing(
-        id = 1,
-        name = "iPhone 13",
-        description = "The latest iPhone with a 6.1-inch Super Retina XDR display.",
-        seller = User(),
-        price = 999.99F,
-        categories = listOf(
-            Category(name = "Electronics"),
-            Category(name = "Smartphones")
-        )
-    )
-
 
     val navController = rememberNavController()
 
