@@ -20,7 +20,7 @@ class UpdateUser(private val repository: UserRepository) {
      * @param [userId] the ID of the user to update
      * @param [updatedUser] the user containing all the updated fields - the ID of this user will be discarded
      */
-    suspend operator fun invoke(userId: Long, updatedUser: User): Flow<ApiResponse<User>> {
+    suspend operator fun invoke(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
         return repository.updateUser(userId, updatedUser)
     }
 }
