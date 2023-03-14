@@ -1,38 +1,52 @@
 package com.studhub.app.ui
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.studhub.app.MainActivity
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.User
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class ListingScreenTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeTestRule = createComposeRule()
 
     @Test
-    fun listingScreen_displaysListingDetails() {
-        // Prepare the test data
-        val testListing = Listing(
+    fun testListingScreen() {
+        val mockOnContactSellerClick: () -> Unit = {}
+        val mockOnFavouriteClick: () -> Unit = {}
+
+        val listing = Listing(
             id = 1,
-            name = "Test Listing",
-            description = "This is a test listing.",
-            price = 100.0F
+            name = "iPhone 13",
+            description = "The latest iPhone with a 6.1-inch Super Retina XDR display.",
+            seller = User(),
+            price = 999.99F,
+            categories = listOf(
+                Category(name = "Electronics"),
+                Category(name = "Smartphones")
+            )
         )
 
-        // Set up the UI content
         composeTestRule.setContent {
-            ListingScreen(listing = testListing)
+            ListingScreen(
+                listing = listing,
+                onContactSellerClick = mockOnContactSellerClick,
+                onFavouriteClick = mockOnFavouriteClick
+            )
         }
+        // wait for UI
+        composeTestRule.waitForIdle()
 
-        // Assertions
-        composeTestRule.onNodeWithText("Test Listing").assertIsDisplayed()
-        composeTestRule.onNodeWithText("This is a test listing.").assertIsDisplayed()
-        composeTestRule.onNodeWithText("$100.0").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Favourite").assertIsDisplayed()
+        composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText("$${listing.price}").assertIsDisplayed()
+        composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
     }
 }

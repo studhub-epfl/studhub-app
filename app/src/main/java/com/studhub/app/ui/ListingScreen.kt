@@ -9,12 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.studhub.app.R
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.ui.theme.StudHubTheme
 
 @Composable
-fun ListingScreen(listing: Listing) {
+fun ListingScreen(listing: Listing,  onContactSellerClick: () -> Unit,
+                  onFavouriteClick: () -> Unit) {
     val typography = MaterialTheme.typography
     StudHubTheme {
         Surface(
@@ -31,13 +31,13 @@ fun ListingScreen(listing: Listing) {
                 ) {
                     // "Contact seller" button
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { onContactSellerClick()} ,
                     ) {
                         Text(text = "Contact seller")
                     }
                     // "Favourite" button
                     OutlinedButton(
-                        onClick = { /* do something */ },
+                        onClick = { onFavouriteClick() },
                     ) {
                         Text(text = "Favourite")
                     }
@@ -82,6 +82,7 @@ fun ListingScreen(listing: Listing) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
+                    // $ + price
                     text = "$${listing.price}",
                     style = typography.bodyMedium,
                     textAlign = TextAlign.Center,

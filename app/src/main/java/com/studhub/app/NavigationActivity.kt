@@ -15,11 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.ui.AddListingScreen
-import com.studhub.app.ui.BrowseScreen
-import com.studhub.app.ui.HomeScreen
+import com.studhub.app.ui.*
 import com.studhub.app.ui.theme.StudHubTheme
-import com.studhub.app.ui.ListingScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
@@ -39,7 +36,7 @@ fun AppNavigation() {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "Listing") {
+    NavHost(navController = navController, startDestination = "Home") {
         composable("Home") {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
@@ -52,8 +49,16 @@ fun AppNavigation() {
         composable("Browse") {
             BrowseScreen()
         }
-        composable("Listing"){
-            ListingScreen(listing)
+        composable("Listing") {
+            ListingScreen(
+                listing = listing,
+                onContactSellerClick = {
+                    // Implement the action to contact the seller
+                },
+                onFavouriteClick = {
+                    // Implement the action to favourite the listing
+                }
+            )
         }
     }
 }
