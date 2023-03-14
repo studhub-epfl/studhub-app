@@ -63,3 +63,7 @@ check_android_task:
       androidtest_artifacts:
         path: "./app/build/outputs/**/*.xml"
         format: junit
+    jacoco_artifact:
+      path: ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+    coverage_artifact:
+      path: ./app/build/reports/jacoco/jacocoTestReport/*
