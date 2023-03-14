@@ -16,8 +16,8 @@ class ListingRepositoryImplTest {
         myRef.setValue(myList)
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-               // val value = dataSnapshot.getValue<ArrayList<String>>()
-                //Log.d(TAG, "Value is: $value")
+               val value = dataSnapshot.getValue<ArrayList<String>>()
+                Log.d(TAG, "Value is: $value")
             }
 
             override fun onCancelled(error: DatabaseError) {
