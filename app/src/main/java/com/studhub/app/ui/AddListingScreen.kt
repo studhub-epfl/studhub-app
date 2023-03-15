@@ -13,7 +13,7 @@ fun AddListingScreen() {
     StudHubTheme {
         Column(
        Modifier.fillMaxSize().padding(16.dp)){
-            Text(text = "Browse our selection:")
+            Text(text = "List your item: ")
             Spacer(Modifier.height(16.dp))
             // TODO : Add listing details
         }

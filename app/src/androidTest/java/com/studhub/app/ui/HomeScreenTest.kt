@@ -19,11 +19,15 @@ class HomeScreenTest {
     fun testHomeScreen() {
         val mockOnAddListingClick: () -> Unit = {}
         val mockOnBrowseClick: () -> Unit = {}
+        val mockOnCartClick: () -> Unit = {}
+        val mockOnAboutClick: () -> Unit = {}
 
         composeTestRule.setContent {
             HomeScreen(
                 onAddListingClick = mockOnAddListingClick,
-                onBrowseClick = mockOnBrowseClick
+                onBrowseClick = mockOnBrowseClick,
+                onCartClick = mockOnCartClick ,
+                onAboutClick = mockOnAboutClick,
             )
         }
 
@@ -39,5 +43,11 @@ class HomeScreenTest {
 
         // Check if "Browse" button is displayed
         composeTestRule.onNodeWithText("Browse").assertIsDisplayed()
+
+        // Check if "Cart" button is displayed
+        composeTestRule.onNodeWithText("Your Cart:").assertIsDisplayed()
+
+        // Check if "About" button is displayed
+        composeTestRule.onNodeWithText("About").assertIsDisplayed()
     }
 }

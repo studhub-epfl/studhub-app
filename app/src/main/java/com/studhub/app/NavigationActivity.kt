@@ -40,7 +40,9 @@ fun AppNavigation() {
         composable("Home") {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
-                onBrowseClick = { navController.navigate("Browse") }
+                onBrowseClick = { navController.navigate("Browse") },
+                onAboutClick ={navController.navigate("About")},
+                onCartClick ={navController.navigate("Cart")}
             )
         }
         composable("AddListing") {
@@ -49,6 +51,14 @@ fun AppNavigation() {
         composable("Browse") {
             BrowseScreen()
         }
+        composable("Cart"){
+            CartScreen()
+        }
+        composable("About"){
+            AboutScreen()
+        }
+
+
         composable("Listing") {
             ListingScreen(
                 listing = listing,
