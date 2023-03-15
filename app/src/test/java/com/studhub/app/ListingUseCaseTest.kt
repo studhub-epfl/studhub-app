@@ -16,16 +16,16 @@ import org.junit.Test
 import kotlin.random.Random
 
 class ListingUseCaseTest {
-    private val listingDB = HashMap<Long, Listing>()
+    private val listingDB = HashMap<String, Listing>()
 
     private val repository: ListingRepository = object : ListingRepository {
 
-        override suspend fun createListing(listing: Listing): Flow<ApiResponse<Boolean>> {
+        override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
                 listingDB[listing.id] = listing
-                emit(ApiResponse.Success(true))
+                emit(ApiResponse.Success(listing))
             }
         }
 
@@ -37,7 +37,7 @@ class ListingUseCaseTest {
             }
         }
 
-        override suspend fun getListing(listingId: Long): Flow<ApiResponse<Listing>> {
+        override suspend fun getListing(listingId: String): Flow<ApiResponse<Listing>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
@@ -49,7 +49,7 @@ class ListingUseCaseTest {
         }
 
         override suspend fun updateListing(
-            listingId: Long,
+            listingId: String,
             updatedListing: Listing
         ): Flow<ApiResponse<Listing>> {
             return flow {
@@ -64,7 +64,7 @@ class ListingUseCaseTest {
             }
         }
 
-        override suspend fun removeListing(listingId: Long): Flow<ApiResponse<Boolean>> {
+        override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
@@ -83,9 +83,9 @@ class ListingUseCaseTest {
     fun `Get Listings Use Case retrieves all entries of the given repository`() = runBlocking {
         val getListings = GetListings(repository)
 
-        val productId = Random.nextLong()
+        val productId = Random.nextLong().toString()
         val productName = Random.nextLong().toString()
-        listingDB[1L] = Listing(id = 1L, name = "Product 1", seller = User())
+        listingDB["1"] = Listing(id = "1", name = "Product 1", seller = User())
         listingDB[productId] = Listing(id = productId, name = productName, seller = User())
 
         getListings().collect { response ->
@@ -105,7 +105,7 @@ class ListingUseCaseTest {
     fun `Get Listing Use Case retrieves the correct entry of the given repository`() = runBlocking {
         val getListing = GetListing(repository)
 
-        val productId = Random.nextLong()
+        val productId = Random.nextLong().toString()
         val productName = Random.nextLong().toString()
         listingDB[productId] = Listing(id = productId, name = productName, seller = User())
 
@@ -127,7 +127,7 @@ class ListingUseCaseTest {
         runBlocking {
             val createListing = CreateListing(repository)
 
-            val productId = Random.nextLong()
+            val productId = Random.nextLong().toString()
             val productName = Random.nextLong().toString()
             val listing = Listing(id = productId, name = productName, seller = User())
 
@@ -135,7 +135,7 @@ class ListingUseCaseTest {
                 when (response) {
                     is ApiResponse.Success -> {
                         val result = response.data
-                        assertTrue(result)
+                        assertNotNull(result)
                         assertEquals(productName, listingDB.getValue(productId).name)
                     }
                     is ApiResponse.Failure -> fail("Request failure")
@@ -149,9 +149,9 @@ class ListingUseCaseTest {
         runBlocking {
             val updateListing = UpdateListing(repository)
 
-            val productId1 = Random.nextLong()
+            val productId1 = Random.nextLong().toString()
             val productName1 = Random.nextLong().toString()
-            val productId2 = Random.nextLong()
+            val productId2 = Random.nextLong().toString()
             val productName2 = Random.nextLong().toString()
             listingDB[productId1] = Listing(id = productId1, name = productName1, seller = User())
 
@@ -185,7 +185,7 @@ class ListingUseCaseTest {
         runBlocking {
             val removeListing = RemoveListing(repository)
 
-            val productId = Random.nextLong()
+            val productId = Random.nextLong().toString()
             val productName = Random.nextLong().toString()
             val listing = Listing(id = productId, name = productName, seller = User())
             listingDB[productId] = listing
@@ -208,7 +208,7 @@ class ListingUseCaseTest {
         runBlocking {
             val removeListing = RemoveListing(repository)
 
-            val productId = Random.nextLong()
+            val productId = Random.nextLong().toString()
             val productName = Random.nextLong().toString()
             val listing = Listing(id = productId, name = productName, seller = User())
             listingDB[productId] = listing

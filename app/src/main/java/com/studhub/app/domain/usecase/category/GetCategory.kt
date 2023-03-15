@@ -6,7 +6,7 @@ import com.studhub.app.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetCategory(private val repository: CategoryRepository) {
-    suspend operator fun invoke(categoryId: Long): Flow<ApiResponse<Category>> {
+    suspend operator fun invoke(categoryId: String): Flow<ApiResponse<Category>> {
         return repository.getCategory(categoryId)
     }
 }

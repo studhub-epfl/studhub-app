@@ -27,7 +27,7 @@ class RemoveListing(private val repository: ListingRepository) {
      *
      * @param [listingId] the ID of the listing to remove
      */
-    suspend operator fun invoke(listingId: Long): Flow<ApiResponse<Boolean>> {
+    suspend operator fun invoke(listingId: String): Flow<ApiResponse<Boolean>> {
         return repository.removeListing(listingId)
     }
 }

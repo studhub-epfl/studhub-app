@@ -44,32 +44,32 @@ class RegisterUserActivity : ComponentActivity() {
 }
 
 private val repository: UserRepository = object : UserRepository {
-    private val userDB = HashMap<Long, User>()
+    private val userDB = HashMap<String, User>()
 
-    override suspend fun createUser(user: User): Flow<ApiResponse<Boolean>> {
+    override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
             delay(1000)
             userDB[user.id] = user
-            emit(ApiResponse.Success(true))
+            emit(ApiResponse.Success(user))
         }
     }
 
-    override suspend fun getUser(userId: Long): Flow<ApiResponse<User>> {
+    override suspend fun getUser(userId: String): Flow<ApiResponse<User>> {
         return flow {
             // empty implementation
             emit(ApiResponse.Success(User()))
         }
     }
 
-    override suspend fun updateUser(userId: Long, updatedUser: User): Flow<ApiResponse<User>> {
+    override suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
         return flow {
             // empty implementation
             emit(ApiResponse.Success(User()))
         }
     }
 
-    override suspend fun removeUser(userId: Long): Flow<ApiResponse<Boolean>> {
+    override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {
         return flow {
             // empty implementation
             emit(ApiResponse.Success(true))
@@ -110,7 +110,7 @@ fun UserForm() {
                 onClick = {
                     scope.launch {
                         submit(User(
-                            id = 1,
+                            id = "1",
                             email = email.value,
                             phoneNumber = phoneNumber.value,
                             firstName = firstName.value,

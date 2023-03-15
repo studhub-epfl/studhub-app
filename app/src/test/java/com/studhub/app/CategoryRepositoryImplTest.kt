@@ -36,11 +36,11 @@ class CategoryRepositoryImplTest {
         assert(numberOfCats > 0)
 
         val randomIndex = Random.nextInt(numberOfCats) + 1 // IDs start at 1
-        val expectedCategory = retrievedCategories.first { it.id == randomIndex.toLong() }
-        var retrievedCategory = Category(id = -1)
+        val expectedCategory = retrievedCategories.first { it.id == randomIndex.toString() }
+        var retrievedCategory = Category()
 
         runBlocking {
-            getCategory(randomIndex.toLong()).collect {
+            getCategory(randomIndex.toString()).collect {
                 when (it) {
                     is ApiResponse.Success -> retrievedCategory = it.data
                     is ApiResponse.Failure -> fail("Should not fail")

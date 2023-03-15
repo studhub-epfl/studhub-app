@@ -17,7 +17,7 @@ class GetUser(private val repository: UserRepository) {
      *
      * @param [userId] the ID of the user to retrieve
      */
-    suspend operator fun invoke(userId: Long): Flow<ApiResponse<User>> {
+    suspend operator fun invoke(userId: String): Flow<ApiResponse<User>> {
         return repository.getUser(userId)
     }
 }
