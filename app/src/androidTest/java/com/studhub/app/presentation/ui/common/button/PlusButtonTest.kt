@@ -15,7 +15,7 @@ class PlusButtonTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun ComponentPlusButtonExistsWithCorrectGivenNameWhenCreated() {
+    fun componentPlusButtonExistsWithCorrectGivenNameWhenCreated() {
         composeTestRule.setContent {
             PlusButton(onClick = { })
         }
