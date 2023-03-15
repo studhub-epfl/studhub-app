@@ -1,0 +1,43 @@
+package com.studhub.app.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class HomeScreenTest {
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    @Test
+    fun testHomeScreen() {
+        val mockOnAddListingClick: () -> Unit = {}
+        val mockOnBrowseClick: () -> Unit = {}
+
+        composeTestRule.setContent {
+            HomeScreen(
+                onAddListingClick = mockOnAddListingClick,
+                onBrowseClick = mockOnBrowseClick
+            )
+        }
+
+
+        // Check if "Welcome to our app!" text is displayed
+        composeTestRule.onNodeWithText("Welcome to our app!").assertIsDisplayed()
+
+        // Check if "//FILL" text is displayed
+        composeTestRule.onNodeWithText("//FILL").assertIsDisplayed()
+
+        // Check if "Add Listing" button is displayed
+        composeTestRule.onNodeWithText("Add Listing").assertIsDisplayed()
+
+        // Check if "Browse" button is displayed
+        composeTestRule.onNodeWithText("Browse").assertIsDisplayed()
+    }
+}
