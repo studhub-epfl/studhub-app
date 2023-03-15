@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui
+package com.studhub.app.presentation.ui.common.button
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button

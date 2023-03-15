@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui
+package com.studhub.app.presentation.ui.common.input
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions

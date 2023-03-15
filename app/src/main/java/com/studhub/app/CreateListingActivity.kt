@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studhub.app.presentation.ui.BasicTextField
-import com.studhub.app.presentation.ui.BigLabel
+import com.studhub.app.presentation.ui.common.input.BasicTextField
+import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.ui.theme.StudHubTheme
 

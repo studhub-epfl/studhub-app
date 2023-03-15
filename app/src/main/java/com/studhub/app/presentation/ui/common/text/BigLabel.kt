@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui
+package com.studhub.app.presentation.ui.common.text
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
