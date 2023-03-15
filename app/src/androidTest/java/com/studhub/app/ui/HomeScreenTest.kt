@@ -45,7 +45,7 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText("Browse").assertIsDisplayed()
 
         // Check if "Cart" button is displayed
-        composeTestRule.onNodeWithText("Your Cart:").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Cart").assertIsDisplayed()
 
         // Check if "About" button is displayed
         composeTestRule.onNodeWithText("About").assertIsDisplayed()

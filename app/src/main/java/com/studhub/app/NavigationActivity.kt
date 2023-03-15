@@ -58,7 +58,6 @@ fun AppNavigation() {
             AboutScreen()
         }
 
-
         composable("Listing") {
             ListingScreen(
                 listing = listing,
