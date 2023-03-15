@@ -12,7 +12,9 @@ import com.studhub.app.ui.theme.StudHubTheme
 
 
 @Composable
+
 fun HomeScreen(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit, onAboutClick: () -> Unit, onCartClick: () -> Unit) {
+
     StudHubTheme() {
         Column(
             modifier = Modifier
@@ -43,6 +45,7 @@ fun HomeScreen(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit, onAbout
             ) {
                 Text(text = "Browse")
             }
+
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = onCartClick,
@@ -57,6 +60,7 @@ fun HomeScreen(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit, onAbout
             ) {
                 Text(text = "About")
             }
+
         }
     }
 }

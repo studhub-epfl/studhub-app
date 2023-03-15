@@ -22,7 +22,7 @@ class UpdateListing(private val repository: ListingRepository) {
      * @param [updatedListing] the listing containing all the updated fields - the ID of this listing will be discarded
      */
     suspend operator fun invoke(
-        listingId: Long,
+        listingId: String,
         updatedListing: Listing
     ): Flow<ApiResponse<Listing>> {
         return repository.updateListing(listingId, updatedListing)

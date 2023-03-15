@@ -13,6 +13,7 @@ import com.studhub.app.ui.theme.StudHubTheme
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
+
 import org.junit.runner.RunWith
 
 /***
@@ -27,6 +28,7 @@ class NavigationTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+
     @BeforeClass
     @Composable
     fun setup() {
@@ -39,12 +41,15 @@ class NavigationTest {
         @Test
         fun clickAddListing_navigatesToAddListingScreen() {
             composeTestRule.onNodeWithText("Add Listing").assertExists().performClick()
+
             composeTestRule.onNodeWithText("List your item: ").assertIsDisplayed()
+
         }
 
         @Test
         fun clickBrowse_navigatesToBrowseScreen() {
             composeTestRule.onNodeWithText("Browse").assertExists().performClick()
+
             composeTestRule.onNodeWithText("Browse our selection:").assertIsDisplayed()
         }
         @Test
@@ -60,6 +65,10 @@ class NavigationTest {
             composeTestRule.onNodeWithText("Contact us at ...").assertIsDisplayed()
             composeTestRule.onNodeWithText("We are a MarketPlace company working for EPFL campus.").assertIsDisplayed()
         }
+
+           
+        }
+
 
     }}
 
