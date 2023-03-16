@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,22 +21,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.repository.CategoryRepositoryImpl
+import com.studhub.app.data.repository.ListingRepositoryImpl
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.repository.ListingRepository
+import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.category.GetCategories
+import com.studhub.app.domain.usecase.listing.CreateListing
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.ui.theme.StudHubTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlin.random.Random
 
 class CreateListingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,44 +45,11 @@ class CreateListingActivity : ComponentActivity() {
     }
 }
 
-private val categoriesRepository: CategoryRepositoryImpl = CategoryRepositoryImpl()
+private val categoriesRepository = CategoryRepositoryImpl()
 
-private val repository: ListingRepository = object : ListingRepository {
+private val listingRepository = ListingRepositoryImpl()
 
-    private val listingDB = HashMap<String, Listing>()
-
-    override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
-        return flow {
-            emit(ApiResponse.Loading)
-            delay(1000)
-            listingDB[listing.id] = listing
-            emit(ApiResponse.Success(listing))
-        }
-    }
-
-    override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
-        // empty implementation
-        return flowOf(ApiResponse.Loading)
-    }
-
-    override suspend fun getListing(listingId: String): Flow<ApiResponse<Listing>> {
-        // empty implementation
-        return flowOf(ApiResponse.Loading)
-    }
-
-    override suspend fun updateListing(
-        listingId: String,
-        updatedListing: Listing
-    ): Flow<ApiResponse<Listing>> {
-        // empty implementation
-        return flowOf(ApiResponse.Loading)
-    }
-
-    override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> {
-        // empty implementation
-        return flowOf(ApiResponse.Loading)
-    }
-}
+private var categories = emptyList<Category>()
 
 suspend fun getCategoriesList(): List<Category> {
     val getCategories = GetCategories(categoriesRepository)
@@ -99,8 +65,23 @@ suspend fun getCategoriesList(): List<Category> {
     return retrievedCategories
 }
 
+suspend fun createListing(listing: Listing) {
+    val createListing = CreateListing(listingRepository)
+    createListing(listing).collect {
+        when (it) {
+            is ApiResponse.Success -> {/* TODO success message and/or return to another view */}
+            is ApiResponse.Failure -> {/* should not fail */ }
+            is ApiResponse.Loading -> {/* TODO SHOW LOADING ICON */}
+        }
+    }
+}
+
 @Composable
 fun CreateListingView() {
+    val scope = rememberCoroutineScope()
+    scope.launch {
+        categories = getCategoriesList()
+    }
     StudHubTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -124,16 +105,31 @@ fun CreateListingView() {
 @Composable
 fun ListingForm() {
     val scope = rememberCoroutineScope()
+    val title = rememberSaveable { mutableStateOf("") }
+    val description = rememberSaveable { mutableStateOf("") }
+    val price = rememberSaveable{ mutableStateOf("") }
+    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
 
-    BasicTextField(label = "Item title")
+    BasicTextField(label = "Item title", rememberedValue = title)
     AddImageLayout(onClick = {})
-    TextBox(label = "Item description")
-    PriceRow()
-    CategoryDropDown()
+    TextBox(label = "Item description", rememberedValue = description)
+    PriceRow(rememberedValue = price)
+    CategoryDropDown(selected = category)
     BasicFilledButton(
         onClick = {
-            scope.launch {
-
+            val listing = Listing(
+                id = Random.nextInt().toString(),
+                seller = User(userName = "Placeholder Name"),
+                name = title.value,
+                description = description.value,
+                categories = listOf(category.value),
+                price = price.value.toFloat()
+            )
+            if (category.value.name != "Choose a category") {
+                println("Crated listing")
+                scope.launch {
+                    createListing(listing)
+                }
             }
         },
         label = "Create"
@@ -181,8 +177,7 @@ fun ImageCarousel() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PriceRow() {
-    var price by remember { mutableStateOf("") }
+fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
         modifier = Modifier.width(TextFieldDefaults.MinWidth),
         verticalAlignment = Alignment.CenterVertically
@@ -192,8 +187,8 @@ fun PriceRow() {
                 .width(100.dp)
                 .padding(end = 4.dp),
             singleLine = true,
-            value = price,
-            onValueChange = { price = it },
+            value = rememberedValue.value,
+            onValueChange = { rememberedValue.value = it },
             label = { Text("Price") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
@@ -203,13 +198,10 @@ fun PriceRow() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryDropDown() {
-    var categories: List<Category>
-    runBlocking {
-        categories = getCategoriesList()
-    }
+fun CategoryDropDown(
+    selected: MutableState<Category> = rememberSaveable { mutableStateOf(Category(name = "Choose a category")) }
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(categories[0]) }
 
     Box(
         modifier = Modifier.padding(top = 8.dp)
@@ -221,7 +213,7 @@ fun CategoryDropDown() {
             }
         ) {
             OutlinedTextField(
-                value = selectedText.name,
+                value = selected.value.name,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -239,7 +231,7 @@ fun CategoryDropDown() {
                     DropdownMenuItem(
                         text = { Text(text = cat.name) },
                         onClick = {
-                            selectedText = cat
+                            selected.value = cat
                             expanded = false
                         },
                         colors = MenuDefaults.itemColors()
