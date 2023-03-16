@@ -17,6 +17,11 @@
             android:label="@string/title_activity_create_listing"
             android:theme="@style/Theme.Bootcamp" />
         <activity
+            android:name=".BrowseActivity"
+            android:exported="false"
+            android:label="@string/title_activity_browse"
+            android:theme="@style/Theme.Bootcamp" />
+        <activity
             android:name=".RegisterUserActivity"
             android:exported="true"
             android:label="@string/title_activity_register_user"

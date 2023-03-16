@@ -5,5 +5,9 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_greet">GreetActivity</string>
     <string name="title_activity_register_user">RegisterUserActivity</string>
+<<<<<<< HEAD
     <string name="title_activity_create_listing">CreateListingActivity</string>
+=======
+    <string name="title_activity_browse">BrowseActivity</string>
+>>>>>>> 916e095 (added new Browse Activity, WIP)
 </resources>
