@@ -69,17 +69,19 @@ suspend fun createListing(listing: Listing) {
     val createListing = CreateListing(listingRepository)
     createListing(listing).collect {
         when (it) {
-            is ApiResponse.Success -> {/* TODO success message and/or return to another view */}
-            is ApiResponse.Failure -> {/* should not fail */ }
-            is ApiResponse.Loading -> {/* TODO SHOW LOADING ICON */}
+            is ApiResponse.Success -> {/* TODO success message and/or return to another view */
+            }
+            is ApiResponse.Failure -> {/* should not fail */
+            }
+            is ApiResponse.Loading -> {/* TODO SHOW LOADING ICON */
+            }
         }
     }
 }
 
 @Composable
 fun CreateListingView() {
-    val scope = rememberCoroutineScope()
-    scope.launch {
+    LaunchedEffect(categories) {
         categories = getCategoriesList()
     }
     StudHubTheme {
@@ -107,7 +109,7 @@ fun ListingForm() {
     val scope = rememberCoroutineScope()
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
-    val price = rememberSaveable{ mutableStateOf("") }
+    val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
 
     BasicTextField(label = "Item title", rememberedValue = title)
