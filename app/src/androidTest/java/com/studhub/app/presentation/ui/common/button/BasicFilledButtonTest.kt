@@ -3,7 +3,6 @@ package com.studhub.app.presentation.ui.common.button
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.studhub.app.presentation.ui.BasicFilledButton
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test

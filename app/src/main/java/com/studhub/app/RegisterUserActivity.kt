@@ -19,7 +19,11 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.CreateUser
-import com.studhub.app.presentation.ui.*
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
+import com.studhub.app.presentation.ui.common.input.BasicTextField
+import com.studhub.app.presentation.ui.common.input.EmailTextField
+import com.studhub.app.presentation.ui.common.input.NumericTextField
+import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.ui.theme.StudHubTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -30,15 +34,7 @@ class RegisterUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            StudHubTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    UserForm()
-                }
-            }
+            RegisterUserView()
         }
     }
 }
@@ -81,6 +77,18 @@ private val repository: UserRepository = object : UserRepository {
 suspend fun submit(user: User) {
     val createUser = CreateUser(repository)
     createUser(user)
+}
+
+@Composable
+fun RegisterUserView() {
+    StudHubTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            UserForm()
+        }
+    }
 }
 
 @Composable
@@ -147,6 +155,6 @@ fun AddFileButton(label: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    RegisterUserActivity()
+fun RegisterUserPreview() {
+    RegisterUserView()
 }
