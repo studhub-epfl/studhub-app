@@ -10,7 +10,10 @@ import com.studhub.app.ui.theme.StudHubTheme
 @Composable
 fun CartScreen() {
     StudHubTheme {
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)) {
             Text(text = "Your Cart:")
             Spacer(Modifier.height(16.dp))
             // TODO: Add cart items list
