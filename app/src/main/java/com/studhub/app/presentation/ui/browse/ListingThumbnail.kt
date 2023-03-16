@@ -1,7 +1,5 @@
 package com.studhub.app.presentation.ui.browse
 
-import android.graphics.Paint.Align
-import android.view.RoundedCorner
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,13 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import kotlin.text.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +52,7 @@ fun ListingThumbnail(listing: Listing) {
                     .align(Alignment.BottomStart)
                     .padding(all = 4.dp)
             ) {
-                Text(text = listing.price.toString() + " chf")
+                Text(text = String.format("%.2f chf", listing.price))
             }
             //category name and seller
             Box(
@@ -84,7 +80,10 @@ fun ListingThumbnail(listing: Listing) {
 private fun ThumbnailImage() {
     Box(
         modifier = Modifier
-            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary))
+            .border(
+                BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                RoundedCornerShape(4.dp)
+            )
     ) {
         Image(
             imageVector = Icons.Filled.AccountBox,
