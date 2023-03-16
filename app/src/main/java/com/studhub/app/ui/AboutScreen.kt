@@ -10,7 +10,10 @@ import com.studhub.app.ui.theme.StudHubTheme
 @Composable
 fun AboutScreen() {
     StudHubTheme {
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)) {
             Text(text = "About Us:")
             Spacer(Modifier.height(16.dp))
             Text(text = "We are a MarketPlace company working for EPFL campus.")

@@ -13,11 +13,11 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.ui.theme.StudHubTheme
 
 @Composable
-fun ListingScreen(listing: Listing,
-                  onContactSellerClick: () -> Unit,
-                  onFavouriteClick: () -> Unit
-)
-{
+fun ListingScreen(
+    listing: Listing,
+    onContactSellerClick: () -> Unit,
+    onFavouriteClick: () -> Unit
+) {
     val typography = MaterialTheme.typography
     StudHubTheme {
         Surface(
@@ -34,7 +34,7 @@ fun ListingScreen(listing: Listing,
                 ) {
                     // "Contact seller" button
                     Button(
-                        onClick = { onContactSellerClick()} ,
+                        onClick = { onContactSellerClick() },
                     ) {
                         Text(text = "Contact seller")
                     }
@@ -48,9 +48,10 @@ fun ListingScreen(listing: Listing,
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = listing.name,
-                    style =  typography.titleLarge,
+                    style = typography.titleLarge,
                     color = contentColorFor(MaterialTheme.colorScheme.surface),
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
                         .align(Alignment.CenterHorizontally)
                 )
                 // Add the placeholder image here

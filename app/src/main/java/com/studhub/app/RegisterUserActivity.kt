@@ -109,15 +109,17 @@ fun UserForm() {
             BasicFilledButton(
                 onClick = {
                     scope.launch {
-                        submit(User(
-                            id = "1",
-                            email = email.value,
-                            phoneNumber = phoneNumber.value,
-                            firstName = firstName.value,
-                            lastName = lastName.value,
-                            userName = userName.value,
-                            profilePicture = "pf_placeholder.png"
-                        ))
+                        submit(
+                            User(
+                                id = "1",
+                                email = email.value,
+                                phoneNumber = phoneNumber.value,
+                                firstName = firstName.value,
+                                lastName = lastName.value,
+                                userName = userName.value,
+                                profilePicture = "pf_placeholder.png"
+                            )
+                        )
                     }
                 },
                 label = "Submit"

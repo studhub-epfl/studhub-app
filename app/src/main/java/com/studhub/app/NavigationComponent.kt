@@ -1,13 +1,6 @@
 package com.studhub.app
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +9,6 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.ui.*
-import com.studhub.app.ui.theme.StudHubTheme
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
@@ -30,6 +22,7 @@ val listing = Listing(
         Category(name = "Smartphones")
     )
 )
+
 @Preview
 @Composable
 fun AppNavigation() {
@@ -41,8 +34,8 @@ fun AppNavigation() {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
                 onBrowseClick = { navController.navigate("Browse") },
-                onAboutClick ={navController.navigate("About")},
-                onCartClick ={navController.navigate("Cart")}
+                onAboutClick = { navController.navigate("About") },
+                onCartClick = { navController.navigate("Cart") }
             )
         }
         composable("AddListing") {
@@ -51,10 +44,10 @@ fun AppNavigation() {
         composable("Browse") {
             BrowseScreen()
         }
-        composable("Cart"){
+        composable("Cart") {
             CartScreen()
         }
-        composable("About"){
+        composable("About") {
             AboutScreen()
         }
 
