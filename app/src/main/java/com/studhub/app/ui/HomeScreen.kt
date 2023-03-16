@@ -13,7 +13,12 @@ import com.studhub.app.ui.theme.StudHubTheme
 
 @Composable
 
-fun HomeScreen(onAddListingClick: () -> Unit, onBrowseClick: () -> Unit, onAboutClick: () -> Unit, onCartClick: () -> Unit) {
+fun HomeScreen(onAddListingClick: () -> Unit
+               , onBrowseClick: () -> Unit
+               , onAboutClick: () -> Unit
+               , onCartClick: () -> Unit
+)
+{
 
     StudHubTheme() {
         Column(

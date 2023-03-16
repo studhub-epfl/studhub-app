@@ -24,7 +24,7 @@ class ListingScreenTest {
         val mockOnFavouriteClick: () -> Unit = {}
 
         val listing = Listing(
-            id = 1,
+            id = "1",
             name = "iPhone 13",
             description = "The latest iPhone with a 6.1-inch Super Retina XDR display.",
             seller = User(),
@@ -46,7 +46,7 @@ class ListingScreenTest {
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("$${listing.price}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("${listing.price} CHF").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
     }
 }

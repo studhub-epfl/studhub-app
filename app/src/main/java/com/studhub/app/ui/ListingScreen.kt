@@ -13,8 +13,11 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.ui.theme.StudHubTheme
 
 @Composable
-fun ListingScreen(listing: Listing,  onContactSellerClick: () -> Unit,
-                  onFavouriteClick: () -> Unit) {
+fun ListingScreen(listing: Listing,
+                  onContactSellerClick: () -> Unit,
+                  onFavouriteClick: () -> Unit
+)
+{
     val typography = MaterialTheme.typography
     StudHubTheme {
         Surface(
@@ -83,7 +86,7 @@ fun ListingScreen(listing: Listing,  onContactSellerClick: () -> Unit,
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     // $ + price
-                    text = "$${listing.price}",
+                    text = "${listing.price} CHF",
                     style = typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
