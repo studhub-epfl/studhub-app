@@ -1,5 +1,7 @@
 package com.studhub.app
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studhub.app.core.utils.ApiResponse
@@ -38,6 +41,7 @@ class RegisterUserActivity : ComponentActivity() {
         }
     }
 }
+
 
 private val repository: UserRepository = object : UserRepository {
     private val userDB = HashMap<String, User>()
@@ -74,9 +78,11 @@ private val repository: UserRepository = object : UserRepository {
 
 }
 
-suspend fun submit(user: User) {
+suspend fun submit(user: User, context : Context) {
     val createUser = CreateUser(repository)
     createUser(user)
+    val intent = Intent(context, MainActivity::class.java)
+    context.startActivity(intent)
 }
 
 @Composable
@@ -99,6 +105,7 @@ fun UserForm() {
     val email = rememberSaveable { mutableStateOf("") }
     val phoneNumber = rememberSaveable { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     Column {
         Column(
             modifier = Modifier
@@ -126,7 +133,8 @@ fun UserForm() {
                                 lastName = lastName.value,
                                 userName = userName.value,
                                 profilePicture = "pf_placeholder.png"
-                            )
+                            ),
+                            context = context
                         )
                     }
                 },

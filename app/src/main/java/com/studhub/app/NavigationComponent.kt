@@ -35,11 +35,13 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
         ) {
             AuthScreen(
                 onLoginComplete = {
-                    navController.navigate("Home")
+                    navController.navigate("RegisterUser")
                 }
             )
         }
-
+        composable("RegisterUser") {
+            RegisterUserView()
+        }
         composable("Home") {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },

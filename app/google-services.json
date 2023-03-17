@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "498909302481-h300i2g4igmd1ek3uqa4bvlmk3brgk5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "1c32ece533daa17238571beae27804af9f629f8f"
+          }
+        },
+        {
           "client_id": "498909302481-f9tmmv2ej4c70vkcd3hsell4cp57mpr6.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -33,14 +36,20 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     AppNavigation(navController = navController)
                 }
-                checkAuthState()
+                var isConnected = rememberSaveable { mutableStateOf(false) }
+                checkAuthState(isConnected)
             }
         }
     }
 
-    private fun checkAuthState() {
-        if (viewModel.isUserAuthenticated) {
-            handleLoginComplete()
+    private fun checkAuthState(isConnected: MutableState<Boolean>) {
+        if (!isConnected.value) {
+            if (viewModel.isUserAuthenticated) {
+                isConnected.value = true
+                handleLoginComplete()
+            }
+        } else {
+            navController.navigate("Home")
         }
     }
 
