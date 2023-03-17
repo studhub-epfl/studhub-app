@@ -14,7 +14,7 @@ import kotlin.random.Random
 class CategoryRepositoryImplTest {
 
     @Test
-    fun `GetCategories randomly chosen retrieved category matches GetCategory with same index`() {
+    fun testGetCategoriesRandomlyChosenRetrievedCategoryMatchesGetCategoryWithSameIndex() {
         val repository = CategoryRepositoryImpl()
         val getCategories = GetCategories(repository)
         val getCategory = GetCategory(repository)
