@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "498909302481-ua72qcffpnope94tcd3iees8angckg1i.apps.googleusercontent.com",
+          "client_id": "498909302481-da0kcctf8qvibscrrt4l7pqf4hdvutn3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.studhub.app",
-            "certificate_hash": "89342bb9349ca99d6f4c8c527145f63730262325"
+            "certificate_hash": "a8d0ff5a967bed48edbe8c1416603abfe57e27d7"
           }
         },
         {
