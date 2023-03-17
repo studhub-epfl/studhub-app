@@ -1,10 +1,10 @@
 package com.studhub.app.ui
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.studhub.app.presentation.home.HomeScreen
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +26,7 @@ class HomeScreenTest {
             HomeScreen(
                 onAddListingClick = mockOnAddListingClick,
                 onBrowseClick = mockOnBrowseClick,
-                onCartClick = mockOnCartClick ,
+                onCartClick = mockOnCartClick,
                 onAboutClick = mockOnAboutClick,
             )
         }
