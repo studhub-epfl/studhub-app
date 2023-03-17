@@ -2,12 +2,15 @@ package com.studhub.app
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.presentation.auth.AuthScreen
+import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.ui.*
 
 // we don't have listings yet so this is mandatory to test, will remove later.
@@ -25,11 +28,18 @@ val listing = Listing(
 
 @Preview
 @Composable
-fun AppNavigation() {
+fun AppNavigation(navController: NavHostController = rememberNavController()) {
+    NavHost(navController = navController, startDestination = "Auth") {
+        composable(
+            route = "Auth"
+        ) {
+            AuthScreen(
+                onLoginComplete = {
+                    navController.navigate("Home")
+                }
+            )
+        }
 
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "Home") {
         composable("Home") {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
