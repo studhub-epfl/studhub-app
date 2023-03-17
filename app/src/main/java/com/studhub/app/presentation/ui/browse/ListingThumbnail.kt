@@ -1,9 +1,6 @@
 package com.studhub.app.presentation.ui.browse
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,11 +17,12 @@ import com.studhub.app.domain.model.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListingThumbnail(listing: Listing) {
+fun ListingThumbnail(listing: Listing, onClick : () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
+            .clickable { onClick() }
     ) {
         ThumbnailImage()
         Box(
@@ -102,5 +100,5 @@ fun ListingThumbnailPreview() {
         categories = listOf(Category(name = "Mobility")),
         price = 1560.45F
     )
-    ListingThumbnail(listing = listing)
+    ListingThumbnail(listing = listing, onClick = {})
 }
