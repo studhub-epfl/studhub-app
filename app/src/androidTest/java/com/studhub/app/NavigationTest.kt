@@ -6,7 +6,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.AppNavigation
 import com.studhub.app.ui.theme.StudHubTheme
-import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
