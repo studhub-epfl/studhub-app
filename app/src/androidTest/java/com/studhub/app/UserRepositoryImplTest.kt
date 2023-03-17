@@ -5,7 +5,6 @@ import com.studhub.app.data.repository.UserRepositoryImpl
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
 import org.junit.Test

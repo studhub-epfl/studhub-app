@@ -1,10 +1,8 @@
 package com.studhub.app
 
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.listing.CreateListing
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.UpdateUser
@@ -68,7 +66,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun `Create User Use Case creates the correct entry in the given repository`() = runBlocking {
+    fun createUserUseCaseCorrectEntryInGivenRepository() = runBlocking {
         val createUser = CreateUser(repository)
 
         val userId = Random.nextLong().toString()
@@ -89,7 +87,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun `Get User Use Case retrieves the correct entry of the given repository`() = runBlocking {
+    fun getUserUseCaseRetrievesCorrectEntryFromGivenRepository() = runBlocking {
         val getUser = GetUser(repository)
 
         val userId = Random.nextLong().toString()
@@ -110,7 +108,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun `Update User Use Case retrieves the correct entry of the given repository`() = runBlocking {
+    fun updateUserUseCaseUpdatesCorrectEntryInGivenRepository() = runBlocking {
         val updateUser = UpdateUser(repository)
 
         val userId1 = Random.nextLong().toString()
