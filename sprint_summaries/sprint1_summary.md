@@ -7,7 +7,7 @@ As for myself I went through a lot of learning with Jetpack Compose and using ma
 I did stay working overnight a few times to make sure we could have things done on time and especially to do our best providing with a demo as complete as possible towards our sprint goals and to take on the responsibility as a scrum master for the overestimation of the team.
 I am happy though that everyone went out of their way to do their best and work a lot this sprint and it constitutes now a solid base to progress with this project despite the difficulties we had, notably with the time left to create tests.
 
-**Edouard Wacked**  
+**Edouard Waked**  
 
 During this sprint, I focused on refactoring the base of the project to work on Kotlin Jetpack Compose and adding some basic screens. I also prioritized improving the test coverage of the project.
 Although I encountered some difficulties in getting familiar with Compose, I persisted and gained more confidence over time. Overall, I was able to successfully complete my tasks.
