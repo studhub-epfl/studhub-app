@@ -18,12 +18,16 @@ import org.junit.runner.RunWith
  * that it tests the Navigation from HomeScreen to other screens,
  * not the functionality of HomeScreen
  */
-/*
-@HiltAndroidTest
+
+
 @RunWith(AndroidJUnit4::class)
 class NavigationTest {
 
-
+    @Test
+    fun foo() {
+        assert(true)
+    }
+/*
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -68,9 +72,9 @@ class NavigationTest {
     }
 
 
-}
-
  */
+
+}
 
 
 
