@@ -26,7 +26,7 @@ class ListingThumbnailTest {
         )
 
         composeTestRule.setContent {
-            ListingThumbnail(listing = listing)
+            ListingThumbnail(listing = listing, onClick = { })
         }
 
         // Verify that the listing name is displayed
