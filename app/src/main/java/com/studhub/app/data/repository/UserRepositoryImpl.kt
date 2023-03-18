@@ -1,7 +1,6 @@
 package com.studhub.app.data.repository
 
-import com.google.android.gms.common.api.Api
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
@@ -60,5 +59,50 @@ class UserRepositoryImpl : UserRepository {
 
     override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun updateFavoriteStatus(userId: String, isFavorite: Boolean): Flow<ApiResponse<User>> {
+        return flow {
+            emit(ApiResponse.Loading)
+
+            val userRef = db.child(userId)
+            val updateMap = mapOf<String, Any>("isFavorite" to isFavorite)
+            val query = userRef.updateChildren(updateMap)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                val userSnapshot = userRef.get().await()
+                val updatedUser = userSnapshot.getValue(User::class.java)
+                emit(ApiResponse.Success(updatedUser!!))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
+
+    override suspend fun getFavoriteUsers(): Flow<ApiResponse<List<User>>> {
+        return flow {
+            emit(ApiResponse.Loading)
+
+            val query = db.orderByChild("isFavorite").equalTo(true).get()
+
+            query.await()
+
+            if (query.isSuccessful) {
+                val favoriteUsers = mutableListOf<User>()
+                query.result.children.forEach { userSnapshot ->
+                    val user = userSnapshot.getValue(User::class.java)
+                    if (user != null) {
+                        favoriteUsers.add(user)
+                    }
+                }
+                emit(ApiResponse.Success(favoriteUsers))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
     }
 }

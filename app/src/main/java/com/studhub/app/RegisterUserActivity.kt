@@ -72,6 +72,24 @@ private val repository: UserRepository = object : UserRepository {
         }
     }
 
+    override suspend fun updateFavoriteStatus(
+        userId: String,
+        isFavorite: Boolean
+    ): Flow<ApiResponse<User>> {
+        return flow {
+            // empty implementation
+            emit(ApiResponse.Success(User()))
+        }
+    }
+
+    override suspend fun getFavoriteUsers(): Flow<ApiResponse<List<User>>> {
+        return flow {
+            // empty implementation
+            emit(ApiResponse.Success(listOf(User())))
+        }
+    }
+
+
 }
 
 suspend fun submit(user: User) {
