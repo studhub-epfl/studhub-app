@@ -9,4 +9,6 @@ interface UserRepository {
     suspend fun getUser(userId: String): Flow<ApiResponse<User>>
     suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>>
     suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>>
+    suspend fun updateFavoriteStatus(userId: String, isFavorite: Boolean): Flow<ApiResponse<User>>
+    suspend fun getFavoriteUsers(): Flow<ApiResponse<List<User>>>
 }
