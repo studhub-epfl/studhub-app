@@ -1,8 +1,5 @@
-package com.studhub.app
+package com.studhub.app.presentation.ui
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,71 +16,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.data.repository.CategoryRepositoryImpl
-import com.studhub.app.data.repository.ListingRepositoryImpl
 import com.studhub.app.domain.model.Category
-import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
-import com.studhub.app.domain.usecase.category.GetCategories
-import com.studhub.app.domain.usecase.listing.CreateListing
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.presentation.viewmodel.CreateListingViewModelContract
+import com.studhub.app.presentation.viewmodel.MockCreateListingViewModel
 import com.studhub.app.ui.theme.StudHubTheme
-import kotlinx.coroutines.launch
-import kotlin.random.Random
-
-class CreateListingActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            CreateListingView()
-        }
-    }
-}
-
-private val categoriesRepository = CategoryRepositoryImpl()
-
-private val listingRepository = ListingRepositoryImpl()
-
-private var categories = emptyList<Category>()
-
-suspend fun getCategoriesList(): List<Category> {
-    val getCategories = GetCategories(categoriesRepository)
-    var retrievedCategories: List<Category> = emptyList()
-    getCategories().collect {
-        when (it) {
-            is ApiResponse.Success -> retrievedCategories = it.data
-            is ApiResponse.Failure -> {/* should not fail */
-            }
-            is ApiResponse.Loading -> {}
-        }
-    }
-    return retrievedCategories
-}
-
-suspend fun createListing(listing: Listing) {
-    val createListing = CreateListing(listingRepository)
-    createListing(listing).collect {
-        when (it) {
-            is ApiResponse.Success -> {/* TODO success message and/or return to another view */
-            }
-            is ApiResponse.Failure -> {/* should not fail */
-            }
-            is ApiResponse.Loading -> {/* TODO SHOW LOADING ICON */
-            }
-        }
-    }
-}
 
 @Composable
-fun CreateListingView() {
-    LaunchedEffect(categories) {
-        categories = getCategoriesList()
-    }
+fun CreateListingScreen(viewModel: CreateListingViewModelContract) {
+    val categories by viewModel.categories.collectAsState(emptyList())
+
     StudHubTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -97,7 +43,7 @@ fun CreateListingView() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BigLabel(label = "Create Listing")
-                    ListingForm()
+                    ListingForm(categories, viewModel)
                 }
             }
         }
@@ -105,8 +51,7 @@ fun CreateListingView() {
 }
 
 @Composable
-fun ListingForm() {
-    val scope = rememberCoroutineScope()
+fun ListingForm(categories: List<Category>, viewModel: CreateListingViewModelContract) {
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
@@ -116,22 +61,16 @@ fun ListingForm() {
     AddImageLayout(onClick = {})
     TextBox(label = "Item description", rememberedValue = description)
     PriceRow(rememberedValue = price)
-    CategoryDropDown(selected = category)
+    CategoryDropDown(categories, selected = category)
     BasicFilledButton(
         onClick = {
-            val listing = Listing(
-                id = Random.nextInt().toString(),
-                seller = User(userName = "Placeholder Name"),
-                name = title.value,
-                description = description.value,
-                categories = listOf(category.value),
-                price = price.value.toFloat()
-            )
             if (category.value.name != "Choose a category") {
-                println("Crated listing")
-                scope.launch {
-                    createListing(listing)
-                }
+                viewModel.createListing(
+                    title.value,
+                    description.value,
+                    category.value,
+                    price.value.toFloat()
+                )
             }
         },
         label = "Create"
@@ -174,7 +113,6 @@ fun ImageCarousel() {
             contentDescription = "placeholder"
         )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -201,6 +139,7 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDropDown(
+    categories: List<Category>,
     selected: MutableState<Category> = rememberSaveable { mutableStateOf(Category(name = "Choose a category")) }
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -247,5 +186,15 @@ fun CategoryDropDown(
 @Preview(showBackground = true)
 @Composable
 fun CreateListingPreview() {
-    CreateListingView()
+    StudHubTheme {
+        CreateListingScreenPreviewWrapper()
+    }
 }
+
+@Composable
+fun CreateListingScreenPreviewWrapper() {
+    val viewModel = remember { MockCreateListingViewModel() }
+    CreateListingScreen(viewModel)
+}
+
+

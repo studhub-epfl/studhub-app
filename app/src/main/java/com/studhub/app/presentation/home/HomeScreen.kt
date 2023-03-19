@@ -7,8 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.studhub.app.domain.usecase.user.FakeGetCurrentUser
 import com.studhub.app.presentation.home.components.*
 import com.studhub.app.presentation.ui.common.text.BigLabel
