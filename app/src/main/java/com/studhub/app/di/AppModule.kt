@@ -20,12 +20,14 @@ import com.studhub.app.data.repository.UserRepositoryImpl
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.GetCurrentUser
+import com.studhub.app.domain.usecase.user.IGetCurrentUser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Named
+
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -110,5 +112,10 @@ class AppModule {
         userRepository: UserRepository,
         authRepository: AuthRepository
     ): GetCurrentUser = GetCurrentUser(userRepository, authRepository)
+
+    @Provides
+    fun provideGetCurrentUser(getCurrentUser: GetCurrentUser): IGetCurrentUser {
+        return getCurrentUser
+    }
 
 }
