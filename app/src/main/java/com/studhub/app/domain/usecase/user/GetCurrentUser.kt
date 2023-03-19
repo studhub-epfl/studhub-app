@@ -13,12 +13,12 @@ import javax.inject.Inject
  * @param [userRepository] the repository which the use case will retrieve the user data from
  * @param [authRepository] the repository which the use case will retrieve the logged in user from
  */
-class GetCurrentUser @Inject constructor(private val userRepository: UserRepository, private val authRepository: AuthRepository) {
+class GetCurrentUser @Inject constructor(private val userRepository: UserRepository, private val authRepository: AuthRepository) : IGetCurrentUser {
 
     /**
      * Retrieves the connected user from
      */
-    suspend operator fun invoke(): Flow<ApiResponse<User>> {
+    override suspend operator fun invoke(): Flow<ApiResponse<User>> {
         return userRepository.getUser(authRepository.currentUserUid)
     }
 }
