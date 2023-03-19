@@ -14,9 +14,7 @@ import com.studhub.app.ui.theme.StudHubTheme
 
 @Composable
 fun ListingScreen(
-    listing: Listing,
-    onContactSellerClick: () -> Unit,
-    onFavouriteClick: () -> Unit
+    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit
 ) {
     val typography = MaterialTheme.typography
     StudHubTheme {

@@ -1,26 +1,26 @@
 package com.studhub.app.presentation.ui.browse
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import BrowseContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 
 @Composable
-fun BrowseScreen(viewModel: BrowseViewModel) {
-    val context = LocalContext.current
+fun BrowseScreen(viewModel: BrowseViewModel, navController: NavController) {
     val scope = rememberCoroutineScope()
     LaunchedEffect(viewModel) {
         /***
@@ -36,27 +36,8 @@ fun BrowseScreen(viewModel: BrowseViewModel) {
     }
     val listings = viewModel.listingsState.collectAsState().value
     if (listings.isNotEmpty()) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            LazyColumn(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-            ) {
-                items(listings) { listing ->
-                    Spacer(modifier = Modifier.height(6.dp))
-                    ListingThumbnailScreen(
-                        viewModel = ListingThumbnailViewModel(listing = listing),
-                        onClick = {
-                            viewModel.onListingClick(context, listing)
-                        }
-                    )
+        BrowseContent(listings, navController)
 
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Divider()
-                }
-            }
-        }
     } else {
         // Show a loading indicator while the listings are being fetched.
         Box(
@@ -68,12 +49,17 @@ fun BrowseScreen(viewModel: BrowseViewModel) {
         }
 
     }
+
+
 }
+
 
 
 @Preview(showBackground = true)
 @Composable
 fun BrowseActivityPreview() {
-    val viewModel = BrowseViewModel()
-    BrowseScreen(viewModel = viewModel)
+   val viewModel = BrowseViewModel()
+    lateinit var navController: NavHostController
+    navController = rememberNavController()
+    BrowseScreen(viewModel = viewModel, navController = navController)
 }

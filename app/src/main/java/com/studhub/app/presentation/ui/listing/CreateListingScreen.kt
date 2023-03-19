@@ -22,7 +22,6 @@ import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.presentation.viewmodel.MockCreateListingViewModel
 import com.studhub.app.ui.theme.StudHubTheme
 
 @Composable

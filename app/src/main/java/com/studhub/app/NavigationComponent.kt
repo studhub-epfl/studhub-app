@@ -1,6 +1,8 @@
 package com.studhub.app
 
+import DetailedListingViewModel
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,6 +13,11 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.auth.AuthScreen
 import com.studhub.app.presentation.home.HomeScreen
+import com.studhub.app.presentation.ui.browse.BrowseScreen
+import com.studhub.app.presentation.ui.browse.BrowseViewModel
+import com.studhub.app.presentation.ui.detailedlisting.DetailedListingScreen
+import com.studhub.app.presentation.ui.listing.CreateListingScreen
+import com.studhub.app.presentation.ui.listing.CreateListingViewModel
 import com.studhub.app.ui.*
 
 // we don't have listings yet so this is mandatory to test, will remove later.
@@ -29,7 +36,8 @@ val listing = Listing(
 @Preview
 @Composable
 fun AppNavigation(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = "Auth") {
+    NavHost(navController = navController, startDestination = "Browse") {
+
         composable(
             route = "Auth"
         ) {
@@ -49,10 +57,12 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             )
         }
         composable("AddListing") {
-            AddListingScreen()
+            val createListingViewModel = CreateListingViewModel()
+            CreateListingScreen(viewModel = createListingViewModel)
         }
         composable("Browse") {
-            BrowseScreen()
+            val browseViewModel = BrowseViewModel()
+            BrowseScreen(viewModel = browseViewModel, navController = navController)
         }
         composable("Cart") {
             CartScreen()
@@ -61,17 +71,20 @@ fun AppNavigation(navController: NavHostController = rememberNavController()) {
             AboutScreen()
         }
 
-        composable("Listing") {
-            ListingScreen(
-                listing = listing,
-                onContactSellerClick = {
-                    // Implement the action to contact the seller
-                },
-                onFavouriteClick = {
-                    // Implement the action to favourite the listing
-                }
+        composable("Listing/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            val detailedListingViewModel = remember { DetailedListingViewModel(listingId = id) }
+            DetailedListingScreen(
+                id = "id",
+                viewModel = detailedListingViewModel,
+                onContactSellerClick = {},
+                onFavouriteClick = {},
+                navController = rememberNavController()
             )
         }
+
+
+
     }
 }
 
