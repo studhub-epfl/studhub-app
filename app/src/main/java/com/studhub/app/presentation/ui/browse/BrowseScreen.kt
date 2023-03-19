@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @Composable
 fun BrowseScreen(viewModel: BrowseViewModel) {
@@ -27,9 +27,12 @@ fun BrowseScreen(viewModel: BrowseViewModel) {
          *  If we want to use the fake listings,
          *  we can call viewModel.generateSampleListings()
          *  instead of viewModel.getAllListings()
-         *  Here we need to wait or else listings will be treated
+         *
          */
-        val result = scope.async{viewModel.generateSampleListings() }.await()
+        scope.launch {
+            viewModel.generateSampleListings()
+        }
+
     }
     val listings = viewModel.listingsState.collectAsState().value
     if (listings.isNotEmpty()) {

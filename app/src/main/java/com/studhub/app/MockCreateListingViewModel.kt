@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.studhub.app.domain.model.Category
+import com.studhub.app.presentation.ui.listing.CreateListingViewModelContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

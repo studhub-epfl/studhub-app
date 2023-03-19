@@ -18,9 +18,10 @@ class BrowseViewModel : ViewModel() {
     private val _listingsState = MutableStateFlow(emptyList<Listing>())
     val listingsState: StateFlow<List<Listing>> = _listingsState
 
-    suspend fun generateSampleListings() {
+     fun generateSampleListings() {
         val listings = listOf(
             Listing(
+                id = "1",
                 name = "Algebra for the dummies",
                 seller = User(firstName = "Jacky", lastName = "Chan"),
                 categories = listOf(Category(name = "Books")),
@@ -28,6 +29,7 @@ class BrowseViewModel : ViewModel() {
                 price = 34.50F
             ),
             Listing(
+                id = "2",
                 name = "Brand new Nike Air One",
                 seller = User(firstName = "Kristina", lastName = "Gordova"),
                 categories = listOf(Category(name = "Clothing")),
@@ -35,6 +37,7 @@ class BrowseViewModel : ViewModel() {
                 price = 194.25F
             ),
             Listing(
+                id = "3",
                 name = "Super VTT 2000 with custom paint",
                 seller = User(firstName = "Marc", lastName = "Marquez"),
                 categories = listOf(Category(name = "Mobility")),

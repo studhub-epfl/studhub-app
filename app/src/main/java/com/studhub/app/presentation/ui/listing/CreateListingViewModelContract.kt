@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.viewmodel
+package com.studhub.app.presentation.ui.listing
 
 import com.studhub.app.domain.model.Category
 import kotlinx.coroutines.flow.Flow

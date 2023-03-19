@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.viewmodel
+package com.studhub.app.presentation.ui.listing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
