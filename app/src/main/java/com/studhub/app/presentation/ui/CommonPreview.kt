@@ -1,9 +1,5 @@
 package com.studhub.app.presentation.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
@@ -12,6 +8,7 @@ import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.EmailTextField
 import com.studhub.app.presentation.ui.common.input.NumericTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
+import com.studhub.app.presentation.ui.common.misc.ProgressBar
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 private var buttonLabel = "This is a button"
@@ -73,6 +70,14 @@ fun TextBoxPeview() {
 
 @Preview(showBackground = true)
 @Composable
-fun BigLabelPreview(){
+fun BigLabelPreview() {
     BigLabel(label = title)
+}
+
+/** Misc elements preview */
+
+@Preview(showBackground = true)
+@Composable
+fun ProgressBarPreview() {
+    ProgressBar()
 }

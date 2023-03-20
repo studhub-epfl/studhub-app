@@ -6,7 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.presentation.auth.AuthViewModel
-import com.studhub.app.presentation.ui.common.ProgressBar
+import com.studhub.app.presentation.ui.common.misc.ProgressBar
 
 @Composable
 fun OneTapSignIn(
