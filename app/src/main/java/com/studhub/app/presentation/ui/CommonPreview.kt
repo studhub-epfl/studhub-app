@@ -8,7 +8,7 @@ import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.EmailTextField
 import com.studhub.app.presentation.ui.common.input.NumericTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
-import com.studhub.app.presentation.ui.common.misc.ProgressBar
+import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 private var buttonLabel = "This is a button"
@@ -79,5 +79,5 @@ fun BigLabelPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProgressBarPreview() {
-    ProgressBar()
+    LoadingCircle()
 }

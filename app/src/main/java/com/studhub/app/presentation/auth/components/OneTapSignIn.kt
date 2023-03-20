@@ -6,7 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.presentation.auth.AuthViewModel
-import com.studhub.app.presentation.ui.common.misc.ProgressBar
+import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 
 @Composable
 fun OneTapSignIn(
@@ -14,7 +14,7 @@ fun OneTapSignIn(
     launch: (result: BeginSignInResult) -> Unit
 ) {
     when (val oneTapSignInResponse = viewModel.oneTapSignInResponse) {
-        is ApiResponse.Loading -> ProgressBar()
+        is ApiResponse.Loading -> LoadingCircle()
         is ApiResponse.Success -> oneTapSignInResponse.data.let {
             LaunchedEffect(it) {
                 launch(it)
