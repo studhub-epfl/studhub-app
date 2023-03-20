@@ -31,9 +31,3 @@ fun TextBox(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun TextBoxPeview() {
-    TextBox("Item description")
-}
