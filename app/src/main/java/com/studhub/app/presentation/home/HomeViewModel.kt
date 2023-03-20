@@ -1,11 +1,9 @@
 package com.studhub.app.presentation.home
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
-import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.IGetCurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +15,14 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor (
     private val getCurrentUser: IGetCurrentUser,
 ) : ViewModel() {
-    private val _currUser = MutableStateFlow<User?>(null)
+    val _currUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currUser
 
     init {
         getLoggedInUser()
     }
 
-    private fun getLoggedInUser() {
+    fun getLoggedInUser() {
         viewModelScope.launch {
             getCurrentUser().collect {
                 when (it) {
