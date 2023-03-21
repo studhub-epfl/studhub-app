@@ -6,6 +6,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.AppNavigation
 import com.studhub.app.ui.theme.StudHubTheme
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,7 +18,6 @@ import org.junit.runner.RunWith
  * that it tests the Navigation from HomeScreen to other screens,
  * not the functionality of HomeScreen
  */
-
 
 @RunWith(AndroidJUnit4::class)
 class NavigationTest {
