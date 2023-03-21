@@ -1,22 +1,47 @@
 package com.studhub.app.data.repository
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.repository.CategoryRepository
+import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.CreateListing
 import com.studhub.app.domain.usecase.listing.GetListing
 import com.studhub.app.domain.usecase.listing.GetListings
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import javax.inject.Inject
 import kotlin.random.Random
 
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class ListingRepositoryImplTest {
-    private val repository = ListingRepositoryImpl()
+
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var createListing: CreateListing
+
+    @Inject
+    lateinit var getListing:  GetListing
+
+    @Inject
+    lateinit var getListings: GetListings
+
+    @Before
+    fun init() {
+        hiltRule.inject()
+    }
 
     @Test
     fun setAndGetSameListing() {
-        val createListing = CreateListing(repository)
-        val getListing = GetListing(repository)
 
         lateinit var listing: Listing
 
@@ -50,8 +75,6 @@ class ListingRepositoryImplTest {
 
     @Test
     fun getListingsShouldNotFail() {
-        val getListings = GetListings(repository)
-
         runBlocking {
             getListings().collect {
                 when (it) {

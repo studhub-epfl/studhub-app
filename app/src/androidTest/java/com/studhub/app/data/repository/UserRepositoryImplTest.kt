@@ -1,22 +1,44 @@
-package com.studhub.app
+package com.studhub.app.data.repository
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.repository.UserRepositoryImpl
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.ListingRepository
+import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import javax.inject.Inject
 import kotlin.random.Random
 
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class UserRepositoryImplTest {
+
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var createUser: CreateUser
+
+    @Inject
+    lateinit var getUser: GetUser
+
+    @Before
+    fun init() {
+        hiltRule.inject()
+    }
 
     @Test
     fun setAndGetSameUser() {
-        val repository = UserRepositoryImpl()
-        val createUser = CreateUser(repository)
-        val getUser = GetUser(repository)
 
         lateinit var user: User
 

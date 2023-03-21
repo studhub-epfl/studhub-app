@@ -1,24 +1,45 @@
-package com.studhub.app
+package com.studhub.app.data.repository
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.data.repository.CategoryRepositoryImpl
 import com.studhub.app.domain.model.Category
+import com.studhub.app.domain.repository.CategoryRepository
+import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.category.GetCategory
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.random.Random
 
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class CategoryRepositoryImplTest {
+
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var getCategories: GetCategories
+
+    @Inject
+    lateinit var getCategory: GetCategory
+
+    @Before
+    fun init() {
+        hiltRule.inject()
+    }
 
     @Test
     fun testGetCategoriesRandomlyChosenRetrievedCategoryMatchesGetCategoryWithSameIndex() {
-        val repository = CategoryRepositoryImpl()
-        val getCategories = GetCategories(repository)
-        val getCategory = GetCategory(repository)
-
         var retrievedCategories: List<Category> = emptyList()
 
         runBlocking {
