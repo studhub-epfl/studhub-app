@@ -4,13 +4,14 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Use case for updating a user from a given [repository]
  *
  * @param [repository] the repository which the use case will act on
  */
-class UpdateUser(private val repository: UserRepository) {
+class UpdateUser @Inject constructor(private val repository: UserRepository) {
 
     /**
      * Updates the user with ID [userId] from the [repository]

@@ -4,13 +4,14 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Use case for creating a user in a given [repository]
  *
  * @param [repository] the repository which the use case will act on
  */
-class CreateUser(private val repository: UserRepository) {
+class CreateUser @Inject constructor(private val repository: UserRepository) {
 
     /**
      * Adds the given [user] to a [repository]

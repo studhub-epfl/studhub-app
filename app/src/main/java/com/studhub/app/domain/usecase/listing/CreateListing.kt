@@ -4,13 +4,14 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Use case for creating a listing in a given [repository]
  *
  * @param [repository] the which the use case will act on
  */
-class CreateListing(private val repository: ListingRepository) {
+class CreateListing @Inject constructor(private val repository: ListingRepository) {
 
     /**
      * Adds the given [listing] to a [repository]
