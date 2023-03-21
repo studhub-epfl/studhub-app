@@ -14,8 +14,3 @@ fun PlusButton(onClick: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PlusButtonPreview() {
-    PlusButton(onClick = { })
-}

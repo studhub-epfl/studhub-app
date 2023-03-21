@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.common
+package com.studhub.app.presentation.ui.common.misc
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProgressBar() {
+fun LoadingCircle() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
