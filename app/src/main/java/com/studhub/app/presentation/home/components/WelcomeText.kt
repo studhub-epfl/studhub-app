@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import com.studhub.app.presentation.home.HomeViewModel
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.studhub.app.R
 
 @Composable
 fun WelcomeText(viewModel: HomeViewModel) {
@@ -12,8 +15,10 @@ fun WelcomeText(viewModel: HomeViewModel) {
     Text(
         text =
         if (user.value == null)
-            "Welcome to our app!"
+            stringResource(R.string.home_welcome_message)
         else
-            "Welcome to our app ${user.value!!.userName}!"
+            String.format(
+                stringResource(R.string.home_welcome_name_message),
+                user.value!!.userName)
     )
 }
