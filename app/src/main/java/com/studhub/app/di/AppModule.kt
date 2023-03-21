@@ -16,21 +16,32 @@ import com.studhub.app.R
 import com.studhub.app.core.Constants.SIGN_IN_REQUEST
 import com.studhub.app.core.Constants.SIGN_UP_REQUEST
 import com.studhub.app.data.repository.AuthRepositoryImpl
+import com.studhub.app.data.repository.CategoryRepositoryImpl
+import com.studhub.app.data.repository.ListingRepositoryImpl
 import com.studhub.app.data.repository.UserRepositoryImpl
 import com.studhub.app.domain.repository.AuthRepository
+import com.studhub.app.domain.repository.CategoryRepository
+import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.repository.UserRepository
+import com.studhub.app.domain.usecase.category.GetCategories
+import com.studhub.app.domain.usecase.category.GetCategory
+import com.studhub.app.domain.usecase.listing.*
+import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetCurrentUser
-import com.studhub.app.domain.usecase.user.IGetCurrentUser
+import com.studhub.app.domain.usecase.user.GetUser
+import com.studhub.app.domain.usecase.user.UpdateUser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
+import javax.inject.Singleton
 
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 class AppModule {
     @Provides
     fun provideFirebaseAuth() = Firebase.auth
@@ -42,7 +53,7 @@ class AppModule {
     fun provideOneTapClient(
         @ApplicationContext
         context: Context
-    ) = Identity.getSignInClient(context)
+    ): SignInClient = Identity.getSignInClient(context)
 
     @Provides
     @Named(SIGN_IN_REQUEST)
@@ -87,6 +98,7 @@ class AppModule {
         options: GoogleSignInOptions
     ) = GoogleSignIn.getClient(app, options)
 
+    @Singleton
     @Provides
     fun provideAuthRepository(
         auth: FirebaseAuth,
@@ -104,8 +116,21 @@ class AppModule {
         db = db
     )
 
+    @Singleton
     @Provides
     fun provideUserRepository(): UserRepository = UserRepositoryImpl()
+
+    @Singleton
+    @Provides
+    fun provideListingRepository(): ListingRepository = ListingRepositoryImpl()
+
+    @Singleton
+    @Provides
+    fun provideCategoryRepository(): CategoryRepository = CategoryRepositoryImpl()
+
+
+    @Provides
+    fun provideCreateUser(userRepository: UserRepository): CreateUser = CreateUser(userRepository)
 
     @Provides
     fun provideGetCurrentUserUseCase(
@@ -114,8 +139,31 @@ class AppModule {
     ): GetCurrentUser = GetCurrentUser(userRepository, authRepository)
 
     @Provides
-    fun provideGetCurrentUser(getCurrentUser: GetCurrentUser): IGetCurrentUser {
-        return getCurrentUser
-    }
+    fun provideGetUser(userRepository: UserRepository): GetUser = GetUser(userRepository)
+
+    @Provides
+    fun provideUpdateUser(userRepository: UserRepository): UpdateUser = UpdateUser(userRepository)
+
+    @Provides
+    fun provideCreateListing(listingRepository: ListingRepository): CreateListing = CreateListing(listingRepository)
+
+    @Provides
+    fun provideGetListing(listingRepository: ListingRepository): GetListing = GetListing(listingRepository)
+
+    @Provides
+    fun provideGetListings(listingRepository: ListingRepository): GetListings = GetListings(listingRepository)
+
+    @Provides
+    fun provideRemoveListing(listingRepository: ListingRepository): RemoveListing = RemoveListing(listingRepository)
+
+    @Provides
+    fun provideUpdateListing(listingRepository: ListingRepository): UpdateListing = UpdateListing(listingRepository)
+
+    @Provides
+    fun provideGetCategories(categoryRepository: CategoryRepository): GetCategories = GetCategories(categoryRepository)
+
+    @Provides
+    fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory = GetCategory(categoryRepository)
+
 
 }
