@@ -35,8 +35,11 @@ val listing = Listing(
 
 @Preview
 @Composable
-fun AppNavigation(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = "Browse") {
+fun AppNavigation(
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = "Auth"
+) {
+    NavHost(navController = navController, startDestination = "Auth") {
 
         composable(
             route = "Auth"
