@@ -2,9 +2,12 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'jacoco'
-    id "kotlin-kapt"
+
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'org.jetbrains.kotlin.android'
+
+    id 'kotlin-android'
+    id "kotlin-kapt"
     id "dagger.hilt.android.plugin"
 }
 
@@ -19,7 +22,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.studhub.app.StudHubTestRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -72,8 +75,6 @@ dependencies {
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.9.3'
     implementation "androidx.lifecycle:lifecycle-livedata:2.6.0"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -104,10 +105,9 @@ dependencies {
     //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    //Dagger
-    implementation 'com.google.dagger:dagger:2.44.2'
-    implementation 'com.google.dagger:dagger-android:2.44.2'
-    implementation 'com.google.dagger:dagger-android-support:2.44.2'
+    // Hilt Android testing dependencies
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
