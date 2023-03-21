@@ -2,12 +2,9 @@ package com.studhub.app.presentation.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.studhub.app.domain.usecase.user.FakeGetCurrentUser
 import com.studhub.app.presentation.home.components.*
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.ui.theme.StudHubTheme
@@ -22,7 +19,8 @@ fun HomeScreen(
 ) {
     StudHubTheme() {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
                 .fillMaxSize()
         ) {
             BigLabel(label = "Home Page")
@@ -47,6 +45,8 @@ fun HomeScreen(
         }
     }
 }
+
+/*
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
@@ -65,3 +65,4 @@ fun HomeScreenPreview() {
     )
 }
 
+ */
