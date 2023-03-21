@@ -5,7 +5,9 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Singleton
 
+@Singleton
 class CategoryRepositoryImpl : CategoryRepository {
     private val categories: List<Category> = listOf(
         Category(id = "1", name = "electronics", description = "phones/cameras/.. "),

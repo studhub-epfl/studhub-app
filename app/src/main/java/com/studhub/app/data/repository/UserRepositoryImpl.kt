@@ -10,7 +10,9 @@ import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Singleton
 
+@Singleton
 class UserRepositoryImpl : UserRepository {
     private val db: DatabaseReference = Firebase.database.getReference("users")
 
