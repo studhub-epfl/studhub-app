@@ -1,4 +1,4 @@
-package com.studhub.app
+package com.studhub.app.domain.usecase
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
