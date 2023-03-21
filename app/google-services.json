@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "498909302481-bcp1nd7ab64sk0411rp5n1p5fmgg6bks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "ee8920500fbb886fc9ed1303834f25ae72457a9a"
+          }
+        },
+        {
           "client_id": "498909302481-da0kcctf8qvibscrrt4l7pqf4hdvutn3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.studhub.app",
             "certificate_hash": "a8d0ff5a967bed48edbe8c1416603abfe57e27d7"
+          }
+        },
+        {
+          "client_id": "498909302481-h300i2g4igmd1ek3uqa4bvlmk3brgk5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "1c32ece533daa17238571beae27804af9f629f8f"
           }
         },
         {
