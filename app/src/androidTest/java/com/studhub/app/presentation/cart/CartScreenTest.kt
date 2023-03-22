@@ -1,4 +1,4 @@
-package com.studhub.app.ui
+package com.studhub.app.presentation.cart
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule

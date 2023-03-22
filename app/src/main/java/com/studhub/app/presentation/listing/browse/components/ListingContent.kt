@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.presentation.ui.browse.components.CategoryAndSellerInfo
-import com.studhub.app.presentation.ui.browse.components.PriceChip
-import com.studhub.app.presentation.ui.browse.components.ThumbnailImage
+import com.studhub.app.presentation.listing.browse.components.CategoryAndSellerInfo
+import com.studhub.app.presentation.listing.browse.components.PriceChip
+import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
 
 @Composable
 fun ListingContent(listing: Listing, onClick: () -> Unit) {

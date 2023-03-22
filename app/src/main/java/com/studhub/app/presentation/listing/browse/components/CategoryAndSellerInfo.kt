@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.browse.components
+package com.studhub.app.presentation.listing.browse.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.listing.add
+package com.studhub.app.presentation.listing.browse
 
 import androidx.appcompat.R
 import androidx.compose.foundation.Image

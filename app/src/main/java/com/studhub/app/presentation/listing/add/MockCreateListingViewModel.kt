@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.listing
+package com.studhub.app.presentation.listing.add
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

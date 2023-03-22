@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.browse.components
+package com.studhub.app.presentation.listing.browse.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -12,7 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @Composable
 fun ThumbnailImage() {

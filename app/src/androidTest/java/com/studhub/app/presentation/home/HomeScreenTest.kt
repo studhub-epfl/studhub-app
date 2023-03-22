@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.home
+package com.studhub.app.presentation.home
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class HomeTest {
+class HomeScreenTest {
 
     private fun str(id: Int) = composeTestRule.activity.getString(id)
 

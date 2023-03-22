@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.browse
+package com.studhub.app.presentation.listing.browse
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController

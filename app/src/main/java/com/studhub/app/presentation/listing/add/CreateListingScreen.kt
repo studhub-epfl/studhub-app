@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.listing
+package com.studhub.app.presentation.listing.add
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -24,7 +24,7 @@ import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @Composable
 fun CreateListingScreen(viewModel: CreateListingViewModelContract) {

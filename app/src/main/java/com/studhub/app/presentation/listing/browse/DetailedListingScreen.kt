@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.listing.add
+package com.studhub.app.presentation.listing.browse
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -72,4 +72,3 @@ fun DefaultPreview() {
         navController = rememberNavController()
     )
 }
-

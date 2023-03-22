@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.listing.add
+package com.studhub.app.presentation.listing.browse
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -7,7 +7,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.listing.add.ListingScreen
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

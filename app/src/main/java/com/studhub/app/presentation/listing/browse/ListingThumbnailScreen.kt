@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.browse
+package com.studhub.app.presentation.listing.browse
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.presentation.ui.browse.ListingContent
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

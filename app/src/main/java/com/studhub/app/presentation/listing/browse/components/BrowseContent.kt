@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.presentation.ui.browse.ListingThumbnailScreen
-import com.studhub.app.presentation.ui.browse.ListingThumbnailViewModel
+import com.studhub.app.presentation.listing.browse.ListingThumbnailScreen
+import com.studhub.app.presentation.listing.browse.ListingThumbnailViewModel
 
 @Composable
 fun BrowseContent(listings: List<Listing>, navController: NavController) {
