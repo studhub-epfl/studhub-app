@@ -61,6 +61,16 @@
             android:exported="false"
             android:label="AppNavigation Wrapper"
             android:theme="@style/Theme.Bootcamp" />
+        <activity
+            android:name=".wrapper.CartActivity"
+            android:exported="false"
+            android:label="Cart Wrapper"
+            android:theme="@style/Theme.Bootcamp" />
+        <activity
+            android:name=".wrapper.AboutActivity"
+            android:exported="false"
+            android:label="About Wrapper"
+            android:theme="@style/Theme.Bootcamp" />
     </application>
 
 </manifest>
