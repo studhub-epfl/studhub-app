@@ -14,6 +14,10 @@ import javax.inject.Singleton
 class MockUserRepositoryImpl: UserRepository {
     private val userDB = HashMap<String, User>()
 
+    init {
+        userDB[MockAuthRepositoryImpl.loggedInUser.id] = MockAuthRepositoryImpl.loggedInUser
+    }
+
     override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
