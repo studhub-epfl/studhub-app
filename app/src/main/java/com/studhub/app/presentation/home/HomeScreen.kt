@@ -2,6 +2,7 @@ package com.studhub.app.presentation.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,8 @@ fun HomeScreen(
     onAboutClick: () -> Unit,
     onCartClick: () -> Unit,
 ) {
+    val user = viewModel.currentUser.collectAsState()
+
     StudHubTheme() {
         Column(
             modifier = Modifier
@@ -31,7 +34,7 @@ fun HomeScreen(
             BigLabel(label = stringResource(R.string.home_title))
             Spacer(Modifier.height(16.dp))
 
-            WelcomeText(viewModel = viewModel)
+            WelcomeText(user = user.value)
             Spacer(Modifier.height(16.dp))
 
             FeaturedItems()
