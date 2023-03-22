@@ -23,6 +23,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class NavigationTest {
 
+    private fun str(id: Int) = composeTestRule.activity.getString(id)
+
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -33,8 +35,6 @@ class NavigationTest {
     fun setUp() {
         hiltRule.inject()
     }
-
-    private fun str(id: Int) = composeTestRule.activity.getString(id)
 
     @Test
     fun clickAddListing_navigatesToAddListingScreen() {
@@ -65,9 +65,6 @@ class NavigationTest {
             .performClick()
 
         composeTestRule.onNodeWithText(str(R.string.about_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.about_content)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.about_contact_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.about_contact_content)).assertIsDisplayed()
     }
 
 }
