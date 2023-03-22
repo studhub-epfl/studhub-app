@@ -9,7 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.presentation.home.components.*
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EarlyEntryPoint

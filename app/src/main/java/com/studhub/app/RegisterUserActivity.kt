@@ -24,7 +24,7 @@ import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.EmailTextField
 import com.studhub.app.presentation.ui.common.input.NumericTextField
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

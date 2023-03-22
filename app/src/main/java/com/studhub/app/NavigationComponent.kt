@@ -1,6 +1,6 @@
 package com.studhub.app
 
-import DetailedListingViewModel
+import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
@@ -11,15 +11,15 @@ import androidx.navigation.compose.rememberNavController
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.presentation.about.AboutScreen
 import com.studhub.app.presentation.auth.AuthScreen
+import com.studhub.app.presentation.cart.CartScreen
 import com.studhub.app.presentation.home.HomeScreen
-import com.studhub.app.presentation.ui.browse.BrowseScreen
-import com.studhub.app.presentation.ui.browse.BrowseViewModel
-import com.studhub.app.presentation.ui.detailedlisting.DetailedListingScreen
-import com.studhub.app.presentation.ui.listing.CreateListingScreen
-import com.studhub.app.presentation.ui.listing.CreateListingViewModel
-import com.studhub.app.ui.AboutScreen
-import com.studhub.app.ui.CartScreen
+import com.studhub.app.presentation.listing.browse.BrowseScreen
+import com.studhub.app.presentation.listing.browse.BrowseViewModel
+import com.studhub.app.presentation.listing.browse.DetailedListingScreen
+import com.studhub.app.presentation.listing.add.CreateListingScreen
+import com.studhub.app.presentation.listing.add.CreateListingViewModel
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
