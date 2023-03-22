@@ -1,6 +1,5 @@
-package com.studhub.app.presentation.ui.detailedlisting
+package com.studhub.app.presentation.listing.add
 
-import DetailedListingViewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -15,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.ui.ListingScreen
 
 
 @Composable

@@ -18,6 +18,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class HomeTest {
 
+    private fun str(id: Int) = composeTestRule.activity.getString(id)
+
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -28,8 +30,6 @@ class HomeTest {
     fun setUp() {
         hiltRule.inject()
     }
-
-    private fun str(id: Int) = composeTestRule.activity.getString(id)
 
     @Test
     fun homeScreen_displayedElements() {

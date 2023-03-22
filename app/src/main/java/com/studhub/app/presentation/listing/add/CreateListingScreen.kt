@@ -13,9 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
@@ -40,7 +42,7 @@ fun CreateListingScreen(viewModel: CreateListingViewModelContract) {
                         .padding(top = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    BigLabel(label = "Create Listing")
+                    BigLabel(label = stringResource(R.string.listings_add_title))
                     ListingForm(categories, viewModel)
                 }
             }

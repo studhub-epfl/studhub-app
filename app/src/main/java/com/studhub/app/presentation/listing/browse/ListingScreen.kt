@@ -1,5 +1,6 @@
-package com.studhub.app.ui
+package com.studhub.app.presentation.listing.add
 
+import androidx.appcompat.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @Composable
 fun ListingScreen(
@@ -54,7 +55,7 @@ fun ListingScreen(
                 )
                 // Add the placeholder image here
                 Image(
-                    painter = painterResource(id = androidx.appcompat.R.drawable.abc_btn_radio_to_on_mtrl_000),
+                    painter = painterResource(id = R.drawable.abc_btn_radio_to_on_mtrl_000),
                     contentDescription = "Listing Image",
                     modifier = Modifier
                         .fillMaxWidth()
