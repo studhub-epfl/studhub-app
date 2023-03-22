@@ -149,5 +149,4 @@ class AppTestModule {
 
     @Provides
     fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory = GetCategory(categoryRepository)
-
 }
