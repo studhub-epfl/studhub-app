@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="listings_add_title">Create Listing</string>
+    <string name="listings_browsing_title">Browse all listings</string>
+</resources>
