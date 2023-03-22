@@ -18,7 +18,8 @@ import com.studhub.app.presentation.ui.browse.BrowseViewModel
 import com.studhub.app.presentation.ui.detailedlisting.DetailedListingScreen
 import com.studhub.app.presentation.ui.listing.CreateListingScreen
 import com.studhub.app.presentation.ui.listing.CreateListingViewModel
-import com.studhub.app.ui.*
+import com.studhub.app.ui.AboutScreen
+import com.studhub.app.ui.CartScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
@@ -39,7 +40,7 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     startDestination: String = "Auth"
 ) {
-    NavHost(navController = navController, startDestination = "Auth") {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(
             route = "Auth"
@@ -85,7 +86,6 @@ fun AppNavigation(
                 navController = rememberNavController()
             )
         }
-
 
 
     }
