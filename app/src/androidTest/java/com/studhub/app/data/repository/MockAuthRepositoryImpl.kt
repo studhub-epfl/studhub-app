@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Singleton
 
 @Singleton
-class MockAuthRepositoryImpl: AuthRepository {
-    private var isLoggedIn = false
+class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true): AuthRepository {
+    private var isLoggedIn = isLoggedInByDefault
 
     companion object {
         val loggedInUser = User(
