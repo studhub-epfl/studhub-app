@@ -74,7 +74,7 @@ dependencies {
     androidTestImplementation"com.google.truth:truth:1.1.3"
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.9.3'
-    implementation "androidx.lifecycle:lifecycle-livedata:2.6.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.0"
     androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -145,11 +145,27 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/Manifest*.*',
             '**/*Test*.*',
             'android/**/*.*',
+            '**/com/android/**',
+            '**/androidx/**',
+            '**/org/jetbrains/**',
+            '**/kotlin/**',
+            '**/META-INF/**',
             // HILT
+            '**/di/**.*',
             '**/*Hilt*.*',
             'hilt_aggregated_deps/**',
             '**/*_Factory.class',
-            '**/*_MembersInjector.class'
+            '**/*_MembersInjector.class',
+            '**/*Injector*.*',
+            '**/*Module*.*',
+            '**/*Component*.*',
+            '**/*Dagger*.*',
+            '**/*$Lambda*.*',
+            '**/*$Companion*.*',
+            '**/*$*_Factory*.*',
+            '**/*_Provide*Factory*.*',
+            '**Dagger**',
+            '**Hilt**',
     ]
     def debugTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
