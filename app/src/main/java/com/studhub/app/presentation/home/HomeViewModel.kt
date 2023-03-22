@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel @Inject constructor (
     private val getCurrentUser: GetCurrentUser,
 ) : ViewModel() {
     private val _currUser = MutableStateFlow<User?>(null)
@@ -38,3 +38,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 }
+
+
+

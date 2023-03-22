@@ -8,7 +8,9 @@ import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Singleton
 
+@Singleton
 class ListingRepositoryImpl : ListingRepository {
 
     private val db = Firebase.database.getReference("listings")

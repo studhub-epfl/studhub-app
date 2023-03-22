@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
+@Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private var oneTapClient: SignInClient,

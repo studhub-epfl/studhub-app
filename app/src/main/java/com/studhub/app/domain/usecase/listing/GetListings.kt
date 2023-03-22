@@ -4,6 +4,7 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
 /**
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
  *
  * @param [repository] the repository which the use case will act on
  */
-class GetListings(private val repository: ListingRepository) {
+class GetListings @Inject constructor(private val repository: ListingRepository) {
 
     /**
      * Retrieves all listings from the [repository]

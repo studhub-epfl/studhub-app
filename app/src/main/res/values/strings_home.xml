@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Home page</string>
+    <string name="home_welcome_message">Welcome to our app</string>
+    <string name="home_welcome_name_message">Welcome to our app %s.</string>
+    <string name="home_featured_items_title">Here are some feature items</string>
+    <string name="home_button_add_listing">Add Listing</string>
+    <string name="home_button_browse">Browse</string>
+    <string name="home_button_cart">Cart</string>
+    <string name="home_button_about">About</string>
+</resources>

@@ -4,13 +4,14 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 /**
  * Use case for removing a listing from a given [repository]
  *
  * @param [repository] the repository which the use case will act on
  */
-class RemoveListing(private val repository: ListingRepository) {
+class RemoveListing @Inject constructor(private val repository: ListingRepository) {
 
     /**
      * Removes the [listing] from the [repository]

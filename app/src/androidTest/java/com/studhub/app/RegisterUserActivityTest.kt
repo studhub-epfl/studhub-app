@@ -15,7 +15,7 @@ class RegisterUserActivityTest {
     val composeTestRule = createAndroidComposeRule<RegisterUserActivity>()
 
     @Test
-    fun allFormComponentsExist(){
+    fun allFormComponentsExist() {
         composeTestRule.activity.setContent { UserForm() }
         composeTestRule.onNodeWithText("Firstname").assertExists()
         composeTestRule.onNodeWithText("Lastname").assertExists()

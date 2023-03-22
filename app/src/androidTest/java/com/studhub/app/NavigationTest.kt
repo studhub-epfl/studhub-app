@@ -1,11 +1,13 @@
-import androidx.compose.runtime.Composable
+package com.studhub.app
+
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.studhub.app.AppNavigation
-import com.studhub.app.ui.theme.StudHubTheme
+import com.studhub.app.wrapper.NavigationActivity
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,63 +19,52 @@ import org.junit.runner.RunWith
  * that it tests the Navigation from HomeScreen to other screens,
  * not the functionality of HomeScreen
  */
-
-
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class NavigationTest {
 
-    @Test
-    fun foo() {
-        assert(true)
-    }
-/*
-    @get:Rule
-    val composeTestRule = createComposeRule()
+    private fun str(id: Int) = composeTestRule.activity.getString(id)
 
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
+    val composeTestRule = createAndroidComposeRule<NavigationActivity>()
 
     @Before
-    fun setup() {
-        composeTestRule.setContent {
-            StudHubTheme {
-                AppNavigation()
-            }
-        }
+    fun setUp() {
+        hiltRule.inject()
     }
 
     @Test
     fun clickAddListing_navigatesToAddListingScreen() {
-        composeTestRule.onNodeWithText("Add Listing").assertExists().performClick()
+        composeTestRule.onNodeWithText(str(R.string.home_button_add_listing)).assertExists()
+            .performClick()
 
-        composeTestRule.onNodeWithText("List your item: ").assertIsDisplayed()
-
+        composeTestRule.onNodeWithText(str(R.string.listings_add_title)).assertIsDisplayed()
     }
 
     @Test
     fun clickBrowse_navigatesToBrowseScreen() {
-        composeTestRule.onNodeWithText("Browse").assertExists().performClick()
+        composeTestRule.onNodeWithText(str(R.string.home_button_browse)).assertExists()
+            .performClick()
 
-        composeTestRule.onNodeWithText("Browse our selection:").assertIsDisplayed()
+        composeTestRule.onNodeWithText(str(R.string.listings_browsing_title)).assertIsDisplayed()
     }
 
     @Test
     fun clickCart_navigatesToCartScreen() {
-        composeTestRule.onNodeWithText("Cart").assertExists().performClick()
-        composeTestRule.onNodeWithText("Your Cart:").assertIsDisplayed()
+        composeTestRule.onNodeWithText(str(R.string.home_button_cart)).assertExists().performClick()
+        composeTestRule.onNodeWithText(str(R.string.cart_title)).assertIsDisplayed()
     }
 
     @Test
     fun clickCart_navigatesToAboutScreen() {
-        composeTestRule.onNodeWithText("About").assertExists().performClick()
-        composeTestRule.onNodeWithText("About Us:").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Contact us at ...").assertIsDisplayed()
-        composeTestRule.onNodeWithText("We are a MarketPlace company working for EPFL campus.")
-            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_about)).assertExists()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.about_title)).assertIsDisplayed()
     }
 
-
- */
-
 }
-
-
-

@@ -1,17 +1,19 @@
 package com.studhub.app.presentation.home
 
-
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studhub.app.R
+import com.studhub.app.presentation.home.components.*
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.ui.theme.StudHubTheme
-
+import com.studhub.app.presentation.ui.theme.StudHubTheme
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EarlyEntryPoint
 
 @Composable
 fun HomeScreen(
@@ -21,63 +23,54 @@ fun HomeScreen(
     onAboutClick: () -> Unit,
     onCartClick: () -> Unit,
 ) {
-
     val user = viewModel.currentUser.collectAsState()
 
-    StudHubTheme {
+    StudHubTheme() {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(16.dp)
+                .fillMaxSize()
         ) {
-            BigLabel(label = "Home Page")
+            BigLabel(label = stringResource(R.string.home_title))
             Spacer(Modifier.height(16.dp))
 
-            Text(
-                text =
-                if (user.value == null)
-                    "Welcome to our app!"
-                else
-                    "Welcome to our app ${user.value!!.userName}!"
-            )
+            WelcomeText(user = user.value)
+            Spacer(Modifier.height(16.dp))
 
-            Spacer(Modifier.height(16.dp))
-            Text(text = "Here are some featured items:")
-            Spacer(Modifier.height(16.dp))
-            Text(text = "//FILL")
+            FeaturedItems()
             Spacer(Modifier.height(160.dp))
 
-            Button(
-                onClick = onAddListingClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Add Listing")
-            }
+            AddListingButton(onClick = onAddListingClick)
+            Spacer(Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+            BrowseButton(onClick = onBrowseClick)
+            Spacer(Modifier.height(16.dp))
 
-            Button(
-                onClick = onBrowseClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Browse")
-            }
+            CartButton(onClick = onCartClick)
+            Spacer(Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onCartClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Cart")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onAboutClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "About")
-            }
-
+            AboutButton(onClick = onAboutClick)
         }
     }
 }
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    val viewModel = remember {
+        HomeViewModel(
+            getCurrentUser = FakeGetCurrentUser()
+        )
+    }
+
+    HomeScreen(
+        viewModel = viewModel,
+        onAddListingClick = {},
+        onBrowseClick = {},
+        onAboutClick = {},
+        onCartClick = {}
+    )
+}
+
+ */

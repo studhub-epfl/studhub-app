@@ -6,13 +6,14 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 /**
  * Use case for getting a listing from a given [repository]
  *
  * @param [repository] the repository which the use case will act on
  */
-class GetListing(private val repository: ListingRepository) {
+class GetListing @Inject constructor(private val repository: ListingRepository) {
 
     /**
      * Retrieves the listing matching the given [listingId] from the [repository]

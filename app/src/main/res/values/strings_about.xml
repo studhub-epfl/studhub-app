@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_title">About us:</string>
+    <string name="about_content">We are a MarketPlace company working for EPFL campus.</string>
+    <string name="about_contact_title">Contact us:</string>
+    <string name="about_contact_content">contact@studhub.ch</string>
+</resources>
