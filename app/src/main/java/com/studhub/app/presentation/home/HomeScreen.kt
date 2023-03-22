@@ -3,11 +3,16 @@ package com.studhub.app.presentation.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studhub.app.R
 import com.studhub.app.presentation.home.components.*
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.ui.theme.StudHubTheme
+import dagger.hilt.EntryPoint
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EarlyEntryPoint
 
 @Composable
 fun HomeScreen(
@@ -23,7 +28,7 @@ fun HomeScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
-            BigLabel(label = "Home Page")
+            BigLabel(label = stringResource(R.string.home_title))
             Spacer(Modifier.height(16.dp))
 
             WelcomeText(viewModel = viewModel)

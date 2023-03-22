@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.studhub.app.R
 
 @Composable
 fun AboutButton(onClick: () -> Unit) {
@@ -12,6 +14,6 @@ fun AboutButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = "About")
+        Text(text = stringResource(R.string.home_button_about))
     }
 }

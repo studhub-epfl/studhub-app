@@ -15,14 +15,14 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor (
     private val getCurrentUser: GetCurrentUser,
 ) : ViewModel() {
-    val _currUser = MutableStateFlow<User?>(null)
+    private val _currUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currUser
 
     init {
         getLoggedInUser()
     }
 
-    fun getLoggedInUser() {
+    private fun getLoggedInUser() {
         viewModelScope.launch {
             getCurrentUser().collect {
                 when (it) {
