@@ -18,6 +18,7 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the list of [Listing] pushed to the database on success
      */
     suspend fun getListings(): Flow<ApiResponse<List<Listing>>>
+
     /**
      * get a  [listing] with all the listings on the database of Firebase
      * @param [listingId] the listingId we want to match
@@ -46,4 +47,6 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the [Boolean] value of the resulting operation
      */
     suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>>
+    suspend fun updateFavoriteListingStatus(userId: String, favListingId: String, isFavorite: Boolean): Flow<ApiResponse<Listing>>
+    suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>>
 }

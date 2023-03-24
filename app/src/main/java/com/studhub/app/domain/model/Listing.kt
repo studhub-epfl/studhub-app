@@ -6,5 +6,6 @@ data class Listing (
         val description: String = "",
         val seller: User = User(),
         val price: Float = 0F,
-        val categories: List<Category> = emptyList()
+        val categories: List<Category> = emptyList(),
+        var isFavorite: Boolean = false,
 )
