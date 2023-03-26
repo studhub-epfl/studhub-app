@@ -146,4 +146,53 @@ class ListingRepositoryImpl : ListingRepository {
         }
 
     }
+
+    override suspend fun updateFavoriteListingStatus(
+        userId: String,
+        favListingId: String,
+        isFavorite: Boolean
+    ): Flow<ApiResponse<Listing>> {
+        return flow {
+            emit(ApiResponse.Loading)
+
+            val listingRef = db.child(favListingId)
+            val updateMap = mapOf<String, Any>("favorites/$userId" to isFavorite)
+            val query = listingRef.updateChildren(updateMap)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                val listingSnapshot = listingRef.get().await()
+                val updatedListing = listingSnapshot.getValue(Listing::class.java)
+                emit(ApiResponse.Success(updatedListing!!))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
+
+    override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> {
+        return flow {
+            emit(ApiResponse.Loading)
+
+            val query = db.orderByChild("favorites/$userId").equalTo(true).get()
+
+            query.await()
+
+            if (query.isSuccessful) {
+                val favoriteListing = mutableListOf<Listing>()
+                query.result.children.forEach { userSnapshot ->
+                    val listing = userSnapshot.getValue(Listing::class.java)
+                    if (listing != null) {
+                        favoriteListing.add(listing)
+                    }
+                }
+                emit(ApiResponse.Success(favoriteListing))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
 }

@@ -55,4 +55,16 @@ class FakeListingRepository : ListingRepository {
     override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateFavoriteListingStatus(
+        userId: String,
+        favListingId: String,
+        isFavorite: Boolean
+    ): Flow<ApiResponse<Listing>> {
+        TODO("Not yet implemented")
+    }
 }
