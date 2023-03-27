@@ -1,7 +1,6 @@
 package com.studhub.app.domain.repository
 
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import kotlinx.coroutines.flow.Flow
 
@@ -39,7 +38,10 @@ interface ListingRepository {
      * @param [updatedListing] the Listing we want to replace
      * @return A [Flow] of [ApiResponse] with the last one containing the updated [Listing] pushed to the database on success
      */
-    suspend fun updateListing(listingId: String, updatedListing: Listing): Flow<ApiResponse<Listing>>
+    suspend fun updateListing(
+        listingId: String,
+        updatedListing: Listing
+    ): Flow<ApiResponse<Listing>>
 
     /**
      * remove a listing with the given [listingId]
@@ -47,6 +49,4 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the [Boolean] value of the resulting operation
      */
     suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>>
-    suspend fun updateFavoriteListingStatus(userId: String, favListingId: String, isFavorite: Boolean): Flow<ApiResponse<Listing>>
-    suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>>
 }
