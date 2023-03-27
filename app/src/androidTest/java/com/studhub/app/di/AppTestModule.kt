@@ -23,10 +23,8 @@ import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.UpdateUser
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
@@ -134,25 +132,32 @@ class AppTestModule {
     fun provideUpdateUser(userRepository: UserRepository): UpdateUser = UpdateUser(userRepository)
 
     @Provides
-    fun provideCreateListing(listingRepository: ListingRepository): CreateListing = CreateListing(listingRepository)
+    fun provideCreateListing(listingRepository: ListingRepository): CreateListing =
+        CreateListing(listingRepository)
 
     @Provides
-    fun provideGetListing(listingRepository: ListingRepository): GetListing = GetListing(listingRepository)
+    fun provideGetListing(listingRepository: ListingRepository): GetListing =
+        GetListing(listingRepository)
 
     @Provides
-    fun provideGetListings(listingRepository: ListingRepository): GetListings = GetListings(listingRepository)
+    fun provideGetListings(listingRepository: ListingRepository): GetListings =
+        GetListings(listingRepository)
 
     @Provides
-    fun provideRemoveListing(listingRepository: ListingRepository): RemoveListing = RemoveListing(listingRepository)
+    fun provideRemoveListing(listingRepository: ListingRepository): RemoveListing =
+        RemoveListing(listingRepository)
 
     @Provides
-    fun provideUpdateListing(listingRepository: ListingRepository): UpdateListing = UpdateListing(listingRepository)
+    fun provideUpdateListing(listingRepository: ListingRepository): UpdateListing =
+        UpdateListing(listingRepository)
 
     @Provides
-    fun provideGetCategories(categoryRepository: CategoryRepository): GetCategories = GetCategories(categoryRepository)
+    fun provideGetCategories(categoryRepository: CategoryRepository): GetCategories =
+        GetCategories(categoryRepository)
 
     @Provides
-    fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory = GetCategory(categoryRepository)
+    fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory =
+        GetCategory(categoryRepository)
 
     @Provides
     fun provideGetConversationMessages(messageRepository: MessageRepository): GetConversationMessages =
