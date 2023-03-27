@@ -1,10 +1,11 @@
 package com.studhub.app.data.repository
 
-import com.google.android.gms.common.api.Api
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
@@ -86,4 +87,99 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun addFavoriteListing(
+        userId: String,
+        favListingId: String
+    ): Flow<ApiResponse<User>> = flow {
+        emit(ApiResponse.Loading)
+
+        val userRef = db.child(userId)
+        val favoriteListingsRef = userRef.child("favoriteListings")
+
+        val userSnapshot = userRef.get().await()
+
+        val user = userSnapshot.getValue(User::class.java)!!
+        if (user.favoriteListings.contains(favListingId)) {
+            emit(ApiResponse.Failure("Listing is already a favorite"))
+            return@flow
+        }
+
+        val updatedFavoriteListings =
+            user.favoriteListings.toMutableList().apply { add(favListingId) }
+        val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
+
+        val query = favoriteListingsRef.setValue(updatedUser)
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(updatedUser))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun removeFavoriteListing(
+        userId: String,
+        favListingId: String
+    ): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        val userRef = db.child(userId)
+        val favoriteListingsRef = userRef.child("favoriteListings")
+
+        val userSnapshot = userRef.get().await()
+
+        val user = userSnapshot.getValue(User::class.java)!!
+        if (!user.favoriteListings.contains(favListingId)) {
+            emit(ApiResponse.Failure("Listing is not a favorite"))
+            return@flow
+        }
+
+        val updatedFavoriteListings =
+            user.favoriteListings.toMutableList().apply { remove(favListingId) }
+
+        val query = favoriteListingsRef.setValue(updatedFavoriteListings)
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(true))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> =
+        flow {
+            emit(ApiResponse.Loading)
+
+            val userRef = db.child(userId)
+            val favoriteListingsRef = userRef.child("favoriteListings")
+
+            val favoriteListingsSnapshot = favoriteListingsRef.get().await()
+
+            if (favoriteListingsSnapshot.exists()) {
+                val favoriteListingIds = favoriteListingsSnapshot.getValue<List<String>>()!!
+                val favoriteListings = mutableListOf<Listing>()
+
+                favoriteListingIds.forEach { favoriteListingId ->
+                    val listingSnapshot =
+                        Firebase.database.getReference("listings").child(favoriteListingId).get()
+                            .await()
+
+                    if (listingSnapshot.exists()) {
+                        val listing = listingSnapshot.getValue(Listing::class.java)!!
+                        favoriteListings.add(listing)
+                    }
+                }
+
+                emit(ApiResponse.Success(favoriteListings))
+            } else {
+                emit(ApiResponse.Success(emptyList()))
+            }
+        }
 }
