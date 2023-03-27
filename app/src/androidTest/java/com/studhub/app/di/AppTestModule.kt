@@ -12,16 +12,12 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.R
 import com.studhub.app.core.Constants
-import com.studhub.app.data.repository.CategoryRepositoryImpl
-import com.studhub.app.data.repository.MockAuthRepositoryImpl
-import com.studhub.app.data.repository.MockListingRepositoryImpl
-import com.studhub.app.data.repository.MockUserRepositoryImpl
-import com.studhub.app.domain.repository.AuthRepository
-import com.studhub.app.domain.repository.CategoryRepository
-import com.studhub.app.domain.repository.ListingRepository
-import com.studhub.app.domain.repository.UserRepository
+import com.studhub.app.data.repository.*
+import com.studhub.app.domain.repository.*
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.category.GetCategory
+import com.studhub.app.domain.usecase.conversation.GetConversationMessages
+import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
 import com.studhub.app.domain.usecase.listing.*
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetCurrentUser
@@ -114,6 +110,14 @@ class AppTestModule {
     @Provides
     fun provideUserRepository(): UserRepository = MockUserRepositoryImpl()
 
+    @Singleton
+    @Provides
+    fun provideConversationRepository(): ConversationRepository = ConversationRepositoryImpl()
+
+    @Singleton
+    @Provides
+    fun provideMessageRepository(): MessageRepository = MessageRepositoryImpl()
+
     @Provides
     fun provideCreateUser(userRepository: UserRepository): CreateUser = CreateUser(userRepository)
 
@@ -149,4 +153,15 @@ class AppTestModule {
 
     @Provides
     fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory = GetCategory(categoryRepository)
+
+    @Provides
+    fun provideGetConversationMessages(messageRepository: MessageRepository): GetConversationMessages =
+        GetConversationMessages(messageRepository)
+
+    @Provides
+    fun provideGetCurrentUserConversations(
+        conversationRepository: ConversationRepository,
+        authRepository: AuthRepository
+    ): GetCurrentUserConversations =
+        GetCurrentUserConversations(conversationRepository, authRepository)
 }
