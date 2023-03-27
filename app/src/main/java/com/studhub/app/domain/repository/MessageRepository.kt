@@ -12,7 +12,7 @@ interface MessageRepository {
      * @param [message] the message to add to the repository
      * @return A [Flow] of [ApiResponse] with the last one containing the [Message] pushed to the repository on success
      */
-    suspend fun createMessage(message: Message): Flow<ApiResponse<Conversation>>
+    suspend fun createMessage(message: Message): Flow<ApiResponse<Message>>
 
     /**
      * Retrieves all conversations from the repository sent in the given [conversation]
