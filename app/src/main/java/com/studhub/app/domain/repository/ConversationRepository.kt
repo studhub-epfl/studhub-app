@@ -23,6 +23,8 @@ interface ConversationRepository {
 
     /**
      * Retrieves all conversations from the repository sent by the given [user]
+     *
+     * `User1` of each [Conversation] should be [user]
      * @param [user] the user which to retrieve conversations from
      * @return A [Flow] of [ApiResponse] with the last one containing the retrieved list of [Conversation]s on success
      */
