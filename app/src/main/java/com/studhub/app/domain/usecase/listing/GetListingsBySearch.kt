@@ -17,7 +17,7 @@ class GetListingsBySearch @Inject constructor(private val repository: ListingRep
     /**
      * Retrieves all listings from the [repository]
      */
-    suspend operator fun invoke(): Flow<ApiResponse<List<Listing>>> {
-        return repository.getListings()
+    suspend operator fun invoke(keyword: String): Flow<ApiResponse<List<Listing>>> {
+        return repository.getListingsBySearch(keyword)
     }
 }

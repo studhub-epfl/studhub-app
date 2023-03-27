@@ -8,6 +8,7 @@ import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.CreateListing
 import com.studhub.app.domain.usecase.listing.GetListing
 import com.studhub.app.domain.usecase.listing.GetListings
+import com.studhub.app.domain.usecase.listing.GetListingsBySearch
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.collect
@@ -29,6 +30,9 @@ class ListingRepositoryImplTest {
 
     @Inject
     lateinit var listingRepo: ListingRepository
+
+    @Inject
+    lateinit var getListingsBySearch: GetListingsBySearch
 
     @Before
     fun init() {
@@ -110,5 +114,20 @@ class ListingRepositoryImplTest {
             }
         }
     }
+/*
+    @Test
+    fun getListingsBySearchShouldNotFail() {
+        runBlocking {
+            getListingsBySearch("").collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(true)
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
 
+        }
+
+    }
+*/
 }

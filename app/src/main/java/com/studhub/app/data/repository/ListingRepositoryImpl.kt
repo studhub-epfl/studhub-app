@@ -97,8 +97,9 @@ class ListingRepositoryImpl : ListingRepository {
 
             //val retrievedListing: Listing? = query.result.getValue(Listing::class.java)
             for (listingSnapshot in query.result.children.filter {
-                    q-> q.getValue(Listing::class.java)?.id == keyword;
-
+                    q-> (q.getValue(Listing::class.java)?.name == keyword) ||
+                    (q.getValue(Listing::class.java)?.id == keyword) ||
+                    (q.getValue(Listing::class.java)?.description == keyword)
 
             }){
                 val retrievedListing: Listing? = listingSnapshot.getValue(Listing::class.java)
