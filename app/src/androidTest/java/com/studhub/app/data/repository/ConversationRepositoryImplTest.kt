@@ -2,7 +2,6 @@ package com.studhub.app.data.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.domain.model.Message
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
 import com.studhub.app.domain.usecase.conversation.StartConversationWith

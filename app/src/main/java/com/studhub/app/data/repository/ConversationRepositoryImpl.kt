@@ -87,7 +87,8 @@ class ConversationRepositoryImpl : ConversationRepository {
     ): Flow<ApiResponse<Conversation>> = flow {
         emit(ApiResponse.Loading)
 
-        val conversationToPush = conversation.copy(updatedAt = Date(), lastMessageContent = message.content)
+        val conversationToPush =
+            conversation.copy(updatedAt = Date(), lastMessageContent = message.content)
 
         val query = db.child(conversation.id).setValue(conversationToPush)
 
