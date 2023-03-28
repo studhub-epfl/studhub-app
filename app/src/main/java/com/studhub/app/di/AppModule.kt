@@ -15,16 +15,14 @@ import com.google.firebase.ktx.Firebase
 import com.studhub.app.R
 import com.studhub.app.core.Constants.SIGN_IN_REQUEST
 import com.studhub.app.core.Constants.SIGN_UP_REQUEST
-import com.studhub.app.data.repository.AuthRepositoryImpl
-import com.studhub.app.data.repository.CategoryRepositoryImpl
-import com.studhub.app.data.repository.ListingRepositoryImpl
-import com.studhub.app.data.repository.UserRepositoryImpl
-import com.studhub.app.domain.repository.AuthRepository
-import com.studhub.app.domain.repository.CategoryRepository
-import com.studhub.app.domain.repository.ListingRepository
-import com.studhub.app.domain.repository.UserRepository
+import com.studhub.app.data.repository.*
+import com.studhub.app.domain.repository.*
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.category.GetCategory
+import com.studhub.app.domain.usecase.conversation.GetConversationMessages
+import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
+import com.studhub.app.domain.usecase.conversation.SendMessage
+import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.*
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetCurrentUser
@@ -33,7 +31,6 @@ import com.studhub.app.domain.usecase.user.UpdateUser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
@@ -128,6 +125,13 @@ class AppModule {
     @Provides
     fun provideCategoryRepository(): CategoryRepository = CategoryRepositoryImpl()
 
+    @Singleton
+    @Provides
+    fun provideConversationRepository(): ConversationRepository = ConversationRepositoryImpl()
+
+    @Singleton
+    @Provides
+    fun provideMessageRepository(): MessageRepository = MessageRepositoryImpl()
 
     @Provides
     fun provideCreateUser(userRepository: UserRepository): CreateUser = CreateUser(userRepository)
@@ -145,25 +149,56 @@ class AppModule {
     fun provideUpdateUser(userRepository: UserRepository): UpdateUser = UpdateUser(userRepository)
 
     @Provides
-    fun provideCreateListing(listingRepository: ListingRepository): CreateListing = CreateListing(listingRepository)
+    fun provideCreateListing(listingRepository: ListingRepository): CreateListing =
+        CreateListing(listingRepository)
 
     @Provides
-    fun provideGetListing(listingRepository: ListingRepository): GetListing = GetListing(listingRepository)
+    fun provideGetListing(listingRepository: ListingRepository): GetListing =
+        GetListing(listingRepository)
 
     @Provides
-    fun provideGetListings(listingRepository: ListingRepository): GetListings = GetListings(listingRepository)
+    fun provideGetListings(listingRepository: ListingRepository): GetListings =
+        GetListings(listingRepository)
 
     @Provides
-    fun provideRemoveListing(listingRepository: ListingRepository): RemoveListing = RemoveListing(listingRepository)
+    fun provideRemoveListing(listingRepository: ListingRepository): RemoveListing =
+        RemoveListing(listingRepository)
 
     @Provides
-    fun provideUpdateListing(listingRepository: ListingRepository): UpdateListing = UpdateListing(listingRepository)
+    fun provideUpdateListing(listingRepository: ListingRepository): UpdateListing =
+        UpdateListing(listingRepository)
 
     @Provides
-    fun provideGetCategories(categoryRepository: CategoryRepository): GetCategories = GetCategories(categoryRepository)
+    fun provideGetCategories(categoryRepository: CategoryRepository): GetCategories =
+        GetCategories(categoryRepository)
 
     @Provides
-    fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory = GetCategory(categoryRepository)
+    fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory =
+        GetCategory(categoryRepository)
 
+    @Provides
+    fun provideGetConversationMessages(messageRepository: MessageRepository): GetConversationMessages =
+        GetConversationMessages(messageRepository)
+
+    @Provides
+    fun provideGetCurrentUserConversations(
+        conversationRepository: ConversationRepository,
+        authRepository: AuthRepository
+    ): GetCurrentUserConversations =
+        GetCurrentUserConversations(conversationRepository, authRepository)
+
+    @Provides
+    fun provideSendMessage(
+        messageRepository: MessageRepository,
+        conversationRepository: ConversationRepository,
+        authRepository: AuthRepository
+    ): SendMessage =
+        SendMessage(messageRepository, conversationRepository, authRepository)
+
+    @Provides
+    fun provideStartConversationWith(
+        conversationRepository: ConversationRepository,
+        authRepository: AuthRepository
+    ): StartConversationWith = StartConversationWith(conversationRepository, authRepository)
 
 }
