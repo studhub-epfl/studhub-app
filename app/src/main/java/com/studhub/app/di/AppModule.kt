@@ -21,6 +21,8 @@ import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.category.GetCategory
 import com.studhub.app.domain.usecase.conversation.GetConversationMessages
 import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
+import com.studhub.app.domain.usecase.conversation.SendMessage
+import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.*
 import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetCurrentUser
@@ -184,5 +186,19 @@ class AppModule {
         authRepository: AuthRepository
     ): GetCurrentUserConversations =
         GetCurrentUserConversations(conversationRepository, authRepository)
+
+    @Provides
+    fun provideSendMessage(
+        messageRepository: MessageRepository,
+        conversationRepository: ConversationRepository,
+        authRepository: AuthRepository
+    ): SendMessage =
+        SendMessage(messageRepository, conversationRepository, authRepository)
+
+    @Provides
+    fun provideStartConversationWith(
+        conversationRepository: ConversationRepository,
+        authRepository: AuthRepository
+    ): StartConversationWith = StartConversationWith(conversationRepository, authRepository)
 
 }
