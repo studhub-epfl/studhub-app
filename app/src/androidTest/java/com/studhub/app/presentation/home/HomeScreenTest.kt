@@ -4,9 +4,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.studhub.app.wrapper.HomeActivity
 import com.studhub.app.R
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
+import com.studhub.app.wrapper.HomeActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -38,6 +38,7 @@ class HomeScreenTest {
         composeTestRule.onNodeWithText(str(R.string.home_button_add_listing)).assertIsDisplayed()
         composeTestRule.onNodeWithText(str(R.string.home_button_browse)).assertIsDisplayed()
         composeTestRule.onNodeWithText(str(R.string.home_button_cart)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(str(R.string.home_button_profile)).assertIsDisplayed()
         composeTestRule.onNodeWithText(str(R.string.home_button_about)).assertIsDisplayed()
     }
 
