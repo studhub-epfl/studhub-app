@@ -9,6 +9,8 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Message
 import com.studhub.app.domain.repository.MessageRepository
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -67,5 +69,10 @@ class MessageRepositoryImpl : MessageRepository {
             }
 
             db.addListenerForSingleValueEvent(listener)
+
+            awaitClose {
+                db.removeEventListener(listener)
+                cancel()
+            }
         }
 }
