@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.wrapper.NavigationActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -64,6 +65,20 @@ class NavigationTest {
             .performScrollTo()
             .performClick()
         composeTestRule.onNodeWithText(str(R.string.cart_title)).assertIsDisplayed()
+    }
+
+    @Test
+    fun clickProfile_navigateToProfileScreenAndSignOut() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_profile)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_title)).assertIsDisplayed()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_btn_sign_out)).performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.auth_title)).performClick()
     }
 
     @Test
