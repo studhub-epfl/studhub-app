@@ -9,5 +9,6 @@ data class Conversation(
     val user1: User? = null,
     val user2: User? = null,
     val createdAt: Date = Date(),
-    val updatedAt: Date = Date()
+    val updatedAt: Date = Date(),
+    val lastMessageContent: String = ""
 )
