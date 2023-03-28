@@ -9,11 +9,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.presentation.home.components.*
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.theme.StudHubTheme
-import dagger.hilt.EntryPoint
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.EarlyEntryPoint
 
 @Composable
 fun HomeScreen(
@@ -22,6 +20,7 @@ fun HomeScreen(
     onBrowseClick: () -> Unit,
     onAboutClick: () -> Unit,
     onCartClick: () -> Unit,
+    onProfileClick: () -> Unit
 ) {
     val user = viewModel.currentUser.collectAsState()
 
@@ -47,6 +46,9 @@ fun HomeScreen(
             Spacer(Modifier.height(16.dp))
 
             CartButton(onClick = onCartClick)
+            Spacer(Modifier.height(16.dp))
+
+            ProfileButton(onClick = onProfileClick)
             Spacer(Modifier.height(16.dp))
 
             AboutButton(onClick = onAboutClick)
