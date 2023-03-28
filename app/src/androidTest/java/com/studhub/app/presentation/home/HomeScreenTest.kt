@@ -3,6 +3,7 @@ package com.studhub.app.presentation.home
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.R
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
@@ -33,13 +34,34 @@ class HomeScreenTest {
 
     @Test
     fun homeScreen_displayedElements() {
-        composeTestRule.onNodeWithText(str(R.string.home_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.home_featured_items_title)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.home_button_add_listing)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.home_button_browse)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.home_button_cart)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.home_button_profile)).assertIsDisplayed()
-        composeTestRule.onNodeWithText(str(R.string.home_button_about)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_title))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_featured_items_title))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_add_listing))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_browse))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_cart))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_profile))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_about))
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test
