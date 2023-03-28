@@ -64,7 +64,7 @@ class HomeScreenTest {
             .assertIsDisplayed()
     }
 
-    /**@Test
+    @Test
     fun homeScreen_welcomeText_displaysUserName() {
         val userName = MockAuthRepositoryImpl.loggedInUser.userName
         val format = str(R.string.home_welcome_name_message)
@@ -73,5 +73,5 @@ class HomeScreenTest {
         composeTestRule.apply {
             onNodeWithText(message).assertIsDisplayed()
         }
-    }**/
+    }
 }

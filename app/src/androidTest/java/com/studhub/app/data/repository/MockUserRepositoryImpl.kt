@@ -30,7 +30,6 @@ class MockUserRepositoryImpl : UserRepository {
     override suspend fun getUser(userId: String): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             if (userDB.containsKey(userId))
                 emit(ApiResponse.Success(userDB.getValue(userId)))
             else
