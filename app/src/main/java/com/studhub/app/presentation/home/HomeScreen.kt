@@ -1,6 +1,8 @@
 package com.studhub.app.presentation.home
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -23,11 +25,13 @@ fun HomeScreen(
     onProfileClick: () -> Unit
 ) {
     val user = viewModel.currentUser.collectAsState()
+    val scrollState = rememberScrollState()
 
     StudHubTheme() {
         Column(
             modifier = Modifier
                 .padding(16.dp)
+                .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
             BigLabel(label = stringResource(R.string.home_title))
