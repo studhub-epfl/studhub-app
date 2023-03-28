@@ -13,11 +13,12 @@ class HomeActivity: AppCompatActivity() {
 
         setContent {
             HomeScreen(
-                onAddListingClick = { /*TODO*/ },
-                onBrowseClick = { /*TODO*/ },
-                onAboutClick = { /*TODO*/ }) {
-                
-            }
+                onAddListingClick = {},
+                onBrowseClick = {},
+                onAboutClick = {},
+                onCartClick = {},
+                onProfileClick = {}
+            )
         }
     }
 }
