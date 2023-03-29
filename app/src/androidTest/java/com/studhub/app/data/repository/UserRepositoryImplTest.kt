@@ -2,11 +2,8 @@ package com.studhub.app.data.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.data.repository.UserRepositoryImpl
 import com.studhub.app.domain.model.User
-import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -27,10 +24,7 @@ class UserRepositoryImplTest {
     var hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var createUser: CreateUser
-
-    @Inject
-    lateinit var getUser: GetUser
+    lateinit var userRepo: UserRepository
 
     @Before
     fun init() {
@@ -53,7 +47,7 @@ class UserRepositoryImplTest {
                 profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
             )
 
-            createUser(edouard).collect {
+            userRepo.createUser(edouard).collect {
                 when (it) {
                     is ApiResponse.Success -> user = it.data
                     is ApiResponse.Failure -> fail(it.message)
@@ -63,7 +57,7 @@ class UserRepositoryImplTest {
         }
 
         runBlocking {
-            getUser(user.id).collect {
+            userRepo.getUser(user.id).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(it.data == user)
                     is ApiResponse.Failure -> fail(it.message)

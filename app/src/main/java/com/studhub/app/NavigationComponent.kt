@@ -1,6 +1,5 @@
 package com.studhub.app
 
-import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,11 +14,13 @@ import com.studhub.app.presentation.about.AboutScreen
 import com.studhub.app.presentation.auth.AuthScreen
 import com.studhub.app.presentation.cart.CartScreen
 import com.studhub.app.presentation.home.HomeScreen
+import com.studhub.app.presentation.listing.add.CreateListingScreen
+import com.studhub.app.presentation.listing.add.CreateListingViewModel
 import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.browse.BrowseViewModel
 import com.studhub.app.presentation.listing.browse.DetailedListingScreen
-import com.studhub.app.presentation.listing.add.CreateListingScreen
-import com.studhub.app.presentation.listing.add.CreateListingViewModel
+import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
+import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
@@ -47,14 +48,25 @@ fun AppNavigation(
             route = "Auth"
         ) {
             AuthScreen(
-                onLoginComplete = {
-                    navController.navigate("Home")
+                onLoginComplete = { isNewUser ->
+                    if (isNewUser) {
+                        navController.navigate("EditProfile")
+                    } else {
+                        navController.navigate("Home")
+                    }
                 }
             )
         }
 
         composable(route = "Profile") {
-            ProfileScreen(navigateToAuthScreen = { navController.navigate("Auth") })
+            ProfileScreen(
+                navigateToAuthScreen = { navController.navigate("Auth") },
+                navigateToEditProfileScreen = { navController.navigate("EditProfile") }
+            )
+        }
+
+        composable(route = "EditProfile") {
+            EditProfileScreen(navigateToProfile = { navController.navigate("Profile") })
         }
 
         composable("Home") {
@@ -63,7 +75,7 @@ fun AppNavigation(
                 onBrowseClick = { navController.navigate("Browse") },
                 onAboutClick = { navController.navigate("About") },
                 onCartClick = { navController.navigate("Cart") },
-                onProfileClick = { navController.navigate("Profile")}
+                onProfileClick = { navController.navigate("Profile") }
             )
         }
         composable("AddListing") {

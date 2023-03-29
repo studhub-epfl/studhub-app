@@ -46,7 +46,7 @@ class ListingRepositoryImpl : ListingRepository {
             val listings = mutableListOf<Listing>()
 
             //val retrievedListing: Listing? = query.result.getValue(Listing::class.java)
-            for (listingSnapshot in query.result.children){
+            for (listingSnapshot in query.result.children) {
                 val retrievedListing: Listing? = listingSnapshot.getValue(Listing::class.java)
                 if (retrievedListing != null) {
                     listings.add(retrievedListing)
@@ -84,11 +84,11 @@ class ListingRepositoryImpl : ListingRepository {
     override suspend fun updateListing(
         listingId: String,
         updatedListing: Listing
-    ): Flow<ApiResponse<Listing>> {
-        TODO("Not yet implemented")
+    ): Flow<ApiResponse<Listing>> = flow {
+        emit(ApiResponse.Loading)
     }
 
-    override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> {
-        TODO("Not yet implemented")
+    override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
     }
 }

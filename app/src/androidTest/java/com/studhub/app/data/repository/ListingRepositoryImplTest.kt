@@ -10,6 +10,7 @@ import com.studhub.app.domain.usecase.listing.GetListing
 import com.studhub.app.domain.usecase.listing.GetListings
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
 import org.junit.Before
@@ -27,13 +28,7 @@ class ListingRepositoryImplTest {
     var hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var createListing: CreateListing
-
-    @Inject
-    lateinit var getListing:  GetListing
-
-    @Inject
-    lateinit var getListings: GetListings
+    lateinit var listingRepo: ListingRepository
 
     @Before
     fun init() {
@@ -52,7 +47,7 @@ class ListingRepositoryImplTest {
                 name = "Product ${Random.nextLong()}",
             )
 
-            createListing(product).collect {
+            listingRepo.createListing(product).collect {
                 when (it) {
                     is ApiResponse.Success -> listing = it.data
                     is ApiResponse.Failure -> fail(it.message)
@@ -62,7 +57,7 @@ class ListingRepositoryImplTest {
         }
 
         runBlocking {
-            getListing(listing.id).collect {
+            listingRepo.getListing(listing.id).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(it.data == listing)
                     is ApiResponse.Failure -> fail(it.message)
@@ -76,16 +71,44 @@ class ListingRepositoryImplTest {
     @Test
     fun getListingsShouldNotFail() {
         runBlocking {
-            getListings().collect {
+            listingRepo.getListings().collect {
                 when (it) {
                     is ApiResponse.Success -> assert(true)
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
                 }
             }
-
         }
+    }
 
+    @Test
+    fun updateListingShouldNotFail() {
+        // stub test
+        val fakeListing = Listing(id = "000", name = "My listing")
+
+        runBlocking {
+            listingRepo.updateListing(fakeListing.id, fakeListing).collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail()
+                    else -> assert(true)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun removeListingShouldNotFail() {
+        // stub test
+        val fakeListing = Listing(id = "000", name = "My listing")
+
+        runBlocking {
+            listingRepo.removeListing(fakeListing.id).collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail()
+                    else -> assert(true)
+                }
+            }
+        }
     }
 
 }

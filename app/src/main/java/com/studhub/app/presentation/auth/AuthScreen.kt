@@ -18,7 +18,7 @@ import com.studhub.app.presentation.auth.components.SignInWithGoogle
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
-    onLoginComplete: () -> Unit
+    onLoginComplete: (isNewUser: Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -59,10 +59,6 @@ fun AuthScreen(
     )
 
     SignInWithGoogle(
-        navigateToHomeScreen = { signedIn ->
-            if (signedIn) {
-                onLoginComplete()
-            }
-        }
+        onSignIn = onLoginComplete
     )
 }

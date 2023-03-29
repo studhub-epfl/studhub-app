@@ -56,8 +56,31 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
-        TODO("Not yet implemented")
+    override suspend fun updateUserInfo(userId: String, updatedUser: User): Flow<ApiResponse<User>> = flow {
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).updateChildren(mapOf(
+            "firstName" to updatedUser.firstName,
+            "lastName" to updatedUser.lastName,
+            "userName" to updatedUser.userName,
+            "phoneNumber" to updatedUser.phoneNumber
+        ))
+
+        query.await()
+
+        if (query.isSuccessful) {
+            val updatedUserQuery = db.child(userId).get()
+            updatedUserQuery.await()
+            val retrievedUpdatedUser: User? = updatedUserQuery.result.getValue(User::class.java)
+            if (retrievedUpdatedUser == null) {
+                emit(ApiResponse.Failure("An error occurred while retrieving the updated user"))
+            } else {
+                emit(ApiResponse.Success(retrievedUpdatedUser))
+            }
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
     }
 
     override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {

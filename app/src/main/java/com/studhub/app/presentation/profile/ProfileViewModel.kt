@@ -9,6 +9,7 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.SignOut
+import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val _signOut: SignOut,
     private val getCurrentUser: GetCurrentUser,
+    private val updateCurrentUserInfo: UpdateCurrentUserInfo
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
         private set
@@ -28,13 +30,20 @@ class ProfileViewModel @Inject constructor(
         getLoggedInUser()
     }
 
-    private fun getLoggedInUser() {
+    private fun getLoggedInUser() =
         viewModelScope.launch {
             getCurrentUser().collect {
                 currentUser = it
             }
         }
-    }
+
+    fun updateUserInfo(updatedUserInfo: User) =
+        viewModelScope.launch {
+            updateCurrentUserInfo(updatedUserInfo).collect {
+                currentUser = it
+            }
+        }
+
 
     fun signOut() = viewModelScope.launch {
         signOutResponse = ApiResponse.Loading

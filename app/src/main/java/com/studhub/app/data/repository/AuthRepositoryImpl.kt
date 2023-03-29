@@ -62,7 +62,7 @@ class AuthRepositoryImpl @Inject constructor(
                 addUserToFirebase()
             }
 
-            emit(ApiResponse.Success(true))
+            emit(ApiResponse.Success(isNewUser))
         } catch (e: Exception) {
             emit(ApiResponse.Failure(e.message.orEmpty()))
         }
