@@ -47,8 +47,12 @@ fun AppNavigation(
             route = "Auth"
         ) {
             AuthScreen(
-                onLoginComplete = {
-                    navController.navigate("Home")
+                onLoginComplete = { isNewUser ->
+                    if (isNewUser) {
+                        navController.navigate("Home")
+                    } else {
+                        navController.navigate("Profile")
+                    }
                 }
             )
         }

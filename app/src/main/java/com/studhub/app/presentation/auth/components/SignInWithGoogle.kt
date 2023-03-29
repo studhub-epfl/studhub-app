@@ -10,13 +10,13 @@ import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 @Composable
 fun SignInWithGoogle(
     viewModel: AuthViewModel = hiltViewModel(),
-    navigateToHomeScreen: (signedIn: Boolean) -> Unit
+    onSignIn: (isNewUser: Boolean) -> Unit,
 ) {
     when (val signInWithGoogleResponse = viewModel.signInWithGoogleResponse) {
         is ApiResponse.Loading -> LoadingCircle()
-        is ApiResponse.Success -> signInWithGoogleResponse.data.let { signedIn ->
-            LaunchedEffect(signedIn) {
-                navigateToHomeScreen(signedIn)
+        is ApiResponse.Success -> signInWithGoogleResponse.data.let { isNewUser ->
+            LaunchedEffect(isNewUser) {
+                onSignIn(isNewUser)
             }
         }
         is ApiResponse.Failure -> LaunchedEffect(Unit) {

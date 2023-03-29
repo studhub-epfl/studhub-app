@@ -17,6 +17,7 @@ interface AuthRepository {
 
     /**
      * Authenticate to firebase with the given [googleCredential]
+     * @return a [Flow] of [ApiResponse] with the last one being true iff the user is a new user
      */
     suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>>
 
