@@ -2,4 +2,11 @@
 <resources>
     <string name="profile_title">Profile</string>
     <string name="profile_btn_sign_out">Sign out</string>
+    <string name="profile_btn_edit_profile">Edit</string>
+    <string name="profile_edit_title">Edit profile information</string>
+    <string name="profile_edit_form_label_firstname">First Name</string>
+    <string name="profile_edit_form_label_lastname">Last Name</string>
+    <string name="profile_edit_form_label_username">User Name</string>
+    <string name="profile_edit_form_label_phone">Phone Number</string>
+    <string name="profile_edit_form_btn_save">Save information</string>
 </resources>

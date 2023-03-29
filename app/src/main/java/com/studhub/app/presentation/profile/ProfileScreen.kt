@@ -13,7 +13,8 @@ import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    navigateToAuthScreen: () -> Unit
+    navigateToAuthScreen: () -> Unit,
+    navigateToEditProfileScreen: () -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -24,9 +25,10 @@ fun ProfileScreen(
             Scaffold(
                 topBar = {
                     ProfileTopBar(
+                        editProfile = navigateToEditProfileScreen,
                         signOut = {
                             viewModel.signOut()
-                        },
+                        }
                     )
                 },
                 content = { padding ->

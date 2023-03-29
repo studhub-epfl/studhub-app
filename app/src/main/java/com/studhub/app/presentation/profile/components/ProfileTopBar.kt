@@ -1,7 +1,5 @@
 package com.studhub.app.presentation.profile.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
@@ -11,10 +9,9 @@ import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTopBar(
-    signOut: () -> Unit
+    signOut: () -> Unit,
+    editProfile: () -> Unit
 ) {
-    var openMenu by remember { mutableStateOf(false) }
-
     TopAppBar(
         title = {
             Text(
@@ -22,16 +19,10 @@ fun ProfileTopBar(
             )
         },
         actions = {
-            IconButton(
-                onClick = {
-                    openMenu = !openMenu
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.MoreVert,
-                    contentDescription = null,
-                )
-            }
+            BasicFilledButton(
+                onClick = editProfile,
+                label = stringResource(R.string.profile_btn_edit_profile)
+            )
 
             BasicFilledButton(
                 onClick = signOut,
