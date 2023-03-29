@@ -12,7 +12,6 @@ import javax.inject.Inject
  *
  * @param [userRepository] the repository which the use case will act on
  * @param [authRepository] the repository which the use case will retrieve the logged in user from
- * @
  */
 class UpdateCurrentUserInfo @Inject constructor(
     private val userRepository: UserRepository,

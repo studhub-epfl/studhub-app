@@ -103,7 +103,7 @@ class NavigationTest {
             .performClick()
 
         // assert we are back on the profile page
-        composeTestRule.onNodeWithText(str(R.string.profile_title))
+        composeTestRule.onNodeWithText(str(R.string.profile_title)).assertIsDisplayed()
     }
 
     @Test
