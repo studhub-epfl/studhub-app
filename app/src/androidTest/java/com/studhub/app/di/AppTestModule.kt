@@ -116,9 +116,6 @@ class AppTestModule {
     fun provideMessageRepository(): MessageRepository = MessageRepositoryImpl()
 
     @Provides
-    fun provideCreateUser(userRepository: UserRepository): CreateUser = CreateUser(userRepository)
-
-    @Provides
     fun provideGetCurrentUserUseCase(
         userRepository: UserRepository,
         authRepository: AuthRepository
@@ -128,7 +125,10 @@ class AppTestModule {
     fun provideGetUser(userRepository: UserRepository): GetUser = GetUser(userRepository)
 
     @Provides
-    fun provideUpdateUser(userRepository: UserRepository): UpdateUser = UpdateUser(userRepository)
+    fun provideUpdateCurrentUserInfo(
+        userRepository: UserRepository,
+        authRepository: AuthRepository
+    ): UpdateCurrentUserInfo = UpdateCurrentUserInfo(userRepository, authRepository)
 
     @Provides
     fun provideSignOut(authRepository: AuthRepository): SignOut = SignOut(authRepository)

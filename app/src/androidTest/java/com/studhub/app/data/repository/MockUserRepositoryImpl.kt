@@ -36,7 +36,7 @@ class MockUserRepositoryImpl: UserRepository {
         }
     }
 
-    override suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
+    override suspend fun updateUserInfo(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {

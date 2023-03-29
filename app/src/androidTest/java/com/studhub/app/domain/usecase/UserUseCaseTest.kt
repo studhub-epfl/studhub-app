@@ -1,22 +1,47 @@
 package com.studhub.app.domain.usecase
 
+import com.google.android.gms.auth.api.identity.BeginSignInResult
+import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.domain.usecase.user.GetUser
-import com.studhub.app.domain.usecase.user.UpdateUser
+import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
 import org.junit.Test
 import kotlin.random.Random
+import kotlin.random.nextLong
 
 class UserUseCaseTest {
     private val userDB = HashMap<String, User>()
+    private val loggedInUser = User(id = "user-uid", userName = "John Doe" )
+
+    init {
+        userDB[loggedInUser.id] = loggedInUser
+    }
+
+    private val authRepo: AuthRepository = object : AuthRepository {
+        override val isUserAuthenticatedInFirebase: Boolean
+            get() = true
+        override val currentUserUid: String
+            get() = loggedInUser.id
+
+        override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> =
+            flowOf(ApiResponse.Loading)
+
+        override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>> =
+            flowOf(ApiResponse.Loading)
+
+        override suspend fun signOut(): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+    }
 
     private val repository: UserRepository = object : UserRepository {
         override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
@@ -39,7 +64,10 @@ class UserUseCaseTest {
             }
         }
 
-        override suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
+        override suspend fun updateUserInfo(
+            userId: String,
+            updatedUser: User
+        ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
@@ -66,27 +94,6 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun createUserUseCaseCorrectEntryInGivenRepository() = runBlocking {
-        val createUser = CreateUser(repository)
-
-        val userId = Random.nextLong().toString()
-        val userName = Random.nextLong().toString()
-        val listing = User(id = userId, userName = userName)
-
-        createUser(listing).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> {
-                    val result = response.data
-                    Assert.assertNotNull(result)
-                    Assert.assertEquals(userName, userDB.getValue(userId).userName)
-                }
-                is ApiResponse.Failure -> Assert.fail("Request failure")
-                is ApiResponse.Loading -> {}
-            }
-        }
-    }
-
-    @Test
     fun getUserUseCaseRetrievesCorrectEntryFromGivenRepository() = runBlocking {
         val getUser = GetUser(repository)
 
@@ -109,36 +116,36 @@ class UserUseCaseTest {
 
     @Test
     fun updateUserUseCaseUpdatesCorrectEntryInGivenRepository() = runBlocking {
-        val updateUser = UpdateUser(repository)
+        val updateCurrentUserInfo = UpdateCurrentUserInfo(repository, authRepo)
 
-        val userId1 = Random.nextLong().toString()
-        val userName1 = Random.nextLong().toString()
-        val userId2 = Random.nextLong().toString()
-        val userName2 = Random.nextLong().toString()
-        userDB[userId1] = User(id = userId1, userName = userName1)
+        val userId = Random.nextLong().toString()
+        val userName = Random.nextLong().toString()
+        val email = "${Random.nextLong()}@stud-hub.com"
 
-        val updatedUser = User(id = userId2, userName = userName2)
+        val updatedUser = User(id = userId, userName = userName, email = email)
 
-        updateUser(userId1, updatedUser).collect { response ->
+        updateCurrentUserInfo(updatedUser).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val result: User = response.data
-                    val expectedResult: User = updatedUser.copy(id = userId1)
-                    val user1FromDB: User = userDB.getValue(userId1)
 
                     Assert.assertEquals(
-                        "returned user should match the updated one",
-                        result,
-                        expectedResult
+                        "user id should not be updated",
+                        result.id,
+                        loggedInUser.id
+                    )
+
+                    Assert.assertEquals(
+                        "email should be updated",
+                        result.email,
+                        email
                     )
 
                     Assert.assertEquals(
                         "username should be updated",
-                        userName2,
-                        user1FromDB.userName
+                        result.userName,
+                        userName
                     )
-
-                    Assert.assertEquals("id should not be updated", userId1, user1FromDB.id)
                 }
                 is ApiResponse.Failure -> Assert.fail("Request failure")
                 is ApiResponse.Loading -> {}

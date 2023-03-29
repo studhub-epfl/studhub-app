@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.user.CreateUser
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.EmailTextField
@@ -58,7 +57,7 @@ private val repository: UserRepository = object : UserRepository {
         }
     }
 
-    override suspend fun updateUser(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
+    override suspend fun updateUserInfo(userId: String, updatedUser: User): Flow<ApiResponse<User>> {
         return flow {
             // empty implementation
             emit(ApiResponse.Success(User()))
@@ -75,8 +74,8 @@ private val repository: UserRepository = object : UserRepository {
 }
 
 suspend fun submit(user: User) {
-    val createUser = CreateUser(repository)
-    createUser(user)
+    // val createUser = CreateUser(repository)
+    // createUser(user)
 }
 
 @Composable
