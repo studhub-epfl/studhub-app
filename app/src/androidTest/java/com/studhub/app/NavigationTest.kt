@@ -78,7 +78,7 @@ class NavigationTest {
 
         composeTestRule.onNodeWithText(str(R.string.profile_btn_sign_out)).performClick()
 
-        composeTestRule.onNodeWithText(str(R.string.auth_title)).performClick()
+        composeTestRule.onNodeWithText(str(R.string.auth_title)).assertIsDisplayed()
     }
 
     @Test
