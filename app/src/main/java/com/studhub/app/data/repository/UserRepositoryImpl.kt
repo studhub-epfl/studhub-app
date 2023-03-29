@@ -97,27 +97,31 @@ class UserRepositoryImpl : UserRepository {
         val userRef = db.child(userId)
         val favoriteListingsRef = userRef.child("favoriteListings")
 
-        val userSnapshot = userRef.get().await()
+        val userQuery = userRef.get()
 
-        val user = userSnapshot.getValue(User::class.java)!!
-        if (user.favoriteListings.contains(favListingId)) {
-            emit(ApiResponse.Failure("Listing is already a favorite"))
-            return@flow
-        }
+        userQuery.await()
 
-        val updatedFavoriteListings =
-            user.favoriteListings.toMutableList().apply { add(favListingId) }
-        val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
+        val user: User? = userQuery.result.getValue(User::class.java)
 
-        val query = favoriteListingsRef.setValue(updatedUser)
+        if (user != null) {
+            if (user.favoriteListings.contains(favListingId)) {
+                emit(ApiResponse.Failure("Listing is already a favorite"))
+                return@flow
+            }
+            val updatedFavoriteListings =
+                user.favoriteListings.toMutableList().apply { add(favListingId) }
+            val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
 
-        query.await()
+            val query = favoriteListingsRef.setValue(updatedUser)
 
-        if (query.isSuccessful) {
-            emit(ApiResponse.Success(updatedUser))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
         }
     }
 
@@ -130,26 +134,31 @@ class UserRepositoryImpl : UserRepository {
         val userRef = db.child(userId)
         val favoriteListingsRef = userRef.child("favoriteListings")
 
-        val userSnapshot = userRef.get().await()
+        val userQuery = userRef.get()
 
-        val user = userSnapshot.getValue(User::class.java)!!
-        if (!user.favoriteListings.contains(favListingId)) {
-            emit(ApiResponse.Failure("Listing is not a favorite"))
-            return@flow
-        }
+        userQuery.await()
 
-        val updatedFavoriteListings =
-            user.favoriteListings.toMutableList().apply { remove(favListingId) }
+        val user: User? = userQuery.result.getValue(User::class.java)
 
-        val query = favoriteListingsRef.setValue(updatedFavoriteListings)
+        if (user != null) {
+            if (!user.favoriteListings.contains(favListingId)) {
+                emit(ApiResponse.Failure("Listing is not a favorite"))
+                return@flow
+            }
 
-        query.await()
+            val updatedFavoriteListings =
+                user.favoriteListings.toMutableList().apply { remove(favListingId) }
 
-        if (query.isSuccessful) {
-            emit(ApiResponse.Success(true))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            val query = favoriteListingsRef.setValue(updatedFavoriteListings)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(true))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
         }
     }
 
@@ -160,10 +169,14 @@ class UserRepositoryImpl : UserRepository {
             val userRef = db.child(userId)
             val favoriteListingsRef = userRef.child("favoriteListings")
 
-            val favoriteListingsSnapshot = favoriteListingsRef.get().await()
+            val favoriteListingQuery = favoriteListingsRef.get()
 
-            if (favoriteListingsSnapshot.exists()) {
-                val favoriteListingIds = favoriteListingsSnapshot.getValue<List<String>>()!!
+            favoriteListingQuery.await()
+
+            val favoriteListingIds: List<String>? =
+                favoriteListingQuery.result.getValue<List<String>>()
+
+            if (favoriteListingIds != null) {
                 val favoriteListings = mutableListOf<Listing>()
 
                 favoriteListingIds.forEach { favoriteListingId ->

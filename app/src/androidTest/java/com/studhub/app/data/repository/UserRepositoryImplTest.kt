@@ -2,9 +2,11 @@ package com.studhub.app.data.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.user.GetUser
+import com.studhub.app.domain.usecase.user.AddFavoriteListing
+import com.studhub.app.domain.usecase.user.GetFavoriteListings
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -65,6 +67,38 @@ class UserRepositoryImplTest {
                 }
             }
 
+        }
+    }
+
+    @Test
+    fun addAndGetFavoriteListing() {
+        val userRepo = UserRepositoryImpl() // real repo
+        val authRepo = MockAuthRepositoryImpl() // fake repo
+        val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
+        val getFavoriteListings = GetFavoriteListings(userRepo, authRepo)
+        val product = Listing(
+            id = Random.nextLong().toString(),
+            name = "Testing Product ${Random.nextLong()}",
+        )
+
+        runBlocking {
+            addFavoriteListing(product.id).collect() {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
+                }
+            }
+        }
+
+        runBlocking {
+            getFavoriteListings().collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> listOf(product) == it.data
+                }
+            }
         }
     }
 }
