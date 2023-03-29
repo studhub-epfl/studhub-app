@@ -68,6 +68,18 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun signOut(): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            oneTapClient.signOut().await()
+            auth.signOut()
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Error while signing out" }))
+        }
+    }
+
     private fun addUserToFirebase() {
         auth.currentUser?.apply {
             val user: User = toUser()

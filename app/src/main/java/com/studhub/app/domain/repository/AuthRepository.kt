@@ -10,7 +10,18 @@ interface AuthRepository {
 
     val currentUserUid: String
 
+    /**
+     * Start sign-in process with google one-tap sign-in
+     */
     suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>>
 
+    /**
+     * Authenticate to firebase with the given [googleCredential]
+     */
     suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>>
+
+    /**
+     * Sign out of the application
+     */
+    suspend fun signOut(): Flow<ApiResponse<Boolean>>
 }

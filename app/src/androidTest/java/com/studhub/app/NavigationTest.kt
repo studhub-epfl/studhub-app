@@ -4,10 +4,12 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.wrapper.NavigationActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +40,9 @@ class NavigationTest {
 
     @Test
     fun clickAddListing_navigatesToAddListingScreen() {
-        composeTestRule.onNodeWithText(str(R.string.home_button_add_listing)).assertExists()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_add_listing)).assertExists()
+            .performScrollTo()
             .performClick()
 
         composeTestRule.onNodeWithText(str(R.string.listings_add_title)).assertIsDisplayed()
@@ -46,7 +50,9 @@ class NavigationTest {
 
     @Test
     fun clickBrowse_navigatesToBrowseScreen() {
-        composeTestRule.onNodeWithText(str(R.string.home_button_browse)).assertExists()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_browse)).assertExists()
+            .performScrollTo()
             .performClick()
 
         composeTestRule.onNodeWithText(str(R.string.listings_browsing_title)).assertIsDisplayed()
@@ -54,14 +60,32 @@ class NavigationTest {
 
     @Test
     fun clickCart_navigatesToCartScreen() {
-        composeTestRule.onNodeWithText(str(R.string.home_button_cart)).assertExists().performClick()
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_cart)).assertExists()
+            .performScrollTo()
+            .performClick()
         composeTestRule.onNodeWithText(str(R.string.cart_title)).assertIsDisplayed()
+    }
+
+    @Test
+    fun clickProfile_navigateToProfileScreenAndSignOut() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_profile)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_title)).assertIsDisplayed()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_btn_sign_out)).performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.auth_title)).assertIsDisplayed()
     }
 
     @Test
     fun clickCart_navigatesToAboutScreen() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_about)).assertExists()
+            .performScrollTo()
             .performClick()
 
         composeTestRule.onNodeWithText(str(R.string.about_title)).assertIsDisplayed()

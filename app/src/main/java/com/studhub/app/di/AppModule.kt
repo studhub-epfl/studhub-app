@@ -24,10 +24,7 @@ import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
 import com.studhub.app.domain.usecase.conversation.SendMessage
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.*
-import com.studhub.app.domain.usecase.user.CreateUser
-import com.studhub.app.domain.usecase.user.GetCurrentUser
-import com.studhub.app.domain.usecase.user.GetUser
-import com.studhub.app.domain.usecase.user.UpdateUser
+import com.studhub.app.domain.usecase.user.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -147,6 +144,9 @@ class AppModule {
 
     @Provides
     fun provideUpdateUser(userRepository: UserRepository): UpdateUser = UpdateUser(userRepository)
+
+    @Provides
+    fun provideSignOut(authRepository: AuthRepository): SignOut = SignOut(authRepository)
 
     @Provides
     fun provideCreateListing(listingRepository: ListingRepository): CreateListing =

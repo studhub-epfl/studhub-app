@@ -1,6 +1,8 @@
 package com.studhub.app.presentation.home
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -9,11 +11,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.presentation.home.components.*
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.theme.StudHubTheme
-import dagger.hilt.EntryPoint
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.EarlyEntryPoint
 
 @Composable
 fun HomeScreen(
@@ -22,13 +22,16 @@ fun HomeScreen(
     onBrowseClick: () -> Unit,
     onAboutClick: () -> Unit,
     onCartClick: () -> Unit,
+    onProfileClick: () -> Unit
 ) {
     val user = viewModel.currentUser.collectAsState()
+    val scrollState = rememberScrollState()
 
     StudHubTheme() {
         Column(
             modifier = Modifier
                 .padding(16.dp)
+                .verticalScroll(scrollState)
                 .fillMaxSize()
         ) {
             BigLabel(label = stringResource(R.string.home_title))
@@ -47,6 +50,9 @@ fun HomeScreen(
             Spacer(Modifier.height(16.dp))
 
             CartButton(onClick = onCartClick)
+            Spacer(Modifier.height(16.dp))
+
+            ProfileButton(onClick = onProfileClick)
             Spacer(Modifier.height(16.dp))
 
             AboutButton(onClick = onAboutClick)

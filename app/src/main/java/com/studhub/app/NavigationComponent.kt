@@ -20,6 +20,7 @@ import com.studhub.app.presentation.listing.browse.BrowseViewModel
 import com.studhub.app.presentation.listing.browse.DetailedListingScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
 import com.studhub.app.presentation.listing.add.CreateListingViewModel
+import com.studhub.app.presentation.profile.ProfileScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
@@ -52,12 +53,17 @@ fun AppNavigation(
             )
         }
 
+        composable(route = "Profile") {
+            ProfileScreen(navigateToAuthScreen = { navController.navigate("Auth") })
+        }
+
         composable("Home") {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
                 onBrowseClick = { navController.navigate("Browse") },
                 onAboutClick = { navController.navigate("About") },
-                onCartClick = { navController.navigate("Cart") }
+                onCartClick = { navController.navigate("Cart") },
+                onProfileClick = { navController.navigate("Profile")}
             )
         }
         composable("AddListing") {

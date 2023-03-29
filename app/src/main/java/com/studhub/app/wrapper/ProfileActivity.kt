@@ -3,22 +3,16 @@ package com.studhub.app.wrapper
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import com.studhub.app.presentation.home.HomeScreen
+import com.studhub.app.presentation.profile.ProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeActivity: AppCompatActivity() {
+class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            HomeScreen(
-                onAddListingClick = {},
-                onBrowseClick = {},
-                onAboutClick = {},
-                onCartClick = {},
-                onProfileClick = {}
-            )
+            ProfileScreen(navigateToAuthScreen = {})
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.studhub.app.data.repository
 
-import android.app.PendingIntent
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
@@ -11,14 +10,15 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Singleton
 
 @Singleton
-class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true): AuthRepository {
+class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true) : AuthRepository {
     private var isLoggedIn = isLoggedInByDefault
 
     companion object {
         val loggedInUser = User(
             id = "wiufhb",
             userName = "Stud Hub",
-            email = "stud.hub@studhub.ch")
+            email = "stud.hub@studhub.ch"
+        )
 
     }
 
@@ -36,5 +36,10 @@ class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true): AuthRepositor
     override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>> {
         isLoggedIn = true
         return flowOf(ApiResponse.Loading)
+    }
+
+    override suspend fun signOut(): Flow<ApiResponse<Boolean>> {
+        isLoggedIn = false
+        return flowOf(ApiResponse.Success(true))
     }
 }
