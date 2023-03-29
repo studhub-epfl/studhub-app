@@ -101,7 +101,7 @@ class AppTestModule {
 
     @Singleton
     @Provides
-    fun provideListingRepository(): ListingRepository = MockListingRepositoryImpl()
+    fun provideListingRepository(): ListingRepository = ListingRepositoryImpl()
 
     @Singleton
     @Provides
