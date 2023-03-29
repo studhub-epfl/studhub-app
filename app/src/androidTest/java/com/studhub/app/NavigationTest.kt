@@ -82,6 +82,31 @@ class NavigationTest {
     }
 
     @Test
+    fun clickProfile_navigateToProfileThenEditThenSave() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_profile)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_title)).assertIsDisplayed()
+
+        // click the EDIT button on the profile screen
+        composeTestRule.onNodeWithText(str(R.string.profile_btn_edit_profile)).performClick()
+
+        // assert edit profile title is displayed i.e. we are on the edit profile page
+        composeTestRule.onNodeWithText(str(R.string.profile_edit_title)).assertIsDisplayed()
+
+        // click the save button
+        composeTestRule
+            .onNodeWithText(str(R.string.profile_edit_form_btn_save))
+            .performScrollTo()
+            .performClick()
+
+        // assert we are back on the profile page
+        composeTestRule.onNodeWithText(str(R.string.profile_title))
+    }
+
+    @Test
     fun clickCart_navigatesToAboutScreen() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_about)).assertExists()

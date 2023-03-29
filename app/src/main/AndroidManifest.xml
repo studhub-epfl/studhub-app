@@ -25,11 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".RegisterUserActivity"
-            android:exported="true"
-            android:label="@string/title_activity_register_user"
-            android:theme="@style/Theme.Bootcamp" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -75,6 +70,11 @@
             android:name=".wrapper.ProfileActivity"
             android:exported="false"
             android:label="Profile Wrapper"
+            android:theme="@style/Theme.Bootcamp" />
+        <activity
+            android:name=".wrapper.EditProfileActivity"
+            android:exported="false"
+            android:label="Edit Profile Wrapper"
             android:theme="@style/Theme.Bootcamp" />
     </application>
 

@@ -17,7 +17,8 @@ class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true) : AuthReposito
         val loggedInUser = User(
             id = "wiufhb",
             userName = "Stud Hub",
-            email = "stud.hub@studhub.ch"
+            email = "stud.hub@studhub.ch",
+            phoneNumber = "0000000000"
         )
 
     }
