@@ -47,5 +47,3 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleLoginComplete() = navController.navigate("Home")
 }
-
-
