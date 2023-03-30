@@ -94,16 +94,10 @@ class ListingRepositoryImpl : ListingRepository {
         if (query.isSuccessful) {
             val listings = mutableListOf<Listing>()
 
-
-            //val retrievedListing: Listing? = query.result.getValue(Listing::class.java)
-            for (listingSnapshot in query.result.children.filter {
-                    q-> (q.getValue(Listing::class.java)?.name?.compareTo(keyword) == 0) ||
-                    (q.getValue(Listing::class.java)?.description?.compareTo(keyword) == 0)
-
-            }){
-                val retrievedListing: Listing? = listingSnapshot.getValue(Listing::class.java)
-                if (retrievedListing != null) {
-                    listings.add(retrievedListing)
+            query.result.children.forEach { snapshot ->
+                val listing = snapshot.getValue(Listing::class.java)
+                if (listing != null && (listing.name.contains(keyword) || listing.description.contains(keyword))) {
+                    listings.add(listing)
                 }
             }
 
@@ -121,14 +115,14 @@ class ListingRepositoryImpl : ListingRepository {
     ): Flow<ApiResponse<Listing>> = flow {
         emit(ApiResponse.Loading)
 
-
+        val listingToPush = updatedListing.copy(id = listingId)
         // set the new value of the Listing on the database
-        val query = db.child(listingId).setValue(updatedListing)
+        val query = db.child(listingId).setValue(listingToPush)
 
         query.await()
 
         if (query.isSuccessful) {
-            emit(ApiResponse.Success(updatedListing))
+            emit(ApiResponse.Success(listingToPush))
         } else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))

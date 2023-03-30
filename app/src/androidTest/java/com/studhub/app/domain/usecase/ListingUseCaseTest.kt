@@ -7,6 +7,7 @@ import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -51,7 +52,11 @@ class ListingUseCaseTest {
         override suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>> {
             return flow {
                 emit(ApiResponse.Loading)
-                emit(ApiResponse.Success(listingDB.values.filter { k-> (k.description.compareTo(keyword)==0 || k.name.compareTo(keyword) == 0) }))
+                emit(ApiResponse.Success(listingDB.values.filter { k ->
+                    (k.description.contains(
+                        keyword
+                    ) || k.name.contains(keyword))
+                }))
             }
         }
 
@@ -232,4 +237,30 @@ class ListingUseCaseTest {
                 }
             }
         }
+
+    @Test
+    fun lessThanMinCharSearchShouldFail(): Unit =
+        runBlocking {
+            val getListingsBySearch = GetListingsBySearch(repository)
+            getListingsBySearch("lu").collect {
+                when (it) {
+                    is ApiResponse.Failure -> assert(true)
+                    else -> fail()
+                }
+            }
+        }
+
+    @Test
+    fun rightCharSearchShouldPass(): Unit =
+        runBlocking {
+            val getListingsBySearch = GetListingsBySearch(repository)
+            getListingsBySearch(Random.nextLong(from = 100, until = 10000000).toString()).collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(true)
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Failure -> fail()
+                }
+            }
+        }
+
 }
