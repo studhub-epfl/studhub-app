@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 
 data class Route(val name: String, val destination: String, val icon: ImageVector)
 
@@ -43,7 +44,7 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
         }
     }
 }
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun NavBarPreview() {
