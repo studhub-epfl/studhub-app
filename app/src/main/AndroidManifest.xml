@@ -76,6 +76,11 @@
             android:exported="false"
             android:label="Edit Profile Wrapper"
             android:theme="@style/Theme.Bootcamp" />
+        <activity
+            android:name=".wrapper.AuthActivity"
+            android:exported="false"
+            android:label="Auth Wrapper"
+            android:theme="@style/Theme.Bootcamp" />
     </application>
 
 </manifest>

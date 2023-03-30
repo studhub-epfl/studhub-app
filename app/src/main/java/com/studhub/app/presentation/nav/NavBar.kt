@@ -7,7 +7,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -27,7 +29,7 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
         Route(stringResource(R.string.nav_cart_button), "Cart",  Icons.Filled.ShoppingCart),
         Route(stringResource(R.string.nav_profile_button), "Profile",  Icons.Filled.AccountBox))
 
-    NavigationBar {
+    NavigationBar (modifier = Modifier.testTag("NavBar")) {
         items.forEachIndexed  { index, route ->
             NavigationBarItem(
                 icon = { Icon(route.icon, contentDescription = route.name) },

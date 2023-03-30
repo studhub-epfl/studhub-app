@@ -10,12 +10,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.studhub.app.core.Globals
 import com.studhub.app.presentation.auth.AuthViewModel
 import com.studhub.app.presentation.nav.NavBar
 import com.studhub.app.presentation.ui.theme.StudHubTheme
@@ -37,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             StudHubTheme {
                 Scaffold(
                     bottomBar = {
-                        if (AppState.showBottomBar) {
+                        if (Globals.showBottomBar) {
                             NavBar(navController = navController)
                         }
                     },
@@ -54,10 +56,6 @@ class MainActivity : AppCompatActivity() {
                     })
             }
         }
-    }
-
-    object AppState {
-        var showBottomBar by mutableStateOf(true)
     }
 
     private fun checkAuthState() {
