@@ -38,7 +38,10 @@ class MockListingRepositoryImpl: ListingRepository {
     }
 
     override suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>> {
-        TODO("Not yet implemented")
+        return flow {
+            emit(ApiResponse.Loading)
+            emit(ApiResponse.Success(listingDB.values.filter { k-> (k.description.compareTo(keyword)==0 || k.name.compareTo(keyword) == 0) }))
+        }
     }
 
     override suspend fun updateListing(

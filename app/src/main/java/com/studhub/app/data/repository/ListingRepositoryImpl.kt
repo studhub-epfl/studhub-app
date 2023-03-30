@@ -97,9 +97,8 @@ class ListingRepositoryImpl : ListingRepository {
 
             //val retrievedListing: Listing? = query.result.getValue(Listing::class.java)
             for (listingSnapshot in query.result.children.filter {
-                    q-> (q.getValue(Listing::class.java)?.name == keyword) ||
-                    (q.getValue(Listing::class.java)?.id == keyword) ||
-                    (q.getValue(Listing::class.java)?.description == keyword)
+                    q-> (q.getValue(Listing::class.java)?.name?.compareTo(keyword) == 0) ||
+                    (q.getValue(Listing::class.java)?.description?.compareTo(keyword) == 0)
 
             }){
                 val retrievedListing: Listing? = listingSnapshot.getValue(Listing::class.java)
@@ -121,9 +120,36 @@ class ListingRepositoryImpl : ListingRepository {
         updatedListing: Listing
     ): Flow<ApiResponse<Listing>> = flow {
         emit(ApiResponse.Loading)
+
+
+        // set the new value of the Listing on the database
+        val query = db.child(listingId).setValue(updatedListing)
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(updatedListing))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+
     }
 
     override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
+
+        // remove the old value on the database
+        val query = db.child(listingId).removeValue()
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(true))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+
     }
 }
