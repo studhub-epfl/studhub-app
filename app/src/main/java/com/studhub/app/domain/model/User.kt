@@ -8,5 +8,5 @@ data class User(
     val lastName: String = "",
     val userName: String = "",
     val profilePicture: String = "",
-    val favoriteListings: List<String> = emptyList(),
+    val favoriteListings: Map<String, Boolean> = emptyMap(),
 )

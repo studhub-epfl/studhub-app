@@ -1,6 +1,7 @@
 package com.studhub.app.domain.usecase.user
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +23,7 @@ class RemoveFavoriteListing @Inject constructor(
      *
      * @param [favListingId] the ID of the listing to remove from the favorite listings
      */
-    suspend operator fun invoke(favListingId: String): Flow<ApiResponse<Boolean>> {
+    suspend operator fun invoke(favListingId: String): Flow<ApiResponse<User>> {
         return userRepository.removeFavoriteListing(
             authRepository.currentUserUid,
             favListingId

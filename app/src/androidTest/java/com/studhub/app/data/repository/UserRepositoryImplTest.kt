@@ -7,6 +7,7 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.AddFavoriteListing
 import com.studhub.app.domain.usecase.user.GetFavoriteListings
+import com.studhub.app.domain.usecase.user.RemoveFavoriteListing
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -101,4 +102,38 @@ class UserRepositoryImplTest {
             }
         }
     }
+
+        @Test
+        fun addAndRemoveFavoriteListing() {
+            val userRepo = UserRepositoryImpl() // real repo
+            val authRepo = MockAuthRepositoryImpl() // fake repo
+            val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
+            val removeFavoriteListing = RemoveFavoriteListing(userRepo,authRepo)
+            val product = Listing(
+                id = Random.nextLong().toString(),
+                name = "Testing Product ${Random.nextLong()}",
+            )
+
+            runBlocking {
+                addFavoriteListing(product.id).collect() {
+                    when (it) {
+                        is ApiResponse.Failure -> fail(it.message)
+                        ApiResponse.Loading -> {}
+                        is ApiResponse.Success -> {}
+                    }
+                }
+            }
+
+            runBlocking {
+                removeFavoriteListing(product.id).collect {
+                    when (it) {
+                        is ApiResponse.Failure -> fail(it.message)
+                        is ApiResponse.Loading -> {}
+                        is ApiResponse.Success -> {}
+                    }
+                }
+            }
+    }
+
+
 }

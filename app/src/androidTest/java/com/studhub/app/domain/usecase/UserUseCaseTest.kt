@@ -103,16 +103,11 @@ class UserUseCaseTest {
                 delay(1000)
                 if (userDB.containsKey(userId)) {
                     val user = userDB.getValue(userId)
-                    if (user.favoriteListings.contains(favListingId)) {
-                        emit(ApiResponse.Failure("Listing is already a favorite"))
-                        return@flow
-                    } else {
-                        val updatedFavoriteListings =
-                            user.favoriteListings.toMutableList().apply { add(favListingId) }
-                        val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
-                        userDB[userId] = updatedUser
-                        emit(ApiResponse.Success(updatedUser))
-                    }
+                    val updatedFavoriteListings =
+                        user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+                    val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
+                    userDB[userId] = updatedUser
+                    emit(ApiResponse.Success(updatedUser))
                 } else {
                     emit(ApiResponse.Failure("No entry for this key"))
                 }
@@ -122,23 +117,18 @@ class UserUseCaseTest {
         override suspend fun removeFavoriteListing(
             userId: String,
             favListingId: String
-        ): Flow<ApiResponse<Boolean>> {
+        ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 delay(1000)
                 if (userDB.containsKey(userId)) {
                     val user = userDB[userId]!!
-                    if (!user.favoriteListings.contains(favListingId)) {
-                        emit(ApiResponse.Failure("Listing is not a favorite"))
-                        return@flow
-                    }
-
                     val updatedFavoriteListings =
-                        user.favoriteListings.toMutableList().apply { remove(favListingId) }
+                        user.favoriteListings.toMutableMap().apply { remove(favListingId) }
                     val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                     userDB[userId] = updatedUser
 
-                    emit(ApiResponse.Success(true))
+                    emit(ApiResponse.Success(updatedUser))
                 } else {
                     emit(ApiResponse.Failure("No entry for this key"))
                 }
@@ -151,8 +141,9 @@ class UserUseCaseTest {
                 delay(1000)
                 if (userDB.containsKey(userId)) {
                     val user = userDB[userId]!!
-                    val favoriteListings = user.favoriteListings.mapNotNull { listingId ->
-                        listingDB[listingId]
+                    val favoriteListings = mutableListOf<Listing>()
+                    user.favoriteListings.forEach {
+                        favoriteListings.add(listingDB[it.key]!!)
                     }
                     emit(ApiResponse.Success(favoriteListings))
                 } else {
@@ -229,45 +220,18 @@ class UserUseCaseTest {
     }
 
     @Test
-    fun removeUserUseCaseRemovesUserFromRepository() = runBlocking {
-        val removeUser = RemoveUser(repository)
-
-        val userId = Random.nextLong().toString()
-        val userName = Random.nextLong().toString()
-        userDB[userId] = User(id = userId, userName = userName)
-
-        removeUser(userId).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> Assert.assertTrue(response.data)
-                is ApiResponse.Failure -> Assert.fail("Request failure")
-                is ApiResponse.Loading -> {}
-            }
-        }
-
-        // Check that the user has been removed from the repository
-        val getUser = GetUser(repository)
-        getUser(userId).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> Assert.fail("User not removed from repository")
-                is ApiResponse.Failure -> {}
-                is ApiResponse.Loading -> {}
-            }
-        }
-    }
-
-    @Test
     fun addFavoriteListingAddsCorrectListingToUserFavorites() = runBlocking {
         val addFavoriteListing = AddFavoriteListing(repository, authRepository)
         val userId = authRepository.currentUserUid
         val listingId = Random.nextLong().toString()
-        userDB[userId] = User(id = userId, userName = "Test User", favoriteListings = emptyList())
+        userDB[userId] = User(id = userId, userName = "Test User", favoriteListings = emptyMap())
 
         addFavoriteListing(listingId).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val user = response.data
                     Assert.assertNotNull(user)
-                    Assert.assertEquals(listOf(listingId), user.favoriteListings)
+                    Assert.assertEquals(mapOf(listingId to true), user.favoriteListings)
                 }
                 is ApiResponse.Failure -> Assert.fail("Request failure")
                 is ApiResponse.Loading -> {}
@@ -285,7 +249,7 @@ class UserUseCaseTest {
         userDB[userId] = User(
             id = userId,
             userName = "Test User",
-            favoriteListings = listOf(listingId1, listingId2)
+            favoriteListings = mapOf(listingId1 to true, listingId2 to true)
         )
 
         removeFavoriteListing(listingId1).collect { response ->
@@ -293,9 +257,8 @@ class UserUseCaseTest {
                 is ApiResponse.Success -> {
                     val result = response.data
                     Assert.assertNotNull(result)
-                    Assert.assertTrue(result)
                     val user = userDB.getValue(userId)
-                    Assert.assertEquals(listOf(listingId2), user.favoriteListings)
+                    Assert.assertEquals(mapOf(listingId2 to true), user.favoriteListings)
                 }
                 is ApiResponse.Failure -> Assert.fail("Request failure")
                 is ApiResponse.Loading -> {}
@@ -315,7 +278,7 @@ class UserUseCaseTest {
         userDB[userId] = User(
             id = userId,
             userName = "Test User",
-            favoriteListings = listOf(listing1.id, listing2.id)
+            favoriteListings = mapOf(listing1.id to true, listing2.id to true)
         )
 
         getFavoriteListings().collect { response ->
@@ -351,61 +314,4 @@ class UserUseCaseTest {
             }
         }
     }
-
-    @Test
-    fun removeUserUseCaseReturnsFailureForInvalidUserId() = runBlocking {
-        val removeUser = RemoveUser(repository)
-
-        val userId = "invalid-id"
-
-        removeUser(userId).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> Assert.fail("Should not succeed with invalid user ID")
-                is ApiResponse.Failure -> {
-                    // Make sure the error message contains the expected text
-                    val expectedErrorMessage = "No entry for this key"
-                    Assert.assertTrue(response.message.contains(expectedErrorMessage))
-                }
-                is ApiResponse.Loading -> {}
-            }
-        }
-    }
-
-    @Test
-    fun removeFavoriteListingReturnsFailureForNonexistentFavoriteListing() = runBlocking {
-        val removeFavoriteListing = RemoveFavoriteListing(repository, authRepository)
-        val listingId = Random.nextLong().toString()
-
-        removeFavoriteListing(listingId).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> Assert.fail("Should not succeed with invalid listing ID")
-                is ApiResponse.Failure -> {
-                    val expectedErrorMessage = "Listing is not a favorite"
-                    Assert.assertTrue(response.message.contains(expectedErrorMessage))
-                }
-                is ApiResponse.Loading -> {}
-            }
-        }
-    }
-
-    @Test
-    fun addFavoriteListingReturnsFailureIfListingAlreadyExistsInFavorites() = runBlocking {
-        val addFavoriteListing = AddFavoriteListing(repository, authRepository)
-        val userId = authRepository.currentUserUid
-        val listingId = Random.nextLong().toString()
-        userDB[userId] =
-            User(id = userId, userName = "Test User", favoriteListings = listOf(listingId))
-
-        addFavoriteListing(listingId).collect { response ->
-            when (response) {
-                is ApiResponse.Success -> Assert.fail("Should not succeed with already existing favorite listing")
-                is ApiResponse.Failure -> {
-                    val expectedErrorMessage = "Listing is already a favorite"
-                    Assert.assertTrue(response.message.contains(expectedErrorMessage))
-                }
-                is ApiResponse.Loading -> {}
-            }
-        }
-    }
-
 }

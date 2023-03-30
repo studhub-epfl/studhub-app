@@ -30,6 +30,7 @@ class MockUserRepositoryImpl : UserRepository {
     override suspend fun getUser(userId: String): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
+            delay(1000)
             if (userDB.containsKey(userId))
                 emit(ApiResponse.Success(userDB.getValue(userId)))
             else
@@ -75,15 +76,11 @@ class MockUserRepositoryImpl : UserRepository {
             delay(1000)
             if (userDB.containsKey(userId)) {
                 val user = userDB.getValue(userId)
-                if (user.favoriteListings.contains(favListingId)) {
-                    emit(ApiResponse.Failure("Listing is already a favorite"))
-                } else {
-                    val updatedFavoriteListings =
-                        user.favoriteListings.toMutableList().apply { add(favListingId) }
-                    val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
-                    userDB[userId] = updatedUser
-                    emit(ApiResponse.Success(updatedUser))
-                }
+                val updatedFavoriteListings =
+                    user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+                val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
+                userDB[userId] = updatedUser
+                emit(ApiResponse.Success(updatedUser))
             } else {
                 emit(ApiResponse.Failure("No entry for this key"))
             }
@@ -93,23 +90,18 @@ class MockUserRepositoryImpl : UserRepository {
     override suspend fun removeFavoriteListing(
         userId: String,
         favListingId: String
-    ): Flow<ApiResponse<Boolean>> {
+    ): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
             delay(1000)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
-                if (!user.favoriteListings.contains(favListingId)) {
-                    emit(ApiResponse.Failure("Listing is not a favorite"))
-                    return@flow
-                }
-
                 val updatedFavoriteListings =
-                    user.favoriteListings.toMutableList().apply { remove(favListingId) }
+                    user.favoriteListings.toMutableMap().apply { remove(favListingId) }
                 val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                 userDB[userId] = updatedUser
 
-                emit(ApiResponse.Success(true))
+                emit(ApiResponse.Success(updatedUser))
             } else {
                 emit(ApiResponse.Failure("No entry for this key"))
             }
@@ -122,8 +114,9 @@ class MockUserRepositoryImpl : UserRepository {
             delay(1000)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
-                val favoriteListings = user.favoriteListings.mapNotNull { listingId ->
-                    listingDB[listingId]
+                val favoriteListings = mutableListOf<Listing>()
+                user.favoriteListings.forEach {
+                    favoriteListings.add(listingDB[it.key]!!)
                 }
                 emit(ApiResponse.Success(favoriteListings))
             } else {
