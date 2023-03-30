@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 val studhub_pink_variant_2 = Color(0XFFFFD8E4)
 val studhub_black = Color(0XFF1C1B1F)
-val studhub_white_variant = Color(0xFFEADDFF)
+val studhub_white_variant = Color(0xFFF1ECF6)
 
 // Dark Palette
 
