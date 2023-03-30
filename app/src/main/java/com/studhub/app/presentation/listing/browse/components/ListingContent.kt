@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.presentation.listing.browse.components.CategoryAndSellerInfo
 import com.studhub.app.presentation.listing.browse.components.PriceChip
 import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
+
 
 @Composable
 fun ListingContent(listing: Listing, onClick: () -> Unit) {
@@ -43,7 +45,7 @@ fun ListingContent(listing: Listing, onClick: () -> Unit) {
             )
             // Category name and seller
             CategoryAndSellerInfo(
-                category = listing.categories[0],
+                category = if (listing.categories.isEmpty()) Category() else listing.categories[0],
                 seller = listing.seller,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

@@ -83,8 +83,8 @@ fun AppNavigation(
             CreateListingScreen(viewModel = createListingViewModel)
         }
         composable("Browse") {
-            val browseViewModel = BrowseViewModel()
-            BrowseScreen(viewModel = browseViewModel, navController = navController)
+
+            BrowseScreen(navController = navController)
         }
         composable("Cart") {
             CartScreen()
