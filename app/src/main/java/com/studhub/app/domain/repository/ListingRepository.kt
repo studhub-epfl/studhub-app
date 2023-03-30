@@ -10,6 +10,8 @@ interface ListingRepository {
     suspend fun getListings(): Flow<ApiResponse<List<Listing>>>
     suspend fun getListing(listingId: String): Flow<ApiResponse<Listing>>
 
+    suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>>
+
     suspend fun updateListing(listingId: String, updatedListing: Listing): Flow<ApiResponse<Listing>>
 
     suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>>
