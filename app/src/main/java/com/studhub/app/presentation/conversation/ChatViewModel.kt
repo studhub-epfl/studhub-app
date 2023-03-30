@@ -15,12 +15,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(
+ class ChatViewModel @Inject constructor(
     private val getConversationMessages: GetConversationMessages,
     private val sendMessage: SendMessage,
 ) : ViewModel() {
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
-    val messages: StateFlow<List<Message>> = _messages
+    open val messages: StateFlow<List<Message>> = _messages
 
     fun loadMessages(conversation: Conversation) {
         viewModelScope.launch {
@@ -43,4 +43,6 @@ class ChatViewModel @Inject constructor(
             }
         }
     }
+
+
 }

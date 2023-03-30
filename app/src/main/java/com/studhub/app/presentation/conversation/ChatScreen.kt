@@ -1,4 +1,4 @@
-package com.studhub.app.ui.chat
+package com.studhub.app.presentation.conversation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
@@ -14,17 +14,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Message
+import com.studhub.app.ui.chat.ChatViewModel
+import java.util.*
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ChatScreen(viewModel: ChatViewModel, conversation: Conversation) {
+fun ChatScreen(viewModel: ChatViewModel = hiltViewModel(), conversation: Conversation) {
     val messages by viewModel.messages.collectAsState()
 
     viewModel.loadMessages(conversation)
 
-    Scaffold() {
+    Scaffold {
         Column(modifier = Modifier.fillMaxSize()) {
             MessageList(messages = messages)
             MessageInput(onSend = { message -> viewModel.sendMessage(conversation, message) })
@@ -79,3 +82,7 @@ fun MessageInput(onSend: (Message) -> Unit) {
         }
     }
 }
+
+
+
+
