@@ -8,16 +8,19 @@ import javax.inject.Inject
 
 
 /**
- * Use case for getting all listings from a given [repository]
+ * Use case for getting all listings from a given [repository] matching a searching constraint
  *
  * @param [repository] the repository which the use case will act on
  */
 class GetListingsBySearch @Inject constructor(private val repository: ListingRepository) {
 
     /**
-     * Retrieves all listings from the [repository]
+     * Retrieves all listings matching the given [keyword] from the [repository]
+     *
+     * @param [keyword] the value to compare to the listings
      */
     suspend operator fun invoke(keyword: String): Flow<ApiResponse<List<Listing>>> {
+
         return repository.getListingsBySearch(keyword)
     }
 }
