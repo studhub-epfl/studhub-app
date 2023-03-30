@@ -2,6 +2,7 @@ package com.studhub.app.presentation.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
@@ -25,13 +26,13 @@ private var title = "This is some title"
  */
 
 /** Buttons preview */
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun BasicFilledButtonPreview() {
     BasicFilledButton(onClick = { }, label = buttonLabel)
 }
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun PlusButtonPreview() {
@@ -39,7 +40,7 @@ fun PlusButtonPreview() {
 }
 
 /** Inputs preview */
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun BasicTextFieldPreview() {
@@ -47,6 +48,7 @@ fun BasicTextFieldPreview() {
 }
 
 //opens email keyboard
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun EmailTextFieldPreview() {
@@ -54,12 +56,13 @@ fun EmailTextFieldPreview() {
 }
 
 //opens numerical keyboard
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun NumericTextFieldPreview() {
     NumericTextField(label = fieldLabel)
 }
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun TextBoxPeview() {
@@ -67,7 +70,7 @@ fun TextBoxPeview() {
 }
 
 /** Text elements preview */
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun BigLabelPreview() {
@@ -75,7 +78,7 @@ fun BigLabelPreview() {
 }
 
 /** Misc elements preview */
-
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun ProgressBarPreview() {
