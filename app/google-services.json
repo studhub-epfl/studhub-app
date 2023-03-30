@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "498909302481-723rp76dnojjt4koja5fk67ik8kpd5jf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "e25ee3a14a38183849af3ac250121bb6f32c432f"
+          }
+        },
+        {
           "client_id": "498909302481-bcp1nd7ab64sk0411rp5n1p5fmgg6bks.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -31,11 +39,35 @@
           }
         },
         {
+          "client_id": "498909302481-gb0mrlv3iskfe47dpvvcl79r5cgrua1h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "372bb87a935e2c639f9a42cbe496b58c5c4d05e2"
+          }
+        },
+        {
           "client_id": "498909302481-h300i2g4igmd1ek3uqa4bvlmk3brgk5n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.studhub.app",
             "certificate_hash": "1c32ece533daa17238571beae27804af9f629f8f"
+          }
+        },
+        {
+          "client_id": "498909302481-nja4tint6tn4fhu97tb55aaecpdvncvs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "fa0706ef5a2c03676b63584bfbcdf92cc559fec1"
+          }
+        },
+        {
+          "client_id": "498909302481-nocugdc1j2fddn1viq56h0757g1ioep2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studhub.app",
+            "certificate_hash": "89342bb9349ca99d6f4c8c527145f63730262325"
           }
         },
         {

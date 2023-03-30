@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.repository.ListingRepositoryImpl
@@ -11,13 +12,32 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.listing.GetListings
+import com.studhub.app.domain.usecase.listing.GetListingsBySearch
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BrowseViewModel : ViewModel() {
+@HiltViewModel
+class BrowseViewModel @Inject constructor(
+    private val getListingsBySearch: GetListingsBySearch
+) : ViewModel() {
     private val _listingsState = MutableStateFlow(emptyList<Listing>())
     val listingsState: StateFlow<List<Listing>> = _listingsState
 
+    fun searchListings(keyword: String) {
+        viewModelScope.launch {
+            getListingsBySearch(keyword).collect {
+                when (it) {
+                    is ApiResponse.Loading -> _listingsState.value = emptyList()
+                    is ApiResponse.Failure -> {}
+                    is ApiResponse.Success -> _listingsState.value = it.data
+                }
+            }
+        }
+    }
 
      fun generateSampleListings() {
         val listings = listOf(
