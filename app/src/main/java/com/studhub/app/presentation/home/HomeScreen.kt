@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studhub.app.MainActivity
 import com.studhub.app.R
+import com.studhub.app.core.Globals
 import com.studhub.app.presentation.home.components.*
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.text.BigLabel
@@ -26,6 +28,7 @@ fun HomeScreen(
 ) {
     val user = viewModel.currentUser.collectAsState()
     val scrollState = rememberScrollState()
+    Globals.showBottomBar = true;
 
     StudHubTheme() {
         Column(
