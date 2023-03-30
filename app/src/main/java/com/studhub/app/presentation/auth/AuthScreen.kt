@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider.getCredential
+import com.studhub.app.MainActivity
 import com.studhub.app.presentation.auth.components.AuthContent
 import com.studhub.app.presentation.auth.components.AuthTopBar
 import com.studhub.app.presentation.auth.components.OneTapSignIn
@@ -20,6 +21,7 @@ fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
     onLoginComplete: (isNewUser: Boolean) -> Unit
 ) {
+    MainActivity.AppState.showBottomBar = false;
     Scaffold(
         topBar = {
             AuthTopBar()
