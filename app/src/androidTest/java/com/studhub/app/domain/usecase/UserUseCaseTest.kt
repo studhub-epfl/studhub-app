@@ -48,7 +48,6 @@ class UserUseCaseTest {
         override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 userDB[user.id] = user
                 emit(ApiResponse.Success(user))
             }
@@ -57,7 +56,6 @@ class UserUseCaseTest {
         override suspend fun getUser(userId: String): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 if (userDB.containsKey(userId))
                     emit(ApiResponse.Success(userDB.getValue(userId)))
                 else
@@ -71,7 +69,6 @@ class UserUseCaseTest {
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 if (userDB.containsKey(userId)) {
                     val newListing = updatedUser.copy(id = userId)
                     userDB[userId] = newListing
@@ -84,7 +81,6 @@ class UserUseCaseTest {
         override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 if (userDB.containsKey(userId)) {
                     userDB.remove(userId)
                     emit(ApiResponse.Success(true))
@@ -100,7 +96,6 @@ class UserUseCaseTest {
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 if (userDB.containsKey(userId)) {
                     val user = userDB.getValue(userId)
                     val updatedFavoriteListings =
@@ -120,7 +115,6 @@ class UserUseCaseTest {
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 if (userDB.containsKey(userId)) {
                     val user = userDB[userId]!!
                     val updatedFavoriteListings =
@@ -138,7 +132,6 @@ class UserUseCaseTest {
         override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> {
             return flow {
                 emit(ApiResponse.Loading)
-                delay(1000)
                 if (userDB.containsKey(userId)) {
                     val user = userDB[userId]!!
                     val favoriteListings = mutableListOf<Listing>()

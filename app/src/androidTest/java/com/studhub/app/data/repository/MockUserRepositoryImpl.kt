@@ -21,7 +21,6 @@ class MockUserRepositoryImpl : UserRepository {
     override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             userDB[user.id] = user
             emit(ApiResponse.Success(user))
         }
@@ -43,7 +42,6 @@ class MockUserRepositoryImpl : UserRepository {
     ): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             if (userDB.containsKey(userId)) {
                 val newListing = updatedUser.copy(id = userId)
                 userDB[userId] = newListing
@@ -56,7 +54,6 @@ class MockUserRepositoryImpl : UserRepository {
     override suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             if (userDB.containsKey(userId)) {
                 userDB.remove(userId)
                 emit(ApiResponse.Success(true))
@@ -72,7 +69,6 @@ class MockUserRepositoryImpl : UserRepository {
     ): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             if (userDB.containsKey(userId)) {
                 val user = userDB.getValue(userId)
                 val updatedFavoriteListings =
@@ -92,7 +88,6 @@ class MockUserRepositoryImpl : UserRepository {
     ): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val updatedFavoriteListings =
@@ -110,7 +105,6 @@ class MockUserRepositoryImpl : UserRepository {
     override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> {
         return flow {
             emit(ApiResponse.Loading)
-            delay(1000)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val favoriteListings = mutableListOf<Listing>()
