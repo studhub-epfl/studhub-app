@@ -6,11 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.user.GetCurrentUser
+import com.studhub.app.domain.usecase.user.GetFavoriteListings
 import com.studhub.app.domain.usecase.user.SignOut
 import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,13 +21,17 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val _signOut: SignOut,
     private val getCurrentUser: GetCurrentUser,
-    private val updateCurrentUserInfo: UpdateCurrentUserInfo
+    private val updateCurrentUserInfo: UpdateCurrentUserInfo,
+    private val getFavoriteListings: GetFavoriteListings
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
         private set
 
     var currentUser by mutableStateOf<ApiResponse<User>>(ApiResponse.Loading)
         private set
+
+    private val _userFavorites = MutableSharedFlow<List<Listing>>(replay = 0)
+    val userFavorites: SharedFlow<List<Listing>> = _userFavorites
 
     init {
         getLoggedInUser()
@@ -43,6 +50,15 @@ class ProfileViewModel @Inject constructor(
                 currentUser = it
             }
         }
+
+    fun getFavorites() = viewModelScope.launch {
+        getFavoriteListings().collect {
+            when (it) {
+                is ApiResponse.Success -> _userFavorites.emit(it.data)
+                else -> _userFavorites.emit(emptyList())
+            }
+        }
+    }
 
 
     fun signOut() = viewModelScope.launch {

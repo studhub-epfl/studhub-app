@@ -82,6 +82,22 @@ class NavigationTest {
     }
 
     @Test
+    fun clickProfile_navigateToProfileScreenAndSignOutAndCheckFavoriteListings() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_profile)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_btn_display_favs))
+            .assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.profile_favorites_title))
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun clickProfile_navigateToProfileThenEditThenSave() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_profile)).assertExists()

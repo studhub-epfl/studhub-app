@@ -14,8 +14,10 @@ import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     navigateToAuthScreen: () -> Unit,
-    navigateToEditProfileScreen: () -> Unit
+    navigateToEditProfileScreen: () -> Unit,
+    navigateToProfileFavorites: () -> Unit
 ) {
+
     val scaffoldState = rememberScaffoldState()
 
     when (val currentUser = viewModel.currentUser) {
@@ -34,7 +36,8 @@ fun ProfileScreen(
                 content = { padding ->
                     ProfileContent(
                         padding = padding,
-                        profile = currentUser.data
+                        profile = currentUser.data,
+                        navigateToProfileFavorites = navigateToProfileFavorites
                     )
                 },
                 scaffoldState = scaffoldState

@@ -18,6 +18,7 @@ import com.studhub.app.presentation.listing.add.CreateListingViewModel
 import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
+import com.studhub.app.presentation.profile.ProfileFavoritesScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
@@ -58,8 +59,13 @@ fun AppNavigation(
         composable(route = "Profile") {
             ProfileScreen(
                 navigateToAuthScreen = { navController.navigate("Auth") },
-                navigateToEditProfileScreen = { navController.navigate("EditProfile") }
+                navigateToEditProfileScreen = { navController.navigate("EditProfile") },
+                navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") }
             )
+        }
+
+        composable(route = "Profile/Favorite-Listing") {
+            ProfileFavoritesScreen(navigateToListing = { id: String -> navController.navigate("Listing/$id") })
         }
 
         composable(route = "EditProfile") {
@@ -96,6 +102,3 @@ fun AppNavigation(
         }
     }
 }
-
-
-
