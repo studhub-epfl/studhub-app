@@ -1,10 +1,7 @@
 package com.studhub.app
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.wrapper.NavigationActivity
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -120,6 +117,16 @@ class NavigationTest {
 
         // assert we are back on the profile page
         composeTestRule.onNodeWithText(str(R.string.profile_title)).assertIsDisplayed()
+    }
+
+    @Test
+    fun clickProfile_navigateToConversations() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_conversations)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.conversation_title)).assertIsDisplayed()
     }
 
     @Test

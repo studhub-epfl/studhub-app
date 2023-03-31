@@ -9,11 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.studhub.app.MainActivity
 import com.studhub.app.R
 import com.studhub.app.core.Globals
 import com.studhub.app.presentation.home.components.*
-import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 
@@ -21,6 +19,7 @@ import com.studhub.app.presentation.ui.theme.StudHubTheme
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onAddListingClick: () -> Unit,
+    onConversationClick: () -> Unit,
     onBrowseClick: () -> Unit,
     onAboutClick: () -> Unit,
     onCartClick: () -> Unit,
@@ -47,6 +46,9 @@ fun HomeScreen(
             Spacer(Modifier.height(160.dp))
 
             AddListingButton(onClick = onAddListingClick)
+            Spacer(Modifier.height(16.dp))
+
+            ConversationButton(onClick = onConversationClick)
             Spacer(Modifier.height(16.dp))
 
             BrowseButton(onClick = onBrowseClick)

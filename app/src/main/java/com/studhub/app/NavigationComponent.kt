@@ -12,6 +12,7 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.about.AboutScreen
 import com.studhub.app.presentation.auth.AuthScreen
 import com.studhub.app.presentation.cart.CartScreen
+import com.studhub.app.presentation.conversation.ConversationScreen
 import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
 import com.studhub.app.presentation.listing.add.CreateListingViewModel
@@ -75,6 +76,7 @@ fun AppNavigation(
         composable("Home") {
             HomeScreen(
                 onAddListingClick = { navController.navigate("AddListing") },
+                onConversationClick = { navController.navigate("Conversations") },
                 onBrowseClick = { navController.navigate("Browse") },
                 onAboutClick = { navController.navigate("About") },
                 onCartClick = { navController.navigate("Cart") },
@@ -99,6 +101,10 @@ fun AppNavigation(
         composable("DetailedListing/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             DetailedListingScreen(id = id ?: "0")
+        }
+
+        composable("Conversations") {
+            ConversationScreen(navigateToDiscussion = { })
         }
     }
 }
