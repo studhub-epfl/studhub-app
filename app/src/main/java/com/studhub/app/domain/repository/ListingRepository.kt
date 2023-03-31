@@ -1,7 +1,6 @@
 package com.studhub.app.domain.repository
 
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import kotlinx.coroutines.flow.Flow
 
@@ -18,6 +17,7 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the list of [Listing] pushed to the database on success
      */
     suspend fun getListings(): Flow<ApiResponse<List<Listing>>>
+
     /**
      * get a  [listing] with all the listings on the database of Firebase
      * @param [listingId] the listingId we want to match
@@ -38,7 +38,10 @@ interface ListingRepository {
      * @param [updatedListing] the Listing we want to replace
      * @return A [Flow] of [ApiResponse] with the last one containing the updated [Listing] pushed to the database on success
      */
-    suspend fun updateListing(listingId: String, updatedListing: Listing): Flow<ApiResponse<Listing>>
+    suspend fun updateListing(
+        listingId: String,
+        updatedListing: Listing
+    ): Flow<ApiResponse<Listing>>
 
     /**
      * remove a listing with the given [listingId]
