@@ -115,5 +115,4 @@ class NavigationTest {
 
         composeTestRule.onNodeWithText(str(R.string.about_title)).assertIsDisplayed()
     }
-
 }
