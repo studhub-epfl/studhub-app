@@ -1,7 +1,6 @@
 package com.studhub.app
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,9 +16,7 @@ import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
 import com.studhub.app.presentation.listing.add.CreateListingViewModel
 import com.studhub.app.presentation.listing.browse.BrowseScreen
-import com.studhub.app.presentation.listing.browse.BrowseViewModel
-import com.studhub.app.presentation.listing.browse.DetailedListingScreen
-import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
+import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 
@@ -93,19 +90,10 @@ fun AppNavigation(
             AboutScreen()
         }
 
-        composable("Listing/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: ""
-            val detailedListingViewModel = remember { DetailedListingViewModel(listingId = id) }
-            DetailedListingScreen(
-                id = "id",
-                viewModel = detailedListingViewModel,
-                onContactSellerClick = {},
-                onFavouriteClick = {},
-                navController = rememberNavController()
-            )
+        composable("DetailedListing/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            DetailedListingScreen(id = id ?: "0")
         }
-
-
     }
 }
 

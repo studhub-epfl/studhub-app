@@ -2,10 +2,7 @@ package com.studhub.app.presentation.listing.browse
 
 import BrowseContent
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.input.SearchBar
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import kotlinx.coroutines.launch
@@ -38,41 +36,39 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
          *
          */
         scope.launch {
-            viewModel.generateSampleListings()
+            viewModel.getCurrentListings()
         }
 
     }
     val listings = viewModel.listingsState.collectAsState().value
-    if (listings.isNotEmpty()) {
 
-        BrowseContent(listings, navController)
+    Column {
         SearchBar(search = search, onSearch = {
             viewModel.searchListings(search.value)
-            Log.d("marche pas", search.value)
         })
 
+        if (listings.isNotEmpty()) {
+            BrowseContent(listings, navController)
+        } else {
+            // Show a loading indicator while the listings are being fetched.
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-    } else {
-        // Show a loading indicator while the listings are being fetched.
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-            Spacer(modifier = Modifier.height(16.dp))
         }
-
     }
-
 
 }
 
-
-
+//Doesn't seem to behave properly with current implementation. Might need to delete if not needed.
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun BrowseActivityPreview() {
-
     lateinit var navController: NavHostController
     navController = rememberNavController()
     BrowseScreen(navController = navController)

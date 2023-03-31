@@ -30,7 +30,7 @@ fun BrowseContent(listings: List<Listing>, navController: NavController) {
                     viewModel = ListingThumbnailViewModel(listing = listing),
                     navController = navController,
                     onClick = {
-                        navController.navigate("Listing/${listing.id}")
+                        navController.navigate("DetailedListing/${listing.id}")
                     }
                 )
 
