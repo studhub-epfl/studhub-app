@@ -38,8 +38,8 @@ class DetailedListingScreenTest {
             )
             Details(
                 listing = listing,
-                onContactSellerClick = { },
-                onFavouriteClick = { })
+                onContactSellerClick = { }
+            )
         }
     }
 
