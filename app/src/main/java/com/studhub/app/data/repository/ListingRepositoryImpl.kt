@@ -146,4 +146,5 @@ class ListingRepositoryImpl : ListingRepository {
         }
 
     }
+
 }
