@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
@@ -27,8 +28,16 @@ import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @Composable
-fun CreateListingScreen(viewModel: CreateListingViewModelContract) {
+fun CreateListingScreen(
+    viewModel: CreateListingViewModel = hiltViewModel(),
+    navigateToListing: (id: String) -> Unit
+) {
     val categories by viewModel.categories.collectAsState(emptyList())
+
+    val title = rememberSaveable { mutableStateOf("") }
+    val description = rememberSaveable { mutableStateOf("") }
+    val price = rememberSaveable { mutableStateOf("") }
+    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
 
     StudHubTheme {
         Surface(
@@ -43,7 +52,22 @@ fun CreateListingScreen(viewModel: CreateListingViewModelContract) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BigLabel(label = stringResource(R.string.listings_add_title))
-                    ListingForm(categories, viewModel)
+                    ListingForm(
+                        categories,
+                        title = title,
+                        description = description,
+                        price = price,
+                        category = category,
+                        onSubmit = {
+                            viewModel.createListing(
+                                title.value,
+                                description.value,
+                                category.value,
+                                price.value.toFloat(),
+                                navigateToListing
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -51,11 +75,14 @@ fun CreateListingScreen(viewModel: CreateListingViewModelContract) {
 }
 
 @Composable
-fun ListingForm(categories: List<Category>, viewModel: CreateListingViewModelContract) {
-    val title = rememberSaveable { mutableStateOf("") }
-    val description = rememberSaveable { mutableStateOf("") }
-    val price = rememberSaveable { mutableStateOf("") }
-    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
+fun ListingForm(
+    categories: List<Category>,
+    title: MutableState<String>,
+    description: MutableState<String>,
+    price: MutableState<String>,
+    category: MutableState<Category>,
+    onSubmit: () -> Unit,
+) {
 
     BasicTextField(label = "Item title", rememberedValue = title)
     AddImageLayout(onClick = {})
@@ -65,12 +92,7 @@ fun ListingForm(categories: List<Category>, viewModel: CreateListingViewModelCon
     BasicFilledButton(
         onClick = {
             if (category.value.name != "Choose a category") {
-                viewModel.createListing(
-                    title.value,
-                    description.value,
-                    category.value,
-                    price.value.toFloat()
-                )
+                onSubmit()
             }
         },
         label = "Create"
@@ -182,19 +204,3 @@ fun CategoryDropDown(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun CreateListingPreview() {
-    StudHubTheme {
-        CreateListingScreenPreviewWrapper()
-    }
-}
-
-@Composable
-fun CreateListingScreenPreviewWrapper() {
-    val viewModel = remember { MockCreateListingViewModel() }
-    CreateListingScreen(viewModel)
-}
-
-

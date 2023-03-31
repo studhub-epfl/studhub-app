@@ -3,34 +3,32 @@ package com.studhub.app.presentation.listing.add
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.data.repository.CategoryRepositoryImpl
-import com.studhub.app.data.repository.ListingRepositoryImpl
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.listing.CreateListing
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.random.Random
 
-class CreateListingViewModel : ViewModel(), CreateListingViewModelContract {
-    private val categoriesRepository = CategoryRepositoryImpl()
-    private val listingRepository = ListingRepositoryImpl()
-
+@HiltViewModel
+class CreateListingViewModel @Inject constructor(
+    private val _createListing: CreateListing,
+    private val getCategories: GetCategories
+) : ViewModel() {
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
-    override val categories: StateFlow<List<Category>> = _categories
+    val categories: StateFlow<List<Category>> = _categories
 
 
     init {
-
         fetchCategories()
     }
 
     private fun fetchCategories() {
         viewModelScope.launch {
-            val getCategories = GetCategories(categoriesRepository)
             getCategories().collect {
                 when (it) {
                     is ApiResponse.Success -> _categories.value = it.data
@@ -42,27 +40,24 @@ class CreateListingViewModel : ViewModel(), CreateListingViewModelContract {
         }
     }
 
-    override fun createListing(
+    fun createListing(
         title: String,
         description: String,
         category: Category,
-        price: Float
+        price: Float,
+        callback: (id: String) -> Unit
     ) {
         val listing = Listing(
-            id = Random.nextInt().toString(),
-            seller = User(userName = "Placeholder Name"),
             name = title,
             description = description,
             categories = listOf(category),
-            price = price
+            price = price,
         )
 
         viewModelScope.launch {
-            val createListing = CreateListing(listingRepository)
-            createListing(listing).collect {
+            _createListing(listing).collect {
                 when (it) {
-                    is ApiResponse.Success -> { /* TODO success message and/or return to another view */
-                    }
+                    is ApiResponse.Success -> { callback(it.data.id) }
                     is ApiResponse.Failure -> { /* should not fail */
                     }
                     is ApiResponse.Loading -> { /* TODO SHOW LOADING ICON */
