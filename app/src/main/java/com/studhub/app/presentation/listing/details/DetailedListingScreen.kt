@@ -16,6 +16,7 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.presentation.listing.details.components.DetailsButtons
 import com.studhub.app.presentation.listing.details.components.ListingDescription
 import com.studhub.app.presentation.listing.details.components.ListingImage
 import com.studhub.app.presentation.listing.details.components.ListingPrice
@@ -66,27 +67,6 @@ fun Details(
             ListingDescription(description = listing.description)
             Spacer(modifier = Modifier.height(35.dp))
             ListingPrice(price = listing.price)
-        }
-    }
-}
-
-@Composable
-fun DetailsButtons(onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        // "Contact seller" button
-        Button(
-            onClick = { onContactSellerClick() },
-        ) {
-            Text(text = "Contact seller")
-        }
-        // "Favourite" button
-        OutlinedButton(
-            onClick = { onFavouriteClick() },
-        ) {
-            Text(text = "Favourite")
         }
     }
 }
