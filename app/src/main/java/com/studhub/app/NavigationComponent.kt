@@ -20,8 +20,8 @@ import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.browse.DetailedListingScreen
 import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
 import com.studhub.app.presentation.profile.EditProfileScreen
-import com.studhub.app.presentation.profile.ProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
+import com.studhub.app.presentation.profile.ProfileScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
@@ -109,7 +109,5 @@ fun AppNavigation(
                 navController = rememberNavController()
             )
         }
-
-
     }
 }
