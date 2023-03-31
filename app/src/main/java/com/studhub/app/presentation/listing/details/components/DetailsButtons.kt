@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 
 @Composable
-fun DetailsButtons(onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit) {
+fun DetailsButtons(onContactSellerClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -24,11 +24,7 @@ fun DetailsButtons(onContactSellerClick: () -> Unit, onFavouriteClick: () -> Uni
             Text(text = "Contact seller")
         }
         // "Favourite" button
-        OutlinedButton(
-            onClick = { onFavouriteClick() },
-        ) {
-            Text(text = "Favourite")
-        }
+        FavoriteButton()
     }
 }
 
@@ -36,5 +32,5 @@ fun DetailsButtons(onContactSellerClick: () -> Unit, onFavouriteClick: () -> Uni
 @Preview(showBackground = true)
 @Composable
 fun DetailsButtonsPreview() {
-    DetailsButtons(onContactSellerClick = {}, onFavouriteClick = {})
+    DetailsButtons(onContactSellerClick = {})
 }

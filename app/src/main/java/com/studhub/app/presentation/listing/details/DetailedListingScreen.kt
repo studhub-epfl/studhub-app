@@ -1,10 +1,7 @@
 package com.studhub.app.presentation.listing.details
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -41,14 +38,14 @@ fun DetailedListingScreen(
             Details(
                 listing = listing,
                 onContactSellerClick = { /*TODO*/ },
-                onFavouriteClick = { /* TODO */ })
+                )
         }
     }
 }
 
 @Composable
 fun Details(
-    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit
+    listing: Listing, onContactSellerClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -58,7 +55,7 @@ fun Details(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            DetailsButtons(onContactSellerClick, onFavouriteClick)
+            DetailsButtons(onContactSellerClick)
             Spacer(modifier = Modifier.height(24.dp))
             BigLabel(label = listing.name)
             // Add the placeholder image here
@@ -88,6 +85,5 @@ fun DetailsPreview() {
     )
     Details(
         listing = listing,
-        onContactSellerClick = { },
-        onFavouriteClick = { })
+        onContactSellerClick = { },)
 }
