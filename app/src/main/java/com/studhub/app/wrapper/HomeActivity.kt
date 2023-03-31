@@ -7,7 +7,7 @@ import com.studhub.app.presentation.home.HomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeActivity: AppCompatActivity() {
+class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -17,7 +17,8 @@ class HomeActivity: AppCompatActivity() {
                 onBrowseClick = {},
                 onAboutClick = {},
                 onCartClick = {},
-                onProfileClick = {}
+                onProfileClick = {},
+                onConversationClick = {}
             )
         }
     }
