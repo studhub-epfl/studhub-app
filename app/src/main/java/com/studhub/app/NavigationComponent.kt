@@ -16,8 +16,6 @@ import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
 import com.studhub.app.presentation.listing.add.CreateListingViewModel
 import com.studhub.app.presentation.listing.browse.BrowseScreen
-import com.studhub.app.presentation.listing.browse.DetailedListingScreen
-import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
 import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
