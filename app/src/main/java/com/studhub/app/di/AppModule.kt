@@ -149,8 +149,11 @@ class AppModule {
     fun provideSignOut(authRepository: AuthRepository): SignOut = SignOut(authRepository)
 
     @Provides
-    fun provideCreateListing(listingRepository: ListingRepository): CreateListing =
-        CreateListing(listingRepository)
+    fun provideCreateListing(
+        listingRepository: ListingRepository,
+        authRepository: AuthRepository
+    ): CreateListing =
+        CreateListing(listingRepository, authRepository)
 
     @Provides
     fun provideGetListing(listingRepository: ListingRepository): GetListing =

@@ -15,7 +15,6 @@ import com.studhub.app.presentation.cart.CartScreen
 import com.studhub.app.presentation.conversation.ConversationScreen
 import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
-import com.studhub.app.presentation.listing.add.CreateListingViewModel
 import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
@@ -84,8 +83,7 @@ fun AppNavigation(
             )
         }
         composable("AddListing") {
-            val createListingViewModel = CreateListingViewModel()
-            CreateListingScreen(viewModel = createListingViewModel)
+            CreateListingScreen(navigateToListing = { id: String -> navController.navigate("DetailedListing/$id") })
         }
         composable("Browse") {
 

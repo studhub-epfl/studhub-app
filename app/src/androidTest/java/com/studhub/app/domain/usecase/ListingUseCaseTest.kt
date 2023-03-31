@@ -1,6 +1,7 @@
 package com.studhub.app.domain.usecase
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.repository.MockAuthRepositoryImpl
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
@@ -137,7 +138,7 @@ class ListingUseCaseTest {
     @Test
     fun createListingUseCaseCreatesCorrectEntry() =
         runBlocking {
-            val createListing = CreateListing(repository)
+            val createListing = CreateListing(repository, MockAuthRepositoryImpl())
 
             val productId = Random.nextLong().toString()
             val productName = Random.nextLong().toString()
