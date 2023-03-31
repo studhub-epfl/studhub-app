@@ -105,7 +105,7 @@ class AppTestModule {
 
     @Singleton
     @Provides
-    fun provideUserRepository(): UserRepository = MockUserRepositoryImpl()
+    fun provideUserRepository(): UserRepository = UserRepositoryImpl()
 
     @Singleton
     @Provides
