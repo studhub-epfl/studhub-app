@@ -17,11 +17,11 @@ import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
 import com.studhub.app.presentation.listing.add.CreateListingViewModel
 import com.studhub.app.presentation.listing.browse.BrowseScreen
-import com.studhub.app.presentation.listing.browse.BrowseViewModel
 import com.studhub.app.presentation.listing.browse.DetailedListingScreen
 import com.studhub.app.presentation.listing.browse.DetailedListingViewModel
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileScreen
+import com.studhub.app.presentation.profile.ProfileFavoritesScreen
 
 // we don't have listings yet so this is mandatory to test, will remove later.
 val listing = Listing(
@@ -61,8 +61,13 @@ fun AppNavigation(
         composable(route = "Profile") {
             ProfileScreen(
                 navigateToAuthScreen = { navController.navigate("Auth") },
-                navigateToEditProfileScreen = { navController.navigate("EditProfile") }
+                navigateToEditProfileScreen = { navController.navigate("EditProfile") },
+                navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") }
             )
+        }
+
+        composable(route = "Profile/Favorite-Listing") {
+            ProfileFavoritesScreen(navigateToListing = { id: String -> navController.navigate("Listing/$id") })
         }
 
         composable(route = "EditProfile") {
@@ -108,6 +113,3 @@ fun AppNavigation(
 
     }
 }
-
-
-

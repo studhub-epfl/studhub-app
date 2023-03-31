@@ -12,7 +12,10 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ProfileScreen(navigateToAuthScreen = {}, navigateToEditProfileScreen = {})
+            ProfileScreen(
+                navigateToAuthScreen = {},
+                navigateToEditProfileScreen = {},
+                navigateToProfileFavorites = {})
         }
     }
 }
