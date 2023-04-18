@@ -57,15 +57,20 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun updateUserInfo(userId: String, updatedUser: User): Flow<ApiResponse<User>> = flow {
+    override suspend fun updateUserInfo(
+        userId: String,
+        updatedUser: User
+    ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
-        val query = db.child(userId).updateChildren(mapOf(
-            "firstName" to updatedUser.firstName,
-            "lastName" to updatedUser.lastName,
-            "userName" to updatedUser.userName,
-            "phoneNumber" to updatedUser.phoneNumber
-        ))
+        val query = db.child(userId).updateChildren(
+            mapOf(
+                "firstName" to updatedUser.firstName,
+                "lastName" to updatedUser.lastName,
+                "userName" to updatedUser.userName,
+                "phoneNumber" to updatedUser.phoneNumber
+            )
+        )
 
         query.await()
 
@@ -104,7 +109,8 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+            val updatedFavoriteListings =
+                user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(true)
 
@@ -135,7 +141,8 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+            val updatedFavoriteListings =
+                user.favoriteListings.toMutableMap().apply { remove(favListingId) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(null)
 
@@ -183,4 +190,67 @@ class UserRepositoryImpl : UserRepository {
                 emit(ApiResponse.Success(emptyList()))
             }
         }
+
+    override suspend fun blockUser(
+        userId: String, blockedUserId: String
+    ): Flow<ApiResponse<User>> = flow {
+        emit(ApiResponse.Loading)
+
+        val userRef = db.child(userId)
+        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
+
+        val userQuery = userRef.get()
+
+        userQuery.await()
+
+        val user: User? = userQuery.result.getValue(User::class.java)
+
+        if (user != null) {
+            val updatedBlockedUsers =
+                user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
+            val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+            val query = blockedUsersRef.setValue(true)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
+
+    override suspend fun unblockUser(
+        userId: String,
+        blockedUserId: String
+    ): Flow<ApiResponse<User>> = flow {
+        emit(ApiResponse.Loading)
+
+        val userRef = db.child(userId)
+        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
+
+        val userQuery = userRef.get()
+
+        userQuery.await()
+
+        val user: User? = userQuery.result.getValue(User::class.java)
+
+        if (user != null) {
+            val updatedBlockedUsers =
+                user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
+            val updatedUser = user.copy(favoriteListings = updatedBlockedUsers)
+            val query = blockedUsersRef.setValue(null)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
 }
