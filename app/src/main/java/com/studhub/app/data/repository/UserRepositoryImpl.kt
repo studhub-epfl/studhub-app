@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
@@ -120,8 +121,7 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings =
-                user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(true)
 
@@ -152,8 +152,7 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings =
-                user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { remove(favListingId) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(null)
 
@@ -263,5 +262,21 @@ class UserRepositoryImpl : UserRepository {
                 emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
             }
         }
+    }
+
+    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+        // Implement the logic to add a rating to the user
+    }
+
+    override suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+        // Implement the logic to update an existing rating
+    }
+
+    override suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>> = flow {
+        // Implement the logic to delete a rating
+    }
+
+    override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> = flow {
+        // Implement the logic to get user ratings
     }
 }
