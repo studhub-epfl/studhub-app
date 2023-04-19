@@ -265,18 +265,67 @@ class UserRepositoryImpl : UserRepository {
     }
 
     override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
-        // Implement the logic to add a rating to the user
+        emit(ApiResponse.Loading)
+
+        val ratingId: String = db.child(userId).child("ratings").push().key.orEmpty()
+        val ratingToPush: Rating = rating.copy(id = ratingId)
+
+        val query = db.child(userId).child("ratings").child(ratingId).setValue(ratingToPush)
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(ratingToPush))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
     }
 
     override suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
-        // Implement the logic to update an existing rating
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).child("ratings").child(ratingId).setValue(rating)
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(rating))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
     }
 
     override suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>> = flow {
-        // Implement the logic to delete a rating
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).child("ratings").child(ratingId).removeValue()
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(true))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
     }
 
     override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> = flow {
-        // Implement the logic to get user ratings
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).child("ratings").get()
+        query.await()
+
+        if (query.isSuccessful) {
+            val ratingsMap: Map<String, Rating>? = query.result.getValue<Map<String, Rating>>()
+            if (ratingsMap != null) {
+                val ratingsList = ratingsMap.values.toList()
+                emit(ApiResponse.Success(ratingsList))
+            } else {
+                emit(ApiResponse.Success(emptyList()))
+            }
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
     }
 }
