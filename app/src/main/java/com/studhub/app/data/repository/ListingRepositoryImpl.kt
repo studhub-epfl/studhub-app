@@ -96,8 +96,20 @@ class ListingRepositoryImpl : ListingRepository {
 
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
-                if (listing != null && (listing.name.contains(keyword) || listing.description.contains(keyword))) {
+                if (listing != null && (listing.name.contains(keyword) || listing.description.contains(keyword)
+                            || listing.price.toString().contains(keyword))) {
                     listings.add(listing)
+
+                }
+
+                if(listing != null && keyword.contains('-')) {
+
+                    if(listing.price >= keyword.substringBefore('-').toFloat()
+                        && listing.price <= keyword.substringAfter('-').toFloat()){
+                        listings.add(listing)
+                    }
+
+
                 }
             }
 
