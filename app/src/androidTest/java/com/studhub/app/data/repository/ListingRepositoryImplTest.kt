@@ -323,11 +323,11 @@ class ListingRepositoryImplTest {
 
         }
         runBlocking {
-            listingRepo.getListingsBySearch("1000-2000").collect {
+            listingRepo.getListingsBySearch("1200-2000").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
-                        it.data.contains(listing) && it.data.contains(listing2) && it.data.contains(listing3)
-                                && it.data.contains(listing4))
+                        it.data.contains(listing4) && it.data.contains(listing2) && it.data.contains(listing3)
+                                && !(it.data.contains(listing)))
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
                 }
