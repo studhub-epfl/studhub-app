@@ -146,5 +146,20 @@ class AppModule {
         conversationRepository: ConversationRepository,
         authRepository: AuthRepository
     ): StartConversationWith = StartConversationWith(conversationRepository, authRepository)
+    @Provides
+    fun provideAddRating(userRepository: UserRepository): AddRating =
+        AddRating(userRepository)
+    @Provides
+    fun provideDeleteRating(userRepository: UserRepository): DeleteRating =
+        DeleteRating(userRepository)
+
+    @Provides
+    fun provideUpdateRating(userRepository: UserRepository): UpdateRating =
+        UpdateRating(userRepository)
+
+    @Provides
+    fun provideGetUserRatings(userRepository: UserRepository): GetUserRatings =
+        GetUserRatings(userRepository)
+
 
 }

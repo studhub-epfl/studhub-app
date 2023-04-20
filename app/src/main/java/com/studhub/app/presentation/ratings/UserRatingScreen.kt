@@ -1,70 +1,178 @@
 package com.studhub.app.presentation.ratings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
-import com.studhub.app.domain.usecase.user.GetCurrentUser
-import com.studhub.app.domain.usecase.user.GetUser
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 
 @Composable
-fun UserRatingScreen(viewModel: UserRatingViewModel) {
+fun UserRatingScreen(viewModel: UserRatingViewModel = hiltViewModel()) {
     val ratings = viewModel.ratings.collectAsState(initial = ApiResponse.Loading)
     val currentUser = viewModel.currentUser.collectAsState(initial = ApiResponse.Loading)
+    var showDialog by remember { mutableStateOf(false) }
+    var currentRating: Rating? by remember { mutableStateOf(null) }
+    var ratingText by remember { mutableStateOf("") }
+    var thumbUp by remember { mutableStateOf(false) }
 
-    when (val ratingsResponse = ratings.value) {
-        is ApiResponse.Loading -> {
-            CircularProgressIndicator()
+    if (showDialog) {
+        Dialog(onDismissRequest = { showDialog = false }) {
+            Column {
+                Text("Thumbs Up / Thumbs Down")
+                Row {
+                    Checkbox(checked = thumbUp, onCheckedChange = { thumbUp = it })
+                    Checkbox(checked = !thumbUp, onCheckedChange = { thumbUp = !it })
+                }
+                TextField(value = ratingText, onValueChange = { ratingText = it })
+                Button(
+                    onClick = {
+                        if (currentRating == null) {
+                            viewModel.addRating(
+                                currentUser.value.let {
+                                    if (it is ApiResponse.Success) {
+                                        it.data.id
+                                    } else {
+                                        return@Button
+                                    }
+                                },
+                                Rating(
+                                    reviewerId = currentUser.value.let {
+                                        if (it is ApiResponse.Success) {
+                                            it.data.id
+                                        } else {
+                                            return@Button
+                                        }
+                                    },
+                                    thumbUp = thumbUp,
+                                    thumbDown = !thumbUp,
+                                    comment = ratingText
+                                )
+                            )
+                        } else {
+                            viewModel.updateRating(
+                                currentUser.value.let {
+                                    if (it is ApiResponse.Success) {
+                                        it.data.id
+                                    } else {
+                                        return@Button
+                                    }
+                                },
+                                currentRating!!.id,
+                                currentRating!!.copy(
+                                    thumbUp = thumbUp,
+                                    thumbDown = !thumbUp,
+                                    comment = ratingText
+                                )
+                            )
+                        }
+                        showDialog = false
+                    },
+                    content = { Text("Submit") }
+                )
+            }
         }
-        is ApiResponse.Success -> {
-            LazyColumn {
-                items(ratingsResponse.data) { rating ->
-                    var userResponse by remember { mutableStateOf<ApiResponse<User>>(ApiResponse.Loading) }
-                    LaunchedEffect(rating.userId) {
-                        userResponse = viewModel.getUser(rating.userId).first()
+    }
+
+    Column {
+        when (val userResponse = currentUser.value) {
+            is ApiResponse.Loading -> {
+                CircularProgressIndicator()
+            }
+            is ApiResponse.Success -> {
+                Text(userResponse.data.firstName + " " + userResponse.data.lastName)
+                Row {
+                    Text("Thumbs Up: ${userResponse.data.thumbsUpCount}")
+                    Text("Thumbs Down: ${userResponse.data.thumbsDownCount}")
+                }
+            }
+            else -> {
+                // handle
+            }
+        }
+
+        when (val ratingsResponse = ratings.value) {
+            is ApiResponse.Loading -> {
+                CircularProgressIndicator()
+            }
+            is ApiResponse.Success -> {
+                val currentUserHasRating = currentUser.value.let { userResponse ->
+                    if (userResponse is ApiResponse.Success) {
+                        ratingsResponse.data.any { it.reviewerId == userResponse.data.id }
+                    } else {
+                        false
                     }
-                    when (userResponse) {
+                }
+
+                if (!currentUserHasRating) {
+                    Text(
+                        text = "Add Listing",
+                        modifier = Modifier.clickable {
+                            // Show dialog for adding a rating
+                            currentRating = null
+                            ratingText = ""
+                            showDialog = true
+                        }
+                    )
+                }
+
+                LazyColumn {
+                    items(ratingsResponse.data) { rating ->
+                        val userResponse = remember(rating.reviewerId) {
+                            mutableStateOf<ApiResponse<User>>(ApiResponse.Loading)
+                        }
+                        LaunchedEffect(rating.reviewerId) {
+                            userResponse.value = viewModel.getUser(rating.reviewerId).first()
+                        }
+                        when (val reviewer = userResponse.value) {
                         is ApiResponse.Loading -> {
                             CircularProgressIndicator()
                         }
                         is ApiResponse.Success -> {
                             val isCurrentUserRating = currentUser.value.let {
                                 if (it is ApiResponse.Success) {
-                                    it.data.id == rating.userId
+                                    it.data.id == rating.reviewerId
                                 } else {
                                     false
                                 }
                             }
                             RatingItem(
-                                user = (userResponse as ApiResponse.Success<User>).data,
+                                rating = rating,
+                                reviewer = reviewer.data,
                                 isCurrentUserRating = isCurrentUserRating,
-                                    onEditRating = { viewModel.updateRating(rating.userId, rating.id, rating) },
-                                onRemoveRating = { viewModel.deleteRating(rating.userId, rating.id) },
+                                onEditRating = {
+                                    // Show dialog for editing a rating
+                                    currentRating = rating
+                                    ratingText = rating.comment
+                                    thumbUp = rating.thumbUp
+                                    showDialog = true
+                                },
+                                onRemoveRating = {
+                                    viewModel.deleteRating(
+                                        rating.userId,
+                                        rating.id
+                                    )
+                                },
                             )
                         }
                         else -> {
-                            // Handle other states: Failure
+                            // handle
                         }
+                    }
                     }
                 }
             }
-        }
-        else -> {
-            // Handle other states: Failure
+            else -> {
+                // handle
+            }
         }
     }
 }
@@ -73,19 +181,22 @@ fun UserRatingScreen(viewModel: UserRatingViewModel) {
 
 @Composable
 fun RatingItem(
-    user: User,
+    rating: Rating,
+    reviewer: User,
     isCurrentUserRating: Boolean,
-    onEditRating: () -> Unit,
-    onRemoveRating: () -> Unit
+    onEditRating: (Rating) -> Unit,
+    onRemoveRating: () -> Unit,
 ) {
     Column {
-        Text("${user.firstName} ${user.lastName}")
+        Text(reviewer.firstName + " " + reviewer.lastName)
+        Text(rating.comment)
+
         if (isCurrentUserRating) {
             Row {
                 Text(
                     text = "Edit Rating",
                     modifier = Modifier.clickable {
-                        onEditRating()
+                        onEditRating(rating)
                     }
                 )
                 Text(
