@@ -73,6 +73,7 @@ class UserRepositoryImpl : UserRepository {
             )
         )
 
+
         query.await()
 
         if (query.isSuccessful) {
@@ -190,37 +191,6 @@ class UserRepositoryImpl : UserRepository {
             }
         }
 
-    override suspend fun blockUser(
-        userId: String, blockedUserId: String
-    ): Flow<ApiResponse<User>> = flow {
-        emit(ApiResponse.Loading)
-
-        val userRef = db.child(userId)
-        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
-
-        val userQuery = userRef.get()
-
-        userQuery.await()
-
-        val user: User? = userQuery.result.getValue(User::class.java)
-
-        if (user != null) {
-            val updatedBlockedUsers =
-                user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
-            val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
-            val query = blockedUsersRef.setValue(true)
-
-            query.await()
-
-            if (query.isSuccessful) {
-                emit(ApiResponse.Success(updatedUser))
-            } else {
-                val errorMessage = query.exception?.message.orEmpty()
-                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-            }
-        }
-    }
-
     override suspend fun unblockUser(
         userId: String,
         blockedUserId: String
@@ -241,6 +211,37 @@ class UserRepositoryImpl : UserRepository {
                 user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
             val updatedUser = user.copy(favoriteListings = updatedBlockedUsers)
             val query = blockedUsersRef.setValue(null)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
+
+    override suspend fun blockUser(
+        userId: String, blockedUserId: String
+    ): Flow<ApiResponse<User>> = flow {
+        emit(ApiResponse.Loading)
+
+        val userRef = db.child(userId)
+        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
+
+        val userQuery = userRef.get()
+
+        userQuery.await()
+
+        val user: User? = userQuery.result.getValue(User::class.java)
+
+        if (user != null) {
+            val updatedBlockedUsers =
+                user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
+            val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+            val query = blockedUsersRef.setValue(true)
 
             query.await()
 
@@ -305,16 +306,22 @@ class UserRepositoryImpl : UserRepository {
         query.await()
 
         if (query.isSuccessful) {
-            val ratingsMap: Map<String, Rating>? = query.result.getValue<Map<String, Rating>>()
-            if (ratingsMap != null) {
-                val ratingsList = ratingsMap.values.toList()
-                emit(ApiResponse.Success(ratingsList))
-            } else {
-                emit(ApiResponse.Success(emptyList()))
+            val ratingsSnapshot = query.result.children
+            val ratingsList = mutableListOf<Rating>()
+
+            ratingsSnapshot.forEach { snapshot ->
+                val rating = snapshot.getValue(Rating::class.java)
+                if (rating != null) {
+                    ratingsList.add(rating)
+                }
             }
-        } else {
+
+            emit(ApiResponse.Success(ratingsList))
+        }  else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
+
+
 }
