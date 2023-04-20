@@ -22,6 +22,33 @@ interface AuthRepository {
     suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>>
 
     /**
+     * Create an account with the given ([email], [password]) tuple and log-in
+     * @return a [Flow] of [ApiResponse] with the last one being true iff sign-up completed successfully
+     */
+    suspend fun signUpWithEmailAndPassword(email: String, password: String): Flow<ApiResponse<Boolean>>
+
+
+    /**
+     * Send an email to verify TODO("something")
+     * @return a [Flow] of [ApiResponse] with the last one being true on success
+     */
+    suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>>
+
+
+    /**
+     * Authenticate the user given the ([email], [password]]) tuple
+     * @return a [Flow] of [ApiResponse] with the last one being true iff authentication succeeded
+     */
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Flow<ApiResponse<Boolean>>
+
+
+    /**
+     * Send an email to reset the password to the user with given [email]
+     * @return a [Flow] of [ApiResponse] with the last one being true on success
+     */
+    suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>>
+
+    /**
      * Sign out of the application
      */
     suspend fun signOut(): Flow<ApiResponse<Boolean>>
