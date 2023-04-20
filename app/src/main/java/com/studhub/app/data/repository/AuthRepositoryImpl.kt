@@ -3,6 +3,7 @@ package com.studhub.app.data.repository
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.common.api.Api
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -29,6 +30,14 @@ class AuthRepositoryImpl @Inject constructor(
     private var signUpRequest: BeginSignInRequest,
     private val db: FirebaseDatabase
 ) : AuthRepository {
+    private enum class AuthType {
+        NONE,
+        ONE_TAP,
+        EMAIL
+    }
+
+    private var authType: AuthType = AuthType.NONE
+
     private val internalDb = db.getReference("users")
 
     override val isUserAuthenticatedInFirebase: Boolean
@@ -40,6 +49,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> = flow {
         try {
             val signInResult = oneTapClient.beginSignIn(signInRequest).await()
+            authType = AuthType.ONE_TAP
             emit(ApiResponse.Success(signInResult))
         } catch (e: Exception) {
             try {
@@ -68,11 +78,72 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun signUpWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            auth.createUserWithEmailAndPassword(email, password).await()
+            addUserToFirebase()
+            authType = AuthType.EMAIL
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "User sign-up failed" }))
+        }
+    }
+
+    override suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            if (auth.currentUser == null) {
+                emit(ApiResponse.Failure("No user logged-in"))
+                return@flow
+            }
+
+            auth.currentUser!!.sendEmailVerification().await()
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Sending verification email failed" }))
+        }
+    }
+
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            auth.signInWithEmailAndPassword(email, password).await()
+            authType = AuthType.EMAIL
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Authentication failed" }))
+        }
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            auth.sendPasswordResetEmail(email).await()
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Sending reset password email failed" }))
+        }
+    }
+
     override suspend fun signOut(): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
 
         try {
-            oneTapClient.signOut().await()
+            if (authType == AuthType.ONE_TAP) {
+                oneTapClient.signOut().await()
+            }
+
             auth.signOut()
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {
