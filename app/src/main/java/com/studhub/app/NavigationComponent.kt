@@ -22,6 +22,8 @@ import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
 import com.studhub.app.presentation.profile.ProfileScreen
+import com.studhub.app.presentation.ratings.UserRatingScreen
+import com.studhub.app.presentation.ratings.UserRatingViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Preview
@@ -129,6 +131,9 @@ fun AppNavigation(
             }
 
             ChatScreen(conversationId = id, navigateBack = { navController.popBackStack() })
+        }
+        composable("RatingScreen") {
+            UserRatingScreen(targetUserId = "-NQSUz5EY7-EfBG7PCIu")
         }
     }
 }

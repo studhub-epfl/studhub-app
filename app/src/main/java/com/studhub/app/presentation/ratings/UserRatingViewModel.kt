@@ -32,13 +32,14 @@ class UserRatingViewModel @Inject constructor(
 
     private val _currentUser = MutableStateFlow<ApiResponse<User>>(ApiResponse.Loading)
     val currentUser: StateFlow<ApiResponse<User>> = _currentUser
-
-    init {
+    lateinit var targetUserId: String
+    fun initTargetUser(targetUserId: String) {
+        this.targetUserId = targetUserId
         viewModelScope.launch {
             val currentUserResponse = getCurrentUser().first()
             if (currentUserResponse is ApiResponse.Success) {
                 _currentUser.value = currentUserResponse
-                val userRatingsResponse = getUserRatingsUseCase(currentUserResponse.data.id).first()
+                val userRatingsResponse = getUserRatingsUseCase(targetUserId).first()
                 if (userRatingsResponse is ApiResponse.Success) {
                     _ratings.value = userRatingsResponse
                 }
