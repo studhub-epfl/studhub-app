@@ -13,20 +13,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
+import com.studhub.app.presentation.ratings.components.RatingItem
 import kotlinx.coroutines.flow.first
 
 @Composable
-fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hiltViewModel()) {
+fun UserRatingScreen(targetUserId: String, viewModel: IUserRatingViewModel = hiltViewModel<UserRatingViewModel>()) {
     val ratings = viewModel.ratings.collectAsState(initial = ApiResponse.Loading)
     val currentUser = viewModel.currentUser.collectAsState(initial = ApiResponse.Loading)
     var showDialog by remember { mutableStateOf(false) }
     var currentRating: Rating? by remember { mutableStateOf(null) }
     var ratingText by remember { mutableStateOf("") }
     var thumbUp by remember { mutableStateOf(false) }
+    val targetUser = viewModel.targetUser.collectAsState(initial = ApiResponse.Loading)
+
 
     LaunchedEffect(targetUserId) {
         viewModel.initTargetUser(targetUserId)
     }
+
+
 
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
@@ -41,13 +46,7 @@ fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hilt
                     onClick = {
                         if (currentRating == null) {
                             viewModel.addRating(
-                                currentUser.value.let {
-                                    if (it is ApiResponse.Success) {
-                                        it.data.id
-                                    } else {
-                                        return@Button
-                                    }
-                                },
+                                targetUserId,
                                 Rating(
                                     reviewerId = currentUser.value.let {
                                         if (it is ApiResponse.Success) {
@@ -63,13 +62,7 @@ fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hilt
                             )
                         } else {
                             viewModel.updateRating(
-                                currentUser.value.let {
-                                    if (it is ApiResponse.Success) {
-                                        it.data.id
-                                    } else {
-                                        return@Button
-                                    }
-                                },
+                                targetUserId,
                                 currentRating!!.id,
                                 currentRating!!.copy(
                                     thumbUp = thumbUp,
@@ -87,7 +80,7 @@ fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hilt
     }
 
     Column {
-        when (val userResponse = currentUser.value) {
+        when (val userResponse = targetUser.value) {
             is ApiResponse.Loading -> {
                 CircularProgressIndicator()
             }
@@ -99,7 +92,7 @@ fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hilt
                 }
             }
             else -> {
-                // handle
+                Text("Error")
             }
         }
 
@@ -134,43 +127,44 @@ fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hilt
                             mutableStateOf<ApiResponse<User>>(ApiResponse.Loading)
                         }
                         LaunchedEffect(rating.reviewerId) {
-                            userResponse.value = viewModel.getUser(rating.reviewerId).first()
+                            userResponse.value = viewModel.getUserById(rating.reviewerId)
+
                         }
                         when (val reviewer = userResponse.value) {
-                        is ApiResponse.Loading -> {
-                            CircularProgressIndicator()
-                        }
-                        is ApiResponse.Success -> {
-                            val isCurrentUserRating = currentUser.value.let {
-                                if (it is ApiResponse.Success) {
-                                    it.data.id == rating.reviewerId
-                                } else {
-                                    false
-                                }
+                            is ApiResponse.Loading -> {
+                                CircularProgressIndicator()
                             }
-                            RatingItem(
-                                rating = rating,
-                                reviewer = reviewer.data,
-                                isCurrentUserRating = isCurrentUserRating,
-                                onEditRating = {
-                                    // Show dialog for editing a rating
-                                    currentRating = rating
-                                    ratingText = rating.comment
-                                    thumbUp = rating.thumbUp
-                                    showDialog = true
-                                },
-                                onRemoveRating = {
-                                    viewModel.deleteRating(
-                                        rating.userId,
-                                        rating.id
-                                    )
-                                },
-                            )
+                            is ApiResponse.Success -> {
+                                val isCurrentUserRating = currentUser.value.let {
+                                    if (it is ApiResponse.Success) {
+                                        it.data.id == rating.reviewerId
+                                    } else {
+                                        false
+                                    }
+                                }
+                                RatingItem(
+                                    rating = rating,
+                                    reviewer = reviewer.data,
+                                    isCurrentUserRating = isCurrentUserRating,
+                                    onEditRating = {
+                                        // Show dialog for editing a rating
+                                        currentRating = rating
+                                        ratingText = rating.comment
+                                        thumbUp = rating.thumbUp
+                                        showDialog = true
+                                    },
+                                    onRemoveRating = {
+                                        viewModel.deleteRating(
+                                            rating.userId,
+                                            rating.id
+                                        )
+                                    },
+                                )
+                            }
+                            else -> {
+                                // handle
+                            }
                         }
-                        else -> {
-                            // handle
-                        }
-                    }
                     }
                 }
             }
@@ -181,37 +175,5 @@ fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hilt
     }
 }
 
-
-
-@Composable
-fun RatingItem(
-    rating: Rating,
-    reviewer: User,
-    isCurrentUserRating: Boolean,
-    onEditRating: (Rating) -> Unit,
-    onRemoveRating: () -> Unit,
-) {
-    Column {
-        Text(reviewer.firstName + " " + reviewer.lastName)
-        Text(rating.comment)
-
-        if (isCurrentUserRating) {
-            Row {
-                Text(
-                    text = "Edit Rating",
-                    modifier = Modifier.clickable {
-                        onEditRating(rating)
-                    }
-                )
-                Text(
-                    text = "Remove Rating",
-                    modifier = Modifier.clickable {
-                        onRemoveRating()
-                    }
-                )
-            }
-        }
-    }
-}
 
 
