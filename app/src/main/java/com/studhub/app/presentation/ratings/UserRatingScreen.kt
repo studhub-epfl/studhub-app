@@ -16,13 +16,17 @@ import com.studhub.app.domain.model.User
 import kotlinx.coroutines.flow.first
 
 @Composable
-fun UserRatingScreen(viewModel: UserRatingViewModel = hiltViewModel()) {
+fun UserRatingScreen(targetUserId: String, viewModel: UserRatingViewModel = hiltViewModel()) {
     val ratings = viewModel.ratings.collectAsState(initial = ApiResponse.Loading)
     val currentUser = viewModel.currentUser.collectAsState(initial = ApiResponse.Loading)
     var showDialog by remember { mutableStateOf(false) }
     var currentRating: Rating? by remember { mutableStateOf(null) }
     var ratingText by remember { mutableStateOf("") }
     var thumbUp by remember { mutableStateOf(false) }
+
+    LaunchedEffect(targetUserId) {
+        viewModel.initTargetUser(targetUserId)
+    }
 
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
@@ -211,18 +215,3 @@ fun RatingItem(
 }
 
 
-@Composable
-fun EditRatingText(onClick: () -> Unit) {
-    Text(
-        text = "Edit Rating",
-        modifier = Modifier.clickable { onClick() }
-    )
-}
-
-@Composable
-fun RemoveRatingText(onClick: () -> Unit) {
-    Text(
-        text = "Remove Rating",
-        modifier = Modifier.clickable { onClick() }
-    )
-}
