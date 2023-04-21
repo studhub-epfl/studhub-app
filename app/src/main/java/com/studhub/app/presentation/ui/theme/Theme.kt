@@ -56,7 +56,7 @@ private val LightColorPalette = lightColorScheme(
     onTertiaryContainer = studhub_pure_white
 )
 
-
+@ExcludeFromGeneratedTestCoverage
 @Composable
 fun StudHubTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colorsScheme = if (darkTheme) DarkColorPalette else LightColorPalette
