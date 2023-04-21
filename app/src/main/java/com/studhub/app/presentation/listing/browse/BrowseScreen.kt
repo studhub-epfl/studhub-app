@@ -63,13 +63,3 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
     }
 
 }
-
-//Doesn't seem to behave properly with current implementation. Might need to delete if not needed.
-@ExcludeFromGeneratedTestCoverage
-@Preview(showBackground = true)
-@Composable
-fun BrowseActivityPreview() {
-    lateinit var navController: NavHostController
-    navController = rememberNavController()
-    BrowseScreen(navController = navController)
-}
