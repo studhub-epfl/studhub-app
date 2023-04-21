@@ -1,16 +1,13 @@
 package com.studhub.app.data.repository
 
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.ListingRepository
-import com.studhub.app.listing
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.function.Predicate
 import javax.inject.Singleton
 
 @Singleton

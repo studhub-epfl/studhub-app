@@ -10,10 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -52,8 +49,25 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             AppNavigation(navController = navController)
                         }
-                        checkAuthState()
+                        AuthState()
                     })
+            }
+        }
+    }
+
+    @Composable
+    private fun AuthState() {
+        val isUserSignedOut = !viewModel.getAuthState().collectAsState().value
+        if (isUserSignedOut) {
+            Globals.showBottomBar = false
+            navController.navigate("Auth")
+        } else {
+            if (viewModel.isEmailVerified) {
+                Globals.showBottomBar = true
+                navController.navigate("Home")
+            } else {
+                Globals.showBottomBar = false
+                navController.navigate("Auth/VerifyEmail")
             }
         }
     }
@@ -65,4 +79,5 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleLoginComplete() = navController.navigate("Home")
+
 }

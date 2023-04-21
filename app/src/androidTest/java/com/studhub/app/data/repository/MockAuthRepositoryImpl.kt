@@ -13,6 +13,8 @@ import javax.inject.Singleton
 class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true) : AuthRepository {
     private var isLoggedIn = isLoggedInByDefault
 
+    private var isEmailVerif = true
+
     companion object {
         val loggedInUser = User(
             id = "wiufhb",
@@ -25,6 +27,8 @@ class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true) : AuthReposito
 
     override val isUserAuthenticatedInFirebase: Boolean
         get() = isLoggedIn
+    override val isEmailVerified: Boolean
+        get() = isEmailVerif
 
     override val currentUserUid: String
         get() = if (isLoggedIn) loggedInUser.id else ""
@@ -39,8 +43,41 @@ class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true) : AuthReposito
         return flowOf(ApiResponse.Loading)
     }
 
+    override suspend fun signUpWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<ApiResponse<Boolean>> {
+        isLoggedIn = true
+        return flowOf(ApiResponse.Success(true))
+    }
+
+    override suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>> {
+        isEmailVerif = true
+        return flowOf(ApiResponse.Success(true))
+    }
+
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<ApiResponse<Boolean>> {
+        isLoggedIn = true
+        return flowOf(ApiResponse.Success(true))
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>> {
+        return flowOf(ApiResponse.Success(true))
+    }
+
     override suspend fun signOut(): Flow<ApiResponse<Boolean>> {
         isLoggedIn = false
         return flowOf(ApiResponse.Success(true))
+    }
+
+    override suspend fun reloadUser(): Flow<ApiResponse<Boolean>> {
+        return flowOf(ApiResponse.Success(true))
+    }
+
+    override fun getAuthState(): Flow<Boolean> {
+        return flowOf(isLoggedIn)
     }
 }
