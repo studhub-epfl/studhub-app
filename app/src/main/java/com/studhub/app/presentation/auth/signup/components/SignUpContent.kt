@@ -13,8 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
+import com.studhub.app.R
 import com.studhub.app.presentation.ui.common.input.EmailTextField
 import com.studhub.app.presentation.ui.common.input.PasswordTextField
 import com.studhub.app.presentation.ui.common.misc.Spacer
@@ -42,12 +44,12 @@ fun SignUpContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BigLabel(label = "Welcome student!")
+        BigLabel(label = stringResource(id = R.string.auth_signup_info_title))
 
         Spacer("large")
 
         Text(
-            text = "You must register with an epfl.ch or unil.ch email address"
+            text = stringResource(id = R.string.auth_signup_info_description)
         )
 
         Spacer("small")
@@ -77,7 +79,7 @@ fun SignUpContent(
             }
         ) {
             Text(
-                text = "Sign up",
+                text = stringResource(id = R.string.auth_signup_btn_submit),
                 fontSize = 15.sp
             )
         }
@@ -86,7 +88,7 @@ fun SignUpContent(
             modifier = Modifier.clickable {
                 navigateBack()
             },
-            text = "Already user",
+            text = stringResource(id = R.string.auth_signup_already_have_account),
             fontSize = 15.sp
         )
     }

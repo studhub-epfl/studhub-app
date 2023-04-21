@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studhub.app.R
 import com.studhub.app.core.utils.Utils.Companion.displayMessage
 import com.studhub.app.presentation.auth.AuthViewModel
 import com.studhub.app.presentation.auth.signup.components.SignUp
@@ -43,7 +44,7 @@ fun SignUpScreen(
             viewModel.sendEmailVerification()
         },
         showVerifyEmailMessage = {
-            displayMessage(context, "Verify email please")
+            displayMessage(context, context.getString(R.string.auth_signup_verification_email_sent))
         },
         showErrorMessage = { message ->
             displayMessage(context, message) }

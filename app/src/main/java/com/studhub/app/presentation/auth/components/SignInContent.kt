@@ -13,12 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.studhub.app.R
 import com.studhub.app.presentation.ui.common.input.EmailTextField
 import com.studhub.app.presentation.ui.common.input.PasswordTextField
+import com.studhub.app.presentation.ui.common.misc.Spacer
+import com.studhub.app.presentation.ui.common.text.BigLabel
 
 @Composable
 @ExperimentalComposeUiApi
@@ -43,8 +47,11 @@ fun SignInContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        BigLabel(label = stringResource(id = R.string.auth_signin_welcome_message))
+
+        Spacer("large")
+
         EmailTextField(
-            label = "Email",
             email = email,
             onEmailValueChange = { newValue ->
                 email = newValue
@@ -54,7 +61,6 @@ fun SignInContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         PasswordTextField(
-            label = "Password",
             password = password,
             onPasswordValueChange = { newValue ->
                 password = newValue
@@ -70,7 +76,7 @@ fun SignInContent(
             }
         ) {
             Text(
-                text = "Sign in",
+                text = stringResource(id = R.string.auth_signin_btn_submit),
                 fontSize = 15.sp
             )
         }
@@ -79,7 +85,7 @@ fun SignInContent(
                 modifier = Modifier.clickable {
                     navigateToForgotPasswordScreen()
                 },
-                text = "Forgot password",
+                text = stringResource(id = R.string.auth_signin_btn_forgot_password),
                 fontSize = 15.sp
             )
             Text(
@@ -92,7 +98,7 @@ fun SignInContent(
                 modifier = Modifier.clickable {
                     navigateToSignUpScreen()
                 },
-                text = "No account",
+                text = stringResource(id = R.string.auth_signin_btn_no_account),
                 fontSize = 15.sp
             )
         }

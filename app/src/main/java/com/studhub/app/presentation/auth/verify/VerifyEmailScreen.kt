@@ -28,13 +28,13 @@ fun VerifyEmailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Sign out"
+                        text = stringResource(id = R.string.auth_verify_title)
                     )
                 },
                 actions = {
                     BasicFilledButton(
                         onClick = { viewModel.signOut() },
-                        label = stringResource(R.string.profile_btn_sign_out)
+                        label = stringResource(R.string.auth_verify_btn_sign_out)
                     )
                 }
             )
@@ -54,7 +54,10 @@ fun VerifyEmailScreen(
             if (viewModel.isEmailVerified) {
                 navigateToProfileScreen()
             } else {
-                displayMessage(context, "Email not verified")
+                displayMessage(
+                    context,
+                    context.getString(R.string.auth_verify_email_not_verified_error)
+                )
             }
         }
     )

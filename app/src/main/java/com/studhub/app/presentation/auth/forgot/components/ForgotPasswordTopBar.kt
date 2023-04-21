@@ -4,6 +4,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.studhub.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -13,7 +15,7 @@ fun ForgotPasswordTopBar(
     TopAppBar(
         title = {
             Text(
-                text = "Forgot password"
+                text = stringResource(id = R.string.auth_forgot_title)
             )
         },
         navigationIcon = {

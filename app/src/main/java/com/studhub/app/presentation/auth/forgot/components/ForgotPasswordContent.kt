@@ -10,8 +10,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
+import com.studhub.app.R
 import com.studhub.app.presentation.ui.common.input.EmailTextField
 import com.studhub.app.presentation.ui.common.misc.Spacer
 
@@ -46,7 +48,7 @@ fun ForgotPasswordContent(
             }
         ) {
             Text(
-                text = "Reset password",
+                text = stringResource(id = R.string.auth_forgot_btn_submit),
                 fontSize = 15.sp
             )
         }
