@@ -3,10 +3,14 @@ package com.studhub.app.domain.repository
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface AuthRepository {
     val isUserAuthenticatedInFirebase: Boolean
+
+    val isEmailVerified: Boolean
 
     val currentUserUid: String
 
@@ -52,4 +56,16 @@ interface AuthRepository {
      * Sign out of the application
      */
     suspend fun signOut(): Flow<ApiResponse<Boolean>>
+
+    /**
+     * Reloads data of the current user
+     * @return a [Flow] of [ApiResponse] with the last one being true on success
+     */
+    suspend fun reloadUser(): Flow<ApiResponse<Boolean>>
+
+    /**
+     * Retrieves the current authentication status
+     * @return true iff a user is currently logged-in
+     */
+    fun getAuthState(): Flow<Boolean>
 }
