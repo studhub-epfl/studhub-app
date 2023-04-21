@@ -1,13 +1,12 @@
 package com.studhub.app.presentation.nav
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -16,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 data class Route(val name: String, val destination: String, val icon: ImageVector)
 
@@ -36,6 +36,10 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
                 icon = { Icon(route.icon, contentDescription = route.name) },
                 label = { Text(route.name) },
                 selected = selectedItem == index,
+                colors = NavigationBarItemDefaults.colors(
+                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                    selectedTextColor = MaterialTheme.colorScheme.onPrimary),
                 onClick = {
                     selectedItem = index
                     navController.navigate(route.destination)
@@ -48,5 +52,7 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
 @Preview(showBackground = true)
 @Composable
 fun NavBarPreview() {
-    NavBar()
+    StudHubTheme() {
+        NavBar()
+    }
 }

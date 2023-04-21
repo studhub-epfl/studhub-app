@@ -1,49 +1,58 @@
 package com.studhub.app.presentation.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
+import com.studhub.app.presentation.nav.NavBar
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
+import com.studhub.app.presentation.ui.common.text.BigLabel
 
 private val DarkColorPalette = darkColorScheme(
 
-    background = studhub_black,
-    onBackground = studhub_white,
-    surface = studhub_black,
-    onSurface = studhub_white,
-    primary = studhub_light_pink,
-    onPrimary = studhub_dark_blue,
-    primaryContainer = studhub_violet,
-    onPrimaryContainer = studhub_white_variant,
-    secondary = studhub_pink_variant,
-    onSecondary = studhub_dark_violet,
-    secondaryContainer = studhub_dark_gray,
-    onSecondaryContainer = studhub_white_variant_2,
-    tertiary = studhub_pink,
-    onTertiary = studhub_burgundy,
-    tertiaryContainer = studhub_pink_brown,
-    onTertiaryContainer = studhub_pink_variant_2
+    background = studhub_dark_grey,
+    onBackground = studhub_off_white,
+    //E.g Navbar background
+    surface = studhub_washed_crimson_red,
+    onSurface = studhub_pure_black,
+    primary = studhub_bright_red,
+    onPrimary = studhub_pure_white,
+    primaryContainer = studhub_dark_grey_pink,
+    onPrimaryContainer = studhub_pure_white,
+    secondary = studhub_crimson_red,
+    onSecondary = studhub_pure_white,
+    secondaryContainer = studhub_pastel_red,
+    onSecondaryContainer = studhub_pure_white,
+    tertiary = studhub_pastel_red,
+    onTertiary = studhub_pure_black,
+    tertiaryContainer = studhub_gray,
+    onTertiaryContainer = studhub_pure_black
 )
 
 
 private val LightColorPalette = lightColorScheme(
-    background = studhub_white_v,
-    onBackground = studhub_black,
-    surface = studhub_white_v,
-    onSurface = studhub_black,
-    primary = studhub_violet_v,
+    background = studhub_off_white,
+    onBackground = studhub_off_black,
+    //E.g Navbar background
+    surface = studhub_washed_crimson_red,
+    onSurface = studhub_pure_black,
+    primary = studhub_bright_red,
     onPrimary = studhub_pure_white,
-    primaryContainer = studhub_white_variant,
-    onPrimaryContainer = studhub_flashy_blue,
-    secondary = studhub_light_gray_v,
+    primaryContainer = studhub_light_grey_pink,
+    onPrimaryContainer = studhub_pure_white,
+    secondary = studhub_crimson_red,
     onSecondary = studhub_pure_white,
-    secondaryContainer = studhub_burgundy_v,
-    onSecondaryContainer = studhub_white_variant,
-    tertiary = studhub_burgundy_v,
-    onTertiary = studhub_burgundy_v,
-    tertiaryContainer = studhub_pink_variant_2,
-    onTertiaryContainer = studhub_dark_burgundy
+    secondaryContainer = studhub_pastel_red,
+    onSecondaryContainer = studhub_pure_white,
+    tertiary = studhub_pastel_red,
+    onTertiary = studhub_pure_black,
+    tertiaryContainer = studhub_gray,
+    onTertiaryContainer = studhub_pure_black
 )
 
 
@@ -57,4 +66,38 @@ fun StudHubTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
         shapes = Shapes,
         content = content
     )
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun ThemePreview() {
+    StudHubTheme {
+        Scaffold(
+            bottomBar = {
+                NavBar()
+            },
+            content = {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    ThemePreviewContent()
+                }
+            })
+    }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Composable
+fun ThemePreviewContent() {
+    Column (modifier = Modifier.padding(5.dp)){
+        Box {
+            BigLabel("Big Label")
+        }
+        BasicFilledButton(onClick = { }, label = "Basic Filled Button")
+        Text(text = "this is normal text")
+    }
 }
