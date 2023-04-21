@@ -3,7 +3,9 @@ package com.studhub.app.presentation.listing.browse
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,16 +25,18 @@ fun ListingThumbnailScreen(
     viewModel: ListingThumbnailViewModel,
     onClick: () -> Unit,
     navController: NavController,
-) {    Card(
-    onClick = onClick,
-    modifier = Modifier
-        .padding(8.dp)
-        .fillMaxWidth()
-){
-    StudHubTheme {
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    ) {
         ListingContent(listing = viewModel.listing, onClick = onClick)
     }
-}
 }
 
 @Preview(showBackground = true)
@@ -47,5 +51,7 @@ fun ListingThumbnailPreview() {
     lateinit var navController: NavHostController
     navController = rememberNavController()
     val viewModel = ListingThumbnailViewModel(listing)
-    ListingThumbnailScreen(viewModel = viewModel, onClick = {}, navController = navController)
+    StudHubTheme() {
+        ListingThumbnailScreen(viewModel = viewModel, onClick = {}, navController = navController)
+    }
 }
