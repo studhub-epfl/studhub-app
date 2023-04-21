@@ -1,6 +1,7 @@
 package com.studhub.app.presentation.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
@@ -35,6 +36,7 @@ fun BasicFilledButtonPreview() {
         BasicFilledButton(onClick = { }, label = buttonLabel)
     }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
@@ -59,9 +61,7 @@ fun BasicTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 fun EmailTextFieldPreview() {
-    StudHubTheme() {
-        EmailTextField(label = fieldLabel)
-    }
+    EmailTextField(email = TextFieldValue(""), onEmailValueChange = {})
 }
 
 //opens numerical keyboard
@@ -73,13 +73,19 @@ fun NumericTextFieldPreview() {
         NumericTextField(label = fieldLabel)
     }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
+<<<<<<< HEAD
 fun TextBoxPeview() {
     StudHubTheme() {
         TextBox(fieldLabel)
     }
+=======
+fun TextBoxPreview() {
+    TextBox(fieldLabel)
+>>>>>>> 6083855 (Link new views with the others)
 }
 
 /** Text elements preview */

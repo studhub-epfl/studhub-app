@@ -27,7 +27,7 @@ fun HomeScreen(
 ) {
     val user = viewModel.currentUser.collectAsState()
     val scrollState = rememberScrollState()
-    Globals.showBottomBar = true;
+    Globals.showBottomBar = true
 
     StudHubTheme() {
         Column(

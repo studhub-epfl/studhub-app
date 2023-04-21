@@ -1,16 +1,17 @@
 package com.studhub.app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.studhub.app.domain.model.Category
-import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.about.AboutScreen
 import com.studhub.app.presentation.auth.AuthScreen
+import com.studhub.app.presentation.auth.forgot.ForgotPasswordScreen
+import com.studhub.app.presentation.auth.signup.SignUpScreen
+import com.studhub.app.presentation.auth.verify.VerifyEmailScreen
 import com.studhub.app.presentation.cart.CartScreen
 import com.studhub.app.presentation.conversation.ConversationScreen
 import com.studhub.app.presentation.home.HomeScreen
@@ -21,19 +22,7 @@ import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 
-// we don't have listings yet so this is mandatory to test, will remove later.
-val listing = Listing(
-    id = "1",
-    name = "iPhone 13",
-    description = "The latest iPhone with a 6.1-inch Super Retina XDR display.",
-    seller = User(),
-    price = 999.99F,
-    categories = listOf(
-        Category(name = "Electronics"),
-        Category(name = "Smartphones")
-    )
-)
-
+@OptIn(ExperimentalComposeUiApi::class)
 @Preview
 @Composable
 fun AppNavigation(
@@ -52,8 +41,22 @@ fun AppNavigation(
                     } else {
                         navController.navigate("Home")
                     }
-                }
+                },
+                navigateToForgotPasswordScreen = { navController.navigate("Auth/ForgotPassword") },
+                navigateToSignUpScreen = { navController.navigate("Auth/SignUp") }
             )
+        }
+
+        composable(route = "Auth/SignUp") {
+            SignUpScreen(navigateBack = { navController.navigate("Auth") })
+        }
+
+        composable(route = "Auth/ForgotPassword") {
+            ForgotPasswordScreen(navigateBack = { navController.navigate("Auth") })
+        }
+
+        composable(route = "Auth/VerifyEmail") {
+            VerifyEmailScreen(navigateToProfileScreen = { navController.navigate("EditProfile") })
         }
 
         composable(route = "Profile") {
