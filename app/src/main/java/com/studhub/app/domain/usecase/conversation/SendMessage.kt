@@ -33,7 +33,7 @@ class SendMessage @Inject constructor(
             message.copy(senderId = authRepository.currentUserUid, conversationId = conversation.id)
 
         return flow {
-            messageRepository.createMessage(msg).collect { msgQuery ->
+            messageRepository.createMessage(msg, ).collect { msgQuery ->
                 when (msgQuery) {
                     is ApiResponse.Success -> {
                         conversationRepository.updateLastMessageWith(conversation, msgQuery.data)

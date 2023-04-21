@@ -103,37 +103,36 @@ class UserRepositoryImplTest {
         }
     }
 
-        @Test
-        fun addAndRemoveFavoriteListing() {
-            val userRepo = UserRepositoryImpl() // real repo
-            val authRepo = MockAuthRepositoryImpl() // fake repo
-            val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
-            val removeFavoriteListing = RemoveFavoriteListing(userRepo,authRepo)
-            val product = Listing(
-                id = Random.nextLong().toString(),
-                name = "Testing Product ${Random.nextLong()}",
-            )
+    @Test
+    fun addAndRemoveFavoriteListing() {
+        val userRepo = UserRepositoryImpl() // real repo
+        val authRepo = MockAuthRepositoryImpl() // fake repo
+        val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
+        val removeFavoriteListing = RemoveFavoriteListing(userRepo, authRepo)
+        val product = Listing(
+            id = Random.nextLong().toString(),
+            name = "Testing Product ${Random.nextLong()}",
+        )
 
-            runBlocking {
-                addFavoriteListing(product.id).collect() {
-                    when (it) {
-                        is ApiResponse.Failure -> fail(it.message)
-                        ApiResponse.Loading -> {}
-                        is ApiResponse.Success -> {}
-                    }
+        runBlocking {
+            addFavoriteListing(product.id).collect() {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
                 }
             }
+        }
 
-            runBlocking {
-                removeFavoriteListing(product.id).collect {
-                    when (it) {
-                        is ApiResponse.Failure -> fail(it.message)
-                        is ApiResponse.Loading -> {}
-                        is ApiResponse.Success -> {}
-                    }
+        runBlocking {
+            removeFavoriteListing(product.id).collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
                 }
             }
+        }
     }
-
 
 }

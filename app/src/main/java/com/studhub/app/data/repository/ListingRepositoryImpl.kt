@@ -1,16 +1,13 @@
 package com.studhub.app.data.repository
 
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.ListingRepository
-import com.studhub.app.listing
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.util.function.Predicate
 import javax.inject.Singleton
 
 @Singleton
@@ -84,30 +81,33 @@ class ListingRepositoryImpl : ListingRepository {
         }
     }
 
-    override suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>> = flow {
-        emit(ApiResponse.Loading)
-        val query = db.get()
+    override suspend fun getListingsBySearch(keyword: String, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<List<Listing>>> =
+        flow {
+            emit(ApiResponse.Loading)
+            val query = db.get()
 
+            query.await()
 
-        query.await()
+            if (query.isSuccessful) {
+                val listings = mutableListOf<Listing>()
 
-        if (query.isSuccessful) {
-            val listings = mutableListOf<Listing>()
-
-            query.result.children.forEach { snapshot ->
-                val listing = snapshot.getValue(Listing::class.java)
-                if (listing != null && (listing.name.contains(keyword) || listing.description.contains(keyword))) {
-                    listings.add(listing)
+                query.result.children.forEach { snapshot ->
+                    val listing = snapshot.getValue(Listing::class.java)
+                    if (listing != null && (listing.name.contains(keyword) || listing.description.contains(
+                            keyword
+                        ) && blockedUsers[listing.seller.id] != true)
+                    ) {
+                        listings.add(listing)
+                    }
                 }
+
+
+                emit(ApiResponse.Success(listings))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
             }
-
-
-            emit(ApiResponse.Success(listings))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
-    }
 
     override suspend fun updateListing(
         listingId: String,

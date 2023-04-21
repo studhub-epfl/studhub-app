@@ -157,6 +157,14 @@ class AppTestModule {
         UpdateListing(listingRepository)
 
     @Provides
+    fun provideGetListingsBySearch(
+        repository: ListingRepository,
+        authRepository: AuthRepository,
+        userRepository: UserRepository
+    ): GetListingsBySearch =
+        GetListingsBySearch(repository, authRepository, userRepository)
+
+    @Provides
     fun provideGetCategories(categoryRepository: CategoryRepository): GetCategories =
         GetCategories(categoryRepository)
 

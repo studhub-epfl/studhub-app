@@ -10,9 +10,10 @@ interface MessageRepository {
     /**
      * Adds a [message] to the repository
      * @param [message] the message to add to the repository
+     * @param [blockedUsers] the list of users to not send a message to
      * @return A [Flow] of [ApiResponse] with the last one containing the [Message] pushed to the repository on success
      */
-    suspend fun createMessage(message: Message): Flow<ApiResponse<Message>>
+    suspend fun createMessage(message: Message, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<Message>>
 
     /**
      * Retrieves all conversations from the repository sent in the given [conversation]

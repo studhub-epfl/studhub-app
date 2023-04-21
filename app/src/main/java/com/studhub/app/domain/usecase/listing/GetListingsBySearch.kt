@@ -2,8 +2,12 @@ package com.studhub.app.domain.usecase.listing
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.ListingRepository
+import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
@@ -13,7 +17,11 @@ import javax.inject.Inject
  *
  * @param [repository] the repository which the use case will act on
  */
-class GetListingsBySearch @Inject constructor(private val repository: ListingRepository) {
+class GetListingsBySearch @Inject constructor(
+    private val repository: ListingRepository,
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
+) {
 
     /**
      * Retrieves all listings matching the given [keyword] from the [repository]
@@ -24,7 +32,23 @@ class GetListingsBySearch @Inject constructor(private val repository: ListingRep
         if (keyword.length < 3) {
             return flowOf(ApiResponse.Failure("Too few characters"))
         }
-
-        return repository.getListingsBySearch(keyword)
+        return flow {
+            userRepository.getUser(authRepository.currentUserUid).collect { userQuery ->
+                when (userQuery) {
+                    is ApiResponse.Success -> {
+                        repository.getListingsBySearch(keyword, userQuery.data.blockedUsers)
+                            .collect { listingQuery ->
+                                when (listingQuery) {
+                                    is ApiResponse.Failure -> emit(ApiResponse.Failure(listingQuery.message))
+                                    is ApiResponse.Loading -> emit(ApiResponse.Loading)
+                                    is ApiResponse.Success -> emit(listingQuery)
+                                }
+                            }
+                    }
+                    is ApiResponse.Loading -> emit(ApiResponse.Loading)
+                    else -> emit(ApiResponse.Failure("No user available"))
+                }
+            }
+        }
     }
 }
