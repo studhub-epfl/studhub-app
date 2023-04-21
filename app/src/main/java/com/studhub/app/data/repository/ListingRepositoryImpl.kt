@@ -81,45 +81,42 @@ class ListingRepositoryImpl : ListingRepository {
         }
     }
 
-    override suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>> =
-        flow {
-            emit(ApiResponse.Loading)
-            val query = db.get()
+    override suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>> = flow {
+        emit(ApiResponse.Loading)
+        val query = db.get()
 
 
-            query.await()
+        query.await()
 
-            if (query.isSuccessful) {
-                val listings = mutableListOf<Listing>()
+        if (query.isSuccessful) {
+            val listings = mutableListOf<Listing>()
 
-                query.result.children.forEach { snapshot ->
-                    val listing = snapshot.getValue(Listing::class.java)
-                    if (listing != null && (listing.name.contains(keyword) || listing.description.contains(
-                            keyword
-                        )
-                                || listing.price.toString().contains(keyword))
-                    ) {
-                        listings.add(listing)
+            query.result.children.forEach { snapshot ->
+                val listing = snapshot.getValue(Listing::class.java)
+                if (listing != null && (listing.name.contains(keyword) || listing.description.contains(keyword)
+                            || listing.price.toString().contains(keyword))) {
+                    listings.add(listing)
 
-                    }
-
-                    if (listing != null && keyword.contains('-')) {
-
-                        if (listing.price >= keyword.substringBefore('-').toFloat()
-                            && listing.price <= keyword.substringAfter('-').toFloat()
-                        ) {
-                            listings.add(listing)
-                        }
-                    }
-
-
-                    emit(ApiResponse.Success(listings))
                 }
-            } else {
-                val errorMessage = query.exception?.message.orEmpty()
-                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+
+                if(listing != null && keyword.contains('-')) {
+
+                    if(listing.price >= keyword.substringBefore('-').toFloat()
+                        && listing.price <= keyword.substringAfter('-').toFloat()){
+                        listings.add(listing)
+                    }
+
+
+                }
             }
+
+
+            emit(ApiResponse.Success(listings))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
+    }
 
     override suspend fun updateListing(
         listingId: String,

@@ -8,7 +8,6 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -29,6 +28,8 @@ class UserUseCaseTest {
     private val authRepository: AuthRepository = object : AuthRepository {
         override val isUserAuthenticatedInFirebase: Boolean
             get() = true
+        override val isEmailVerified: Boolean
+            get() = true
         override val currentUserUid: String
             get() = loggedInUser.id
 
@@ -38,7 +39,27 @@ class UserUseCaseTest {
         override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>> =
             flowOf(ApiResponse.Loading)
 
+        override suspend fun signUpWithEmailAndPassword(
+            email: String,
+            password: String
+        ): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+        override suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>> =
+            flowOf(ApiResponse.Loading)
+
+        override suspend fun signInWithEmailAndPassword(
+            email: String,
+            password: String
+        ): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+        override suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun signOut(): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+        override suspend fun reloadUser(): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+        override fun getAuthState(): Flow<Boolean> = flowOf(true)
 
     }
 
