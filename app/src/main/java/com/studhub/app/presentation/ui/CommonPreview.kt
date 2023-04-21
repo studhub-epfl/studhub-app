@@ -6,10 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
-import com.studhub.app.presentation.ui.common.input.BasicTextField
-import com.studhub.app.presentation.ui.common.input.EmailTextField
-import com.studhub.app.presentation.ui.common.input.NumericTextField
-import com.studhub.app.presentation.ui.common.input.TextBox
+import com.studhub.app.presentation.ui.common.input.*
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.theme.StudHubTheme
@@ -64,6 +61,14 @@ fun EmailTextFieldPreview() {
     EmailTextField(email = TextFieldValue(""), onEmailValueChange = {})
 }
 
+//opens password keyboard
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun PasswordTextFieldPreview() {
+    PasswordTextField(password = TextFieldValue(""), onPasswordValueChange = {})
+}
+
 //opens numerical keyboard
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
@@ -77,15 +82,10 @@ fun NumericTextFieldPreview() {
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
-<<<<<<< HEAD
-fun TextBoxPeview() {
+fun TextBoxPreview() {
     StudHubTheme() {
         TextBox(fieldLabel)
     }
-=======
-fun TextBoxPreview() {
-    TextBox(fieldLabel)
->>>>>>> 6083855 (Link new views with the others)
 }
 
 /** Text elements preview */
