@@ -65,23 +65,4 @@ fun HomeScreen(
     }
 }
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    val viewModel = remember {
-        HomeViewModel(
-            getCurrentUser = FakeGetCurrentUser()
-        )
-    }
 
-    HomeScreen(
-        viewModel = viewModel,
-        onAddListingClick = {},
-        onBrowseClick = {},
-        onAboutClick = {},
-        onCartClick = {}
-    )
-}
-
- */
