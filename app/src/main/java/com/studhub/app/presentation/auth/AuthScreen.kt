@@ -6,21 +6,21 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider.getCredential
-import com.studhub.app.MainActivity
 import com.studhub.app.core.Globals
-import com.studhub.app.presentation.auth.components.AuthContent
-import com.studhub.app.presentation.auth.components.AuthTopBar
-import com.studhub.app.presentation.auth.components.OneTapSignIn
-import com.studhub.app.presentation.auth.components.SignInWithGoogle
+import com.studhub.app.presentation.auth.components.*
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel = hiltViewModel(),
-    onLoginComplete: (isNewUser: Boolean) -> Unit
+    onLoginComplete: (isNewUser: Boolean) -> Unit,
+    navigateToForgotPasswordScreen: () -> Unit,
+    navigateToSignUpScreen: () -> Unit
 ) {
     Globals.showBottomBar = false;
     Scaffold(
@@ -28,6 +28,14 @@ fun AuthScreen(
             AuthTopBar()
         },
         content = { padding ->
+            SignInContent(
+                padding = padding,
+                signIn = { email, password ->
+                    viewModel.signInWithEmailAndPassword(email, password)
+                },
+                navigateToForgotPasswordScreen = navigateToForgotPasswordScreen,
+                navigateToSignUpScreen = navigateToSignUpScreen
+            )
             AuthContent(
                 padding = padding,
                 oneTapSignIn = {
