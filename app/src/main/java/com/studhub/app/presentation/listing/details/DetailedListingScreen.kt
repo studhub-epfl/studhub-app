@@ -16,10 +16,7 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.listing.details.components.DetailsButtons
-import com.studhub.app.presentation.listing.details.components.ListingDescription
-import com.studhub.app.presentation.listing.details.components.ListingImage
-import com.studhub.app.presentation.listing.details.components.ListingPrice
+import com.studhub.app.presentation.listing.details.components.*
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
@@ -27,10 +24,12 @@ import com.studhub.app.presentation.ui.common.text.BigLabel
 @Composable
 fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
-    id: String
+    navigateToConversation: (conversationId: String) -> Unit,
+    id: String?
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.fetchListing(id)
+    LaunchedEffect(id) {
+        if (id != null)
+            viewModel.fetchListing(id)
     }
 
     when (val currentListing = viewModel.currentListing) {
@@ -40,10 +39,12 @@ fun DetailedListingScreen(
             val listing = currentListing.data
             Details(
                 listing = listing,
-                onContactSellerClick = { /*TODO*/ },
+                onContactSellerClick = { viewModel.contactSeller(listing.seller) },
                 onFavouriteClick = { /* TODO */ })
         }
     }
+
+    StartConversation(navigateToConversation = navigateToConversation)
 }
 
 @Composable

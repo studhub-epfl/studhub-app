@@ -98,7 +98,8 @@ fun AppNavigation(
 
         composable("DetailedListing/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
-            DetailedListingScreen(id = id ?: "0")
+            // TODO("Use conversation id to directly go to the discussion")
+            DetailedListingScreen(id = id, navigateToConversation = { conversationId -> navController.navigate("Conversations") })
         }
 
         composable("Conversations") {
