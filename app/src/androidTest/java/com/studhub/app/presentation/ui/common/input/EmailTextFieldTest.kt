@@ -1,5 +1,7 @@
 package com.studhub.app.presentation.ui.common.input
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -25,13 +27,13 @@ class EmailTextFieldTest {
 
     @Test
     fun componentEmailTextFieldWritesUpdateTheField() {
-        lateinit var rememberable: TextFieldValue
+        lateinit var rememberable: MutableState<TextFieldValue>
         composeTestRule.setContent {
-            rememberable = rememberSaveable { TextFieldValue("") }
+            rememberable = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
             EmailTextField(
                 label = "Test",
-                email = rememberable,
-                onEmailValueChange = { rememberable = it })
+                email = rememberable.value,
+                onEmailValueChange = { rememberable.value = it })
         }
         val field = composeTestRule.onNodeWithText("Test")
         val text = "e@m.ail"
@@ -41,16 +43,16 @@ class EmailTextFieldTest {
 
     @Test
     fun componentEmailTextFieldUpdatesPassedRememberableCorrectly() {
-        lateinit var rememberable: TextFieldValue
+        lateinit var rememberable: MutableState<TextFieldValue>
         composeTestRule.setContent {
-            rememberable = rememberSaveable { TextFieldValue("") }
+            rememberable = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
             EmailTextField(
                 label = "Test",
-                email = rememberable,
-                onEmailValueChange = { rememberable = it })
+                email = rememberable.value,
+                onEmailValueChange = { rememberable.value = it })
         }
         val field = composeTestRule.onNodeWithText("Test")
         field.performTextInput("e@m.ail")
-        field.assert(hasText(rememberable.text))
+        field.assert(hasText(rememberable.value.text))
     }
 }
