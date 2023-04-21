@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.nav.NavBar
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
@@ -22,16 +23,16 @@ private val DarkColorPalette = darkColorScheme(
     onSurface = studhub_pure_black,
     primary = studhub_bright_red,
     onPrimary = studhub_pure_white,
-    primaryContainer = studhub_dark_grey_pink,
+    primaryContainer = studhub_pastel_red,
     onPrimaryContainer = studhub_pure_white,
     secondary = studhub_crimson_red,
     onSecondary = studhub_pure_white,
-    secondaryContainer = studhub_pastel_red,
+    secondaryContainer = studhub_dark_grey_pink,
     onSecondaryContainer = studhub_pure_white,
     tertiary = studhub_pastel_red,
     onTertiary = studhub_pure_black,
     tertiaryContainer = studhub_gray,
-    onTertiaryContainer = studhub_pure_black
+    onTertiaryContainer = studhub_pure_white
 )
 
 
@@ -43,16 +44,16 @@ private val LightColorPalette = lightColorScheme(
     onSurface = studhub_pure_black,
     primary = studhub_bright_red,
     onPrimary = studhub_pure_white,
-    primaryContainer = studhub_light_grey_pink,
+    primaryContainer = studhub_pastel_red,
     onPrimaryContainer = studhub_pure_white,
     secondary = studhub_crimson_red,
     onSecondary = studhub_pure_white,
-    secondaryContainer = studhub_pastel_red,
+    secondaryContainer = studhub_light_grey_pink,
     onSecondaryContainer = studhub_pure_white,
     tertiary = studhub_pastel_red,
     onTertiary = studhub_pure_black,
     tertiaryContainer = studhub_gray,
-    onTertiaryContainer = studhub_pure_black
+    onTertiaryContainer = studhub_pure_white
 )
 
 
@@ -68,36 +69,118 @@ fun StudHubTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
-fun ThemePreview() {
+fun LightThemePreview() {
     StudHubTheme {
-        Scaffold(
-            bottomBar = {
-                NavBar()
-            },
-            content = {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    ThemePreviewContent()
-                }
-            })
+        ThemePreviewContent()
+    }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun DarkThemePreview() {
+    StudHubTheme (darkTheme = true) {
+        ThemePreviewContent()
     }
 }
 
 @ExcludeFromGeneratedTestCoverage
 @Composable
-fun ThemePreviewContent() {
-    Column (modifier = Modifier.padding(5.dp)){
-        Box {
-            BigLabel("Big Label")
+fun SamplePrimaryContainer() {
+    Card (
+        modifier = Modifier
+            .width(180.dp)
+            .height(70.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ))
+    {
+        Box (
+            modifier = Modifier.padding(5.dp))
+        {
+            Text("Primary Container")
         }
-        BasicFilledButton(onClick = { }, label = "Basic Filled Button")
-        Text(text = "this is normal text")
     }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Composable
+fun SampleSecondaryContainer() {
+    Card (
+        modifier = Modifier
+            .width(180.dp)
+            .height(70.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ))
+    {
+        Box (
+            modifier = Modifier.padding(5.dp))
+        {
+            Text("Secondary Container")
+        }
+    }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Composable
+fun SampleTertiaryContainer() {
+    Card (
+        modifier = Modifier
+            .width(180.dp)
+            .height(70.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        ))
+    {
+        Box (
+            modifier = Modifier.padding(5.dp))
+        {
+            Text("Tertiary Container")
+        }
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@ExcludeFromGeneratedTestCoverage
+@Composable
+fun ThemePreviewContent() {
+    Scaffold(
+        bottomBar = {
+            NavBar()
+        },
+        content = {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column (modifier = Modifier.padding(5.dp)){
+                    Box {
+                        BigLabel("Big Label")
+                    }
+                    BasicFilledButton(onClick = { }, label = "Basic Filled Button")
+                    Text(text = "this is normal text",
+                        fontSize = 20.sp)
+                    Text(text = "Primary color",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 20.sp)
+                    Text(text = "Secondary color",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 20.sp)
+                    Text(text = "Tertiary color",
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontSize = 20.sp)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    SamplePrimaryContainer()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    SampleSecondaryContainer()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    SampleTertiaryContainer()
+                }
+            }
+        })
 }

@@ -1,12 +1,10 @@
 package com.studhub.app.presentation.nav
 
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -25,21 +23,25 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
 
     val items = listOf(
         Route(stringResource(R.string.nav_home_button), "Home", Icons.Filled.Home),
-        Route(stringResource(R.string.nav_browse_button), "Browse",  Icons.Filled.Search),
-        Route(stringResource(R.string.nav_sell_button), "AddListing",  Icons.Filled.AddCircle),
-        Route(stringResource(R.string.nav_cart_button), "Cart",  Icons.Filled.ShoppingCart),
-        Route(stringResource(R.string.nav_profile_button), "Profile",  Icons.Filled.AccountBox))
+        Route(stringResource(R.string.nav_browse_button), "Browse", Icons.Filled.Search),
+        Route(stringResource(R.string.nav_sell_button), "AddListing", Icons.Filled.AddCircle),
+        Route(stringResource(R.string.nav_cart_button), "Cart", Icons.Filled.ShoppingCart),
+        Route(stringResource(R.string.nav_profile_button), "Profile", Icons.Filled.AccountBox)
+    )
 
-    NavigationBar (modifier = Modifier.testTag("NavBar")) {
-        items.forEachIndexed  { index, route ->
+    NavigationBar(modifier = Modifier.testTag("NavBar")) {
+        items.forEachIndexed { index, route ->
             NavigationBarItem(
                 icon = { Icon(route.icon, contentDescription = route.name) },
                 label = { Text(route.name) },
                 selected = selectedItem == index,
                 colors = NavigationBarItemDefaults.colors(
-                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                    selectedTextColor = MaterialTheme.colorScheme.onPrimary),
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                    indicatorColor = MaterialTheme.colorScheme.secondary
+                ),
                 onClick = {
                     selectedItem = index
                     navController.navigate(route.destination)
@@ -48,6 +50,7 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
         }
     }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
