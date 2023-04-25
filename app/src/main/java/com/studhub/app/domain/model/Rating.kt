@@ -4,7 +4,11 @@ data class Rating(
     val id: String = "",
     val userId: String = "",
     val reviewerId: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val rating: Int = 0,
+    val comment: String = "",
+    val timestamp: Long = 0,
     val thumbUp: Boolean = false,
-    val thumbDown: Boolean = false,
-    val comment: String = ""
+    val thumbDown: Boolean = false
 )
