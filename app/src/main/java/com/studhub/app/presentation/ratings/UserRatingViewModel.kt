@@ -1,5 +1,7 @@
 package com.studhub.app.presentation.ratings
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
@@ -7,9 +9,9 @@ import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +36,13 @@ class UserRatingViewModel @Inject constructor(
     private val _targetUser = MutableStateFlow<ApiResponse<User>>(ApiResponse.Loading)
     override val targetUser: StateFlow<ApiResponse<User>> = _targetUser
 
+    private val _targetUserLoading = MutableStateFlow(true)
+
     private lateinit var targetUserId: String
+
+    private val _currentUserLoading = MutableStateFlow(true)
+    override val currentUserLoading: StateFlow<Boolean> = _currentUserLoading.asStateFlow()
+
 
     override suspend fun getUserById(id: String): ApiResponse<User> {
         println("Attempting to fetch user with id: $id")
@@ -43,64 +51,85 @@ class UserRatingViewModel @Inject constructor(
         return response
     }
 
-    override fun initTargetUser(targetUserId: String) {
+    override suspend fun initTargetUser(targetUserId: String) {
         this.targetUserId = targetUserId
         viewModelScope.launch {
             getCurrentUser().collect { currentUserResponse ->
                 when (currentUserResponse) {
-                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Loading -> {
+                        _currentUserLoading.value = true
+                    }
                     is ApiResponse.Failure -> {
+                        _currentUserLoading.value = false
                         _currentUser.value = ApiResponse.Failure(currentUserResponse.message)
                     }
                     is ApiResponse.Success -> {
+                        Log.d("UserRatingViewModel","Helllooo")
+                        _currentUserLoading.value = false
                         _currentUser.value = currentUserResponse
                     }
                 }
             }
 
-            getUser(targetUserId).collect { targetUserResponse ->
-                when (targetUserResponse) {
-                    is ApiResponse.Loading -> {}
-                    is ApiResponse.Failure -> {
-                        _targetUser.value = ApiResponse.Failure(targetUserResponse.message)
-                    }
-                    is ApiResponse.Success -> {
-                        _targetUser.value = targetUserResponse
-                    }
-                }
-            }
-
             getUserRatingsUseCase(targetUserId).collect { userRatingsResponse ->
+                Log.d("ViewModel", "User ratings response: $userRatingsResponse")
                 when (userRatingsResponse) {
                     is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
-                    is ApiResponse.Failure -> _ratings.value = ApiResponse.Failure(userRatingsResponse.message)
+                    is ApiResponse.Failure -> _ratings.value =
+                        ApiResponse.Failure(userRatingsResponse.message)
                     is ApiResponse.Success -> {
                         _ratings.value = userRatingsResponse
                     }
                 }
             }
-        }
-    }
-
-
-
-
-
-
-
-    override fun addRating(userId: String, rating: Rating) {
-        viewModelScope.launch {
-            addRatingUseCase(userId, rating).collect { response ->
-                when (response) {
-                    is ApiResponse.Success -> getUserRatings(userId)
-                    is ApiResponse.Failure -> _ratings.value = ApiResponse.Failure(response.message)
-                    is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
+            getUser(targetUserId).collect { targetUserResponse ->
+                when (targetUserResponse) {
+                    is ApiResponse.Loading -> {
+                        _targetUserLoading.value = true
+                    }
+                    is ApiResponse.Failure -> {
+                        _targetUserLoading.value = false
+                        _targetUser.value = ApiResponse.Failure(targetUserResponse.message)
+                    }
+                    is ApiResponse.Success -> {
+                        _targetUserLoading.value = false
+                        _targetUser.value = targetUserResponse
+                    }
                 }
             }
         }
     }
 
+
+    override fun addRating(userId: String, rating: Rating) {
+        Log.d(TAG, "addRating called with rating: $rating, comment: ${rating.comment}")
+        viewModelScope.launch {
+            val currentUserResponse = currentUser.value
+            if (currentUserResponse is ApiResponse.Success) {
+                addRatingUseCase(
+                    userId,
+                    rating.copy(reviewerId = currentUserResponse.data.id)
+                ).collect { response ->
+                    when (response) {
+                        is ApiResponse.Success -> {
+                            getUserRatings(userId)
+                            Log.d(TAG, "Rating added successfully. Fetching updated ratings...")
+                        }
+                        is ApiResponse.Failure -> {
+                            _ratings.value = ApiResponse.Failure(response.message)
+                            Log.e(TAG, "Error adding rating: $response")}
+                        is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
+                    }
+                }
+            } else {
+                _ratings.value = ApiResponse.Failure("Error: Current user not found")
+            }
+        }
+    }
+
+
     override fun updateRating(userId: String, ratingId: String, rating: Rating) {
+        Log.d("UserRatingViewModel", "Updating rating")
         viewModelScope.launch {
             updateRatingUseCase(userId, ratingId, rating).collect { response ->
                 when (response) {
@@ -126,10 +155,28 @@ class UserRatingViewModel @Inject constructor(
 
     override fun getUserRatings(userId: String) {
         viewModelScope.launch {
-            _ratings.value = ApiResponse.Loading
-            getUserRatingsUseCase(userId).collect { response ->
-                _ratings.value = response
+            when (val targetUserResponse = targetUser.value) {
+                is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
+                is ApiResponse.Failure -> _ratings.value =
+                    ApiResponse.Failure(targetUserResponse.message)
+                is ApiResponse.Success -> {
+                    _ratings.value = ApiResponse.Loading
+                    getUserRatingsUseCase(userId).collect { response ->
+                        when (response) {
+                            is ApiResponse.Success -> {
+                                _ratings.value =
+                                    ApiResponse.Success(response.data.sortedByDescending { it.timestamp })
+                                Log.d("UserRatingViewModel", "Ratings updated: ${response.data}")
+                            }
+                            is ApiResponse.Failure -> _ratings.value =
+                                ApiResponse.Failure(response.message)
+                            is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
+                        }
+                    }
+                }
             }
         }
     }
+
+
 }
