@@ -1,7 +1,6 @@
 package com.studhub.app.presentation.listing.details.components
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.presentation.listing.details.DetailedListingViewModel

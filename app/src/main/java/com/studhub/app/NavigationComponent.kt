@@ -7,11 +7,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.studhub.app.core.Globals
 import com.studhub.app.presentation.about.AboutScreen
 import com.studhub.app.presentation.auth.AuthScreen
 import com.studhub.app.presentation.auth.forgot.ForgotPasswordScreen
 import com.studhub.app.presentation.auth.signup.SignUpScreen
 import com.studhub.app.presentation.auth.verify.VerifyEmailScreen
+import com.studhub.app.presentation.conversation.ChatScreen
 import com.studhub.app.presentation.conversation.ConversationScreen
 import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
@@ -98,12 +100,30 @@ fun AppNavigation(
 
         composable("DetailedListing/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
-            // TODO("Use conversation id to directly go to the discussion")
-            DetailedListingScreen(id = id, navigateToConversation = { conversationId -> navController.navigate("Conversations") })
+            if (id == null) {
+                navController.navigate("Browse")
+                return@composable
+            }
+
+            DetailedListingScreen(
+                id = id,
+                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") })
         }
 
         composable("Conversations") {
-            ConversationScreen(navigateToDiscussion = { })
+            Globals.showBottomBar = true
+            ConversationScreen(navigateToDiscussion = { conversationId -> navController.navigate("Conversations/$conversationId") })
+        }
+
+        composable("Conversations/{id}") {
+            Globals.showBottomBar = false
+            val id = it.arguments?.getString("id")
+            if (id == null) {
+                navController.navigate("Conversations")
+                return@composable
+            }
+
+            ChatScreen(conversationId = id, navigateBack = { navController.popBackStack() })
         }
     }
 }

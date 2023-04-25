@@ -19,10 +19,7 @@ import com.studhub.app.data.repository.*
 import com.studhub.app.domain.repository.*
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.category.GetCategory
-import com.studhub.app.domain.usecase.conversation.GetConversationMessages
-import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
-import com.studhub.app.domain.usecase.conversation.SendMessage
-import com.studhub.app.domain.usecase.conversation.StartConversationWith
+import com.studhub.app.domain.usecase.conversation.*
 import com.studhub.app.domain.usecase.listing.*
 import com.studhub.app.domain.usecase.user.*
 import dagger.Module
@@ -186,6 +183,10 @@ class AppModule {
     @Provides
     fun provideGetCategory(categoryRepository: CategoryRepository): GetCategory =
         GetCategory(categoryRepository)
+
+    @Provides
+    fun provideGetConversation(conversationRepository: ConversationRepository, authRepository: AuthRepository): GetConversation =
+        GetConversation(conversationRepository, authRepository)
 
     @Provides
     fun provideGetConversationMessages(messageRepository: MessageRepository): GetConversationMessages =

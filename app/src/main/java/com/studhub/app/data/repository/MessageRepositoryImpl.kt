@@ -45,7 +45,7 @@ class MessageRepositoryImpl : MessageRepository {
 
     override suspend fun getConversationMessages(conversation: Conversation): Flow<ApiResponse<List<Message>>> =
         callbackFlow {
-            trySendBlocking(ApiResponse.Loading)
+            trySend(ApiResponse.Loading)
 
             val listener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -60,15 +60,15 @@ class MessageRepositoryImpl : MessageRepository {
 
                     messages.sortBy { it.createdAt }
 
-                    trySendBlocking(ApiResponse.Success(messages))
+                    trySend(ApiResponse.Success(messages))
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    trySendBlocking(ApiResponse.Failure(error.message))
+                    trySend(ApiResponse.Failure(error.message))
                 }
             }
 
-            db.addListenerForSingleValueEvent(listener)
+            db.addValueEventListener(listener)
 
             awaitClose {
                 db.removeEventListener(listener)
