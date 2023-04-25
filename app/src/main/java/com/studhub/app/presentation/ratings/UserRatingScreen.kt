@@ -2,7 +2,9 @@ package com.studhub.app.presentation.ratings
 
 import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -15,8 +17,6 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.ratings.components.RatingItem
-import androidx.compose.runtime.collectAsState
-import kotlinx.coroutines.flow.StateFlow
 import java.util.*
 
 
@@ -36,6 +36,10 @@ fun UserRatingScreen(
     val targetUser = viewModel.targetUser.collectAsState(initial = ApiResponse.Loading)
     val buttonEnabled = remember { mutableStateOf(false) }
 
+    val thumbsUpCount = remember { mutableStateOf(0) }
+    val thumbsDownCount = remember { mutableStateOf(0) }
+
+
     LaunchedEffect(currentUser.value, currentUserLoading.value) {
         buttonEnabled.value = currentUser.value is ApiResponse.Success && !currentUserLoading.value
     }
@@ -54,11 +58,15 @@ fun UserRatingScreen(
 
     LaunchedEffect(ratings.value) {
         Log.d("UserRatingScreen", "LaunchedEffect ratings.value: ${ratings.value}")
+
         if (ratings.value is ApiResponse.Success) {
             val currentUserData = currentUser.value
             if (currentUserData is ApiResponse.Success) {
+                val ratingList = (ratings.value as ApiResponse.Success).data
                 currentUserHasRating =
-                    (ratings.value as ApiResponse.Success).data.any { it.reviewerId == currentUserData.data.id }
+                    ratingList.any { it.reviewerId == currentUserData.data.id }
+                thumbsUpCount.value = ratingList.count { it.thumbUp }
+                thumbsDownCount.value = ratingList.count { it.thumbDown }
             }
         }
     }
@@ -97,6 +105,8 @@ fun UserRatingScreen(
                                                 timestamp = System.currentTimeMillis()
                                             )
                                         )
+                                        thumbsUpCount.value += if (thumbUp) 1 else 0
+                                        thumbsDownCount.value += if (thumbDown) 1 else 0
                                     } else {
                                         Log.d("UserRatingScreen", "Update rating triggered 1")
                                         viewModel.updateRating(
@@ -108,6 +118,8 @@ fun UserRatingScreen(
                                                 comment = ratingText
                                             )
                                         )
+                                        thumbsUpCount.value += if (thumbUp) 1 else 0
+                                        thumbsDownCount.value += if (thumbDown) 1 else 0
                                     }
                                     showDialog = false
                                     Log.d("UserRatingScreen", "False reached $showDialog")
@@ -135,8 +147,9 @@ fun UserRatingScreen(
             is ApiResponse.Success -> {
                 Text(userResponse.data.firstName + " " + userResponse.data.lastName)
                 Row {
-                    Text("Thumbs Up: ${userResponse.data.thumbsUpCount}")
-                    Text("Thumbs Down: ${userResponse.data.thumbsDownCount}")
+                    Text("Thumbs Up: ${thumbsUpCount.value}")
+                    Text("Thumbs Down: ${thumbsDownCount.value
+                    }")
                 }
             }
             else -> {
@@ -197,6 +210,9 @@ fun UserRatingScreen(
                                             rating.userId,
                                             rating.id
                                         )
+                                        thumbsUpCount.value -= if (thumbUp) 1 else 0
+                                        thumbsDownCount.value -= if (thumbDown) 1 else 0
+
                                     },
                                 )
                             }
