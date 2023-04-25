@@ -1,21 +1,21 @@
 package com.studhub.app.presentation.ratings
 
-import android.util.Log
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Rating
-import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.ratings.components.RatingItem
 import java.util.*
 
@@ -57,7 +57,6 @@ fun UserRatingScreen(
     var currentUserHasRating by remember { mutableStateOf(false) }
 
     LaunchedEffect(ratings.value) {
-        Log.d("UserRatingScreen", "LaunchedEffect ratings.value: ${ratings.value}")
 
         if (ratings.value is ApiResponse.Success) {
             val currentUserData = currentUser.value
@@ -82,14 +81,16 @@ fun UserRatingScreen(
                         Checkbox(checked = thumbUp, onCheckedChange = { thumbUp = it })
                         Checkbox(checked = !thumbUp, onCheckedChange = { thumbUp = !it })
                     }
-                    TextField(value = ratingText, onValueChange = { ratingText = it })
+                    TextField(
+                        value = ratingText,
+                        onValueChange = { ratingText = it },
+                        modifier = Modifier.weight(1f).fillMaxWidth()
+                    )
                     Button(
                         onClick = {
-                            Log.d("UserRatingScreen", "Submit button clicked")
                             currentUser.value.let { userResponse ->
                                 if (userResponse is ApiResponse.Success) {
                                     if (currentRating == null) {
-                                        Log.d("UserRatingScreen", "Add rating triggered 1")
                                         val UUID = UUID.randomUUID().toString()
                                         viewModel.addRating(
                                             targetUserId,
@@ -108,7 +109,6 @@ fun UserRatingScreen(
                                         thumbsUpCount.value += if (thumbUp) 1 else 0
                                         thumbsDownCount.value += if (thumbDown) 1 else 0
                                     } else {
-                                        Log.d("UserRatingScreen", "Update rating triggered 1")
                                         viewModel.updateRating(
                                             targetUserId,
                                             currentRating!!.id,
@@ -122,11 +122,8 @@ fun UserRatingScreen(
                                         thumbsDownCount.value += if (thumbDown) 1 else 0
                                     }
                                     showDialog = false
-                                    Log.d("UserRatingScreen", "False reached $showDialog")
                                     viewModel.getUserRatings(targetUserId)
-                                    Log.d("UserRatingScreen", "False Got ratings $showDialog")
                                 } else {
-                                    Log.d("UserRatingScreen", "Failed")
                                 }
                             }
                         },
@@ -138,61 +135,72 @@ fun UserRatingScreen(
         }
     }
 
-    Column {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         when (val userResponse = targetUser.value) {
             is ApiResponse.Loading -> {
-                Log.d("UserRatingScreen", "Target user loading")
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
             is ApiResponse.Success -> {
-                Text(userResponse.data.firstName + " " + userResponse.data.lastName)
-                Row {
-                    Text("Thumbs Up: ${thumbsUpCount.value}")
-                    Text("Thumbs Down: ${thumbsDownCount.value
-                    }")
+                Text(
+                    text = userResponse.data.firstName + " " + userResponse.data.lastName,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text("Thumbs Up: ${thumbsUpCount.value}", fontSize = 20.sp)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        "Thumbs Down: ${
+                            thumbsDownCount.value
+                        }", fontSize = 20.sp
+                    )
                 }
             }
             else -> {
-                Text("Error")
+                Text("Error", modifier = Modifier.align(Alignment.CenterHorizontally))
             }
         }
-
+        Spacer(modifier = Modifier.height(16.dp))
         when (val ratingsResponse = ratings.value) {
             is ApiResponse.Loading -> {
-                Log.d("UserRatingScreen", "Ratings loading")
                 CircularProgressIndicator()
             }
             is ApiResponse.Success -> {
-                Log.d(
-                    "UserRatingScreen",
-                    "currentUser: ${currentUser.value}, currentUserLoading: ${currentUserLoading.value}"
-                )
-                Log.d("UserRatingScreen", "${currentUserHasRating}")
-                if (!currentUserHasRating) {
-                    Log.d("UserRatingScreen", "Ratings success")
-                    Text(
-                        text = "Add Rating",
-                        modifier = Modifier.clickable {
-                            // Show dialog for adding a rating
-                            currentRating = null
-                            ratingText = ""
-                            showDialog = true
-                        }
-                    )
+//                if (!currentUserHasRating) {
+                TextButton(
+                    onClick = {
+                        currentRating = null
+                        ratingText = ""
+                        showDialog = true
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.DarkGray)
+                ) {
+                    Text("Add Rating", fontSize = 14.sp)
                 }
+//                }
 
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .clip(MaterialTheme.shapes.medium)
+                        .fillMaxWidth(0.7f)
+
+                ) {
                     val ratingList = (ratingsResponse as ApiResponse.Success).data
-                    Log.d("UserRatingScreen", "Rating list size: ${ratingList.size}")
                     items(ratingList) { rating ->
-                        Log.d("UserRatingScreen", "Rating n?")
                         currentUser.value.let { userResponse ->
                             if (userResponse is ApiResponse.Loading) {
-                                Log.d("UserRatingScreen", "why?")
                                 CircularProgressIndicator()
                             }
                             if (userResponse is ApiResponse.Success) {
-                                Log.d("UserRatingScreen", "enfin")
                                 RatingItem(
                                     rating = rating,
                                     reviewer = userResponse.data,
@@ -223,7 +231,6 @@ fun UserRatingScreen(
                 }
             }
             else -> {
-                Log.d("UserRatingScreen", "Ratings failed:")
 
             }
         }

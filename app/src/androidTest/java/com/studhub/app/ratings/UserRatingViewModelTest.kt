@@ -100,7 +100,7 @@ class UserRatingViewModelTest {
         val ratingId = "ratingId"
         val rating = Rating(id = ratingId, reviewerId = "reviewerId", thumbUp = true, thumbDown = false, comment = "Great!")
         val response = ApiResponse.Success(emptyList<Rating>())
-
+        viewModel.addRating(userId,rating)
         `when`(deleteRatingUseCase(userId, ratingId)).thenReturn(flowOf(ApiResponse.Success(true)))
         `when`(getUserRatingsUseCase(userId)).thenReturn(flowOf(response))
 
