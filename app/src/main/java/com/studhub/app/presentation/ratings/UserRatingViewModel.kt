@@ -64,7 +64,7 @@ class UserRatingViewModel @Inject constructor(
                         _currentUser.value = ApiResponse.Failure(currentUserResponse.message)
                     }
                     is ApiResponse.Success -> {
-                        Log.d("UserRatingViewModel","Helllooo")
+                        Log.d("UserRatingViewModel", "Helllooo")
                         _currentUserLoading.value = false
                         _currentUser.value = currentUserResponse
                     }
@@ -117,7 +117,8 @@ class UserRatingViewModel @Inject constructor(
                         }
                         is ApiResponse.Failure -> {
                             _ratings.value = ApiResponse.Failure(response.message)
-                            Log.e(TAG, "Error adding rating: $response")}
+                            Log.e(TAG, "Error adding rating: $response")
+                        }
                         is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
                     }
                 }
@@ -165,7 +166,7 @@ class UserRatingViewModel @Inject constructor(
                         when (response) {
                             is ApiResponse.Success -> {
                                 _ratings.value =
-                                    ApiResponse.Success(response.data.sortedByDescending { it.timestamp })
+                                    ApiResponse.Success(response.data.sortedBy { it.timestamp })
                                 Log.d("UserRatingViewModel", "Ratings updated: ${response.data}")
                             }
                             is ApiResponse.Failure -> _ratings.value =

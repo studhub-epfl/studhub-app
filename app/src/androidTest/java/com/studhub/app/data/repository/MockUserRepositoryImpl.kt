@@ -2,6 +2,7 @@ package com.studhub.app.data.repository
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.delay
@@ -153,4 +154,29 @@ class MockUserRepositoryImpl : UserRepository {
             }
         }
     }
+
+    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateRating(
+        userId: String,
+        ratingId: String,
+        rating: Rating
+    ): Flow<ApiResponse<Rating>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteRating(
+        userId: String,
+        ratingId: String
+    ): Flow<ApiResponse<Boolean>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> {
+        TODO("Not yet implemented")
+    }
 }
+
+
