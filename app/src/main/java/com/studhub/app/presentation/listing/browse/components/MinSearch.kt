@@ -14,13 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun MinSearch(
-    search: MutableState<String> = remember { mutableStateOf("") },
+fun MinSearch(label: String = "",
+    search: MutableState<String> = remember { mutableStateOf("") } ,
     onSearch: () -> Unit = {}
 ) {
     Surface(
@@ -52,7 +53,7 @@ fun MinSearch(
                 onValueChange = { search.value = it },
                 label = {
                     Text(
-                        text = "MIN....CHF",
+                        text = label, //"MIN....CHF",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )

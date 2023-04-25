@@ -54,10 +54,10 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
         SearchBar(search = search1, onSearch = {
             viewModel.searchListings(search1.value)
         })
-        MinSearch(search = search2, onSearch = {
+        MinSearch("MIN....CHF", search = search2, onSearch = {
             viewModel.rangeListings1(search2.value)
         })
-        MaxSearch(search = search3, onSearch = {
+        MinSearch("MAX....CHF",search = search3, onSearch = {
             viewModel.rangeListings2(search2.value)
         })
 
