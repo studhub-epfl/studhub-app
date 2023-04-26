@@ -6,7 +6,6 @@ data class Rating(
     val reviewerId: String = "",
     val firstName: String = "",
     val lastName: String = "",
-    val rating: Int = 0,
     val comment: String = "",
     val timestamp: Long = 0,
     val thumbUp: Boolean = false,

@@ -1,11 +1,15 @@
 package com.studhub.app.domain.usecase
 
+import com.google.android.gms.auth.api.identity.BeginSignInResult
+import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -195,6 +199,29 @@ class UserUseCaseTest {
                     emit(ApiResponse.Failure("No entry for this key"))
                 }
             }
+        }
+
+        override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateRating(
+            userId: String,
+            ratingId: String,
+            rating: Rating
+        ): Flow<ApiResponse<Rating>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteRating(
+            userId: String,
+            ratingId: String
+        ): Flow<ApiResponse<Boolean>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> {
+            TODO("Not yet implemented")
         }
 
     }
