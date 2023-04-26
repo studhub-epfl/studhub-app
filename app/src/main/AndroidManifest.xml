@@ -76,6 +76,13 @@
             android:label="HomeComponent Wrapper"
             android:theme="@style/Theme.Studhub" />
         <activity
+            android:name=".wrapper.RatingActivity"
+            android:exported="true"
+            android:label="HomeComponent Wrapper"
+            android:theme="@style/Theme.Bootcamp"
+            />
+
+        <activity
             android:name=".wrapper.NavigationActivity"
             android:exported="false"
             android:label="AppNavigation Wrapper"

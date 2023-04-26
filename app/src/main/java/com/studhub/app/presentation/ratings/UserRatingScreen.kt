@@ -1,22 +1,13 @@
 package com.studhub.app.presentation.ratings
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Rating
-import com.studhub.app.presentation.ratings.components.RatingItem
+import com.studhub.app.presentation.ratings.components.*
 import java.util.*
 
 
@@ -25,6 +16,8 @@ fun UserRatingScreen(
     targetUserId: String,
     viewModel: IUserRatingViewModel = hiltViewModel<UserRatingViewModel>()
 ) {
+
+
     val ratings = viewModel.ratings.collectAsState(initial = ApiResponse.Loading)
     val currentUserLoading = viewModel.currentUserLoading.collectAsState(initial = true)
     val currentUser = viewModel.currentUser.collectAsState(initial = ApiResponse.Loading)
@@ -35,16 +28,14 @@ fun UserRatingScreen(
     var thumbDown by remember { mutableStateOf(false) }
     val targetUser = viewModel.targetUser.collectAsState(initial = ApiResponse.Loading)
     val buttonEnabled = remember { mutableStateOf(false) }
-
     val thumbsUpCount = remember { mutableStateOf(0) }
     val thumbsDownCount = remember { mutableStateOf(0) }
+
 
 
     LaunchedEffect(currentUser.value, currentUserLoading.value) {
         buttonEnabled.value = currentUser.value is ApiResponse.Success && !currentUserLoading.value
     }
-
-
 
 
     LaunchedEffect(targetUser.value) {
@@ -70,170 +61,72 @@ fun UserRatingScreen(
         }
     }
 
+    RatingDialog(
+        showDialog = showDialog,
+        setShowDialog = { showDialog = false },
+        onSubmit = { thumbUp, ratingText ->
+            handleSubmitRating(
+                viewModel,
+                targetUserId,
+                currentUser,
+                thumbUp,
+                ratingText,
+                currentRating,
+                thumbsUpCount,
+                thumbsDownCount,
+                thumbDown
+            )
+        },
+        thumbUp = thumbUp,
+        setThumbUp = { thumbUp = it },
+        ratingText = ratingText,
+        setRatingText = { ratingText = it },
+        currentUser = currentUser,
+        currentUserLoading = currentUserLoading
+    )
 
 
-    if (showDialog) {
-        Dialog(onDismissRequest = { showDialog = false }) {
-            Surface(modifier = Modifier.size(300.dp, 200.dp)) {
-                Column {
-                    Text("Thumbs Up / Thumbs Down")
-                    Row {
-                        Checkbox(checked = thumbUp, onCheckedChange = { thumbUp = it })
-                        Checkbox(checked = !thumbUp, onCheckedChange = { thumbUp = !it })
-                    }
-                    TextField(
-                        value = ratingText,
-                        onValueChange = { ratingText = it },
-                        modifier = Modifier.weight(1f).fillMaxWidth()
-                    )
-                    Button(
-                        onClick = {
-                            currentUser.value.let { userResponse ->
-                                if (userResponse is ApiResponse.Success) {
-                                    if (currentRating == null) {
-                                        val UUID = UUID.randomUUID().toString()
-                                        viewModel.addRating(
-                                            targetUserId,
-                                            Rating(
-                                                id = UUID,
-                                                userId = targetUserId,
-                                                reviewerId = userResponse.data.id,
-                                                firstName = userResponse.data.firstName,
-                                                lastName = userResponse.data.lastName,
-                                                thumbUp = thumbUp,
-                                                thumbDown = !thumbUp,
-                                                comment = ratingText,
-                                                timestamp = System.currentTimeMillis()
-                                            )
-                                        )
-                                        thumbsUpCount.value += if (thumbUp) 1 else 0
-                                        thumbsDownCount.value += if (thumbDown) 1 else 0
-                                    } else {
-                                        viewModel.updateRating(
-                                            targetUserId,
-                                            currentRating!!.id,
-                                            currentRating!!.copy(
-                                                thumbUp = thumbUp,
-                                                thumbDown = !thumbUp,
-                                                comment = ratingText
-                                            )
-                                        )
-                                        thumbsUpCount.value += if (thumbUp) 1 else 0
-                                        thumbsDownCount.value += if (thumbDown) 1 else 0
-                                    }
-                                    showDialog = false
-                                    viewModel.getUserRatings(targetUserId)
-                                } else {
-                                }
-                            }
-                        },
-                        content = { Text("Submit") },
-                        enabled = currentUser.value is ApiResponse.Success && !currentUserLoading.value
-                    )
-                }
-            }
-        }
-    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-        when (val userResponse = targetUser.value) {
-            is ApiResponse.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            is ApiResponse.Success -> {
-                Text(
-                    text = userResponse.data.firstName + " " + userResponse.data.lastName,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text("Thumbs Up: ${thumbsUpCount.value}", fontSize = 20.sp)
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        "Thumbs Down: ${
-                            thumbsDownCount.value
-                        }", fontSize = 20.sp
-                    )
-                }
-            }
-            else -> {
-                Text("Error", modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-        }
+        UserHeader(
+            targetUser = targetUser,
+            thumbsUpCount = thumbsUpCount.value,
+            thumbsDownCount = thumbsDownCount.value
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
-        when (val ratingsResponse = ratings.value) {
-            is ApiResponse.Loading -> {
-                CircularProgressIndicator()
-            }
-            is ApiResponse.Success -> {
-//                if (!currentUserHasRating) {
-                TextButton(
-                    onClick = {
-                        currentRating = null
-                        ratingText = ""
-                        showDialog = true
-                    },
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color.DarkGray)
-                ) {
-                    Text("Add Rating", fontSize = 14.sp)
-                }
-//                }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .clip(MaterialTheme.shapes.medium)
-                        .fillMaxWidth(0.7f)
+        AddRatingButton(
+            onShowDialogToggle = { showDialog = !showDialog },
+            currentUser = currentUser,
+            currentUserLoading = currentUserLoading
+        )
 
-                ) {
-                    val ratingList = (ratingsResponse as ApiResponse.Success).data
-                    items(ratingList) { rating ->
-                        currentUser.value.let { userResponse ->
-                            if (userResponse is ApiResponse.Loading) {
-                                CircularProgressIndicator()
-                            }
-                            if (userResponse is ApiResponse.Success) {
-                                RatingItem(
-                                    rating = rating,
-                                    reviewer = userResponse.data,
-                                    isCurrentUserRating = currentUserHasRating,
-                                    onEditRating = {
-                                        // Show dialog for editing a rating
-                                        currentRating = rating
-                                        ratingText = rating.comment
-                                        thumbUp = rating.thumbUp
-                                        thumbDown = !thumbUp
-                                        showDialog = true
-                                    },
-                                    onRemoveRating = {
-                                        viewModel.deleteRating(
-                                            rating.userId,
-                                            rating.id
-                                        )
-                                        thumbsUpCount.value -= if (thumbUp) 1 else 0
-                                        thumbsDownCount.value -= if (thumbDown) 1 else 0
+        Spacer(modifier = Modifier.height(16.dp))
 
-                                    },
-                                )
-                            }
-                            if (userResponse is ApiResponse.Loading) {
-                            }
-                        }
-                    }
-                }
-            }
-            else -> {
-
-            }
-        }
+        RatingsList(ratings = ratings,
+            currentUser = currentUser,
+            currentUserHasRating = currentUserHasRating,
+            onEditRating = { rating ->
+                // Show dialog for editing a rating
+                currentRating = rating
+                ratingText = rating.comment
+                thumbUp = rating.thumbUp
+                thumbDown = !thumbUp
+                showDialog = true
+            },
+            onRemoveRating = { rating ->
+                viewModel.deleteRating(
+                    rating.userId,
+                    rating.id
+                )
+                thumbsUpCount.value -= if (thumbUp) 1 else 0
+                thumbsDownCount.value -= if (thumbDown) 1 else 0
+            })
     }
 }
 
