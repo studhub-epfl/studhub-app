@@ -5,9 +5,7 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import com.studhub.app.domain.usecase.user.AddFavoriteListing
-import com.studhub.app.domain.usecase.user.GetFavoriteListings
-import com.studhub.app.domain.usecase.user.RemoveFavoriteListing
+import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
@@ -126,6 +124,37 @@ class UserRepositoryImplTest {
 
         runBlocking {
             removeFavoriteListing(product.id).collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
+                }
+            }
+        }
+    }
+
+    @Test
+    fun addAndRemoveBlockedUser() {
+        val userRepo = UserRepositoryImpl() // real repo
+        val authRepo = MockAuthRepositoryImpl() // fake repo
+        val addBlockedUser = AddBlockedUser(userRepo, authRepo)
+        val removeBlockedUser = UnblockUser(userRepo, authRepo)
+        val user = User(
+            id = Random.nextLong().toString(),
+            userName = "Testing User ${Random.nextLong()}",
+        )
+
+        runBlocking {
+            addBlockedUser(user.id).collect() {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
+                }
+            }
+        }
+        runBlocking {
+            removeBlockedUser(user.id).collect {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}

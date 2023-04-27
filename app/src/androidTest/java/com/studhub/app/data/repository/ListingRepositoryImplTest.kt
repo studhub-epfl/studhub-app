@@ -174,8 +174,9 @@ class ListingRepositoryImplTest {
 
 
         }
+        // TODO: substitute mapOf()
         runBlocking {
-            listingRepo.getListingsBySearch("a key").collect {
+            listingRepo.getListingsBySearch("a key", mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3) && it.data.contains(
@@ -247,8 +248,9 @@ class ListingRepositoryImplTest {
 
 
         }
+        // TODO: substitute mapOf()
         runBlocking {
-            listingRepo.getListingsBySearch("Product 3").collect {
+            listingRepo.getListingsBySearch("Product 3", mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3)

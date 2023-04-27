@@ -23,17 +23,13 @@ class MessageRepositoryImpl : MessageRepository {
 
     private val db = Firebase.database.getReference("messages")
 
-    override suspend fun createMessage(message: Message, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<Message>> {
+    override suspend fun createMessage(message: Message): Flow<ApiResponse<Message>> {
         val messageId: String = db.push().key.orEmpty()
         val messageToPush: Message = message.copy(id = messageId)
 
         return flow {
             emit(ApiResponse.Loading)
 
-            if(blockedUsers[message.senderId] == true){
-                emit(ApiResponse.Failure("You are blocked by the recipient and cannot send a message."))
-                return@flow
-            }
             val query = db.child(messageId).setValue(messageToPush)
 
             query.await()
