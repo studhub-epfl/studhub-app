@@ -311,7 +311,7 @@ class ListingRepositoryImplTest {
 
         }
         runBlocking {
-            listingRepo.getListingsBySearch("1200-2000", , mapOf()).collect {
+            listingRepo.getListingsBySearch("1200-2000", mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing4) && it.data.contains(listing2) && it.data.contains(listing3)
