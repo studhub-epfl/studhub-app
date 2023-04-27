@@ -1,30 +1,38 @@
 package com.studhub.app.presentation.ui.common.input
 
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.coroutines.job
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailTextField(
-    label: String,
-    rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }
+    label: String = "Email",
+    email: TextFieldValue,
+    onEmailValueChange: (newValue: TextFieldValue) -> Unit
 ) {
     OutlinedTextField(
-        modifier = Modifier.width(TextFieldDefaults.MinWidth),
+        value = email,
+        onValueChange = { newValue ->
+            onEmailValueChange(newValue)
+        },
+        label = {
+            Text(
+                text = label
+            )
+        },
         singleLine = true,
-        value = rememberedValue.value,
-        onValueChange = { rememberedValue.value = it },
-        label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email
+        ),
     )
 }

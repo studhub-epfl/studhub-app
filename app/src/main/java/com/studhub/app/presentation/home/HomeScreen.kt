@@ -27,7 +27,7 @@ fun HomeScreen(
 ) {
     val user = viewModel.currentUser.collectAsState()
     val scrollState = rememberScrollState()
-    Globals.showBottomBar = true;
+    Globals.showBottomBar = true
 
     StudHubTheme() {
         Column(
@@ -65,23 +65,4 @@ fun HomeScreen(
     }
 }
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    val viewModel = remember {
-        HomeViewModel(
-            getCurrentUser = FakeGetCurrentUser()
-        )
-    }
 
-    HomeScreen(
-        viewModel = viewModel,
-        onAddListingClick = {},
-        onBrowseClick = {},
-        onAboutClick = {},
-        onCartClick = {}
-    )
-}
-
- */

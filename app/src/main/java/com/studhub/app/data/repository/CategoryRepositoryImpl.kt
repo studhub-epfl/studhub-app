@@ -9,6 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class CategoryRepositoryImpl : CategoryRepository {
+
     private val categories: List<Category> = listOf(
         Category(id = "1", name = "electronics", description = "phones/cameras/.. "),
         Category(id = "2", name = "school items", description ="books/pencils/bags/.."),

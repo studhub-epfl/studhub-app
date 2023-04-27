@@ -23,7 +23,7 @@ fun PriceChip(
         modifier = modifier
             .wrapContentSize(Alignment.BottomStart)
             .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
                 RoundedCornerShape(topEnd = 4.dp)
             )
             .background(
@@ -32,6 +32,8 @@ fun PriceChip(
             )
             .padding(all = 4.dp)
     ) {
-        Text(text = String.format("%.2f chf", price))
+        Text(
+            text = String.format("%.2f chf", price),
+            color = MaterialTheme.colorScheme.onBackground)
     }
 }

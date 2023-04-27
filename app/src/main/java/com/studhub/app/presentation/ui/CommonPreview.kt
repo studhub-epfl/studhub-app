@@ -1,16 +1,15 @@
 package com.studhub.app.presentation.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
-import com.studhub.app.presentation.ui.common.input.BasicTextField
-import com.studhub.app.presentation.ui.common.input.EmailTextField
-import com.studhub.app.presentation.ui.common.input.NumericTextField
-import com.studhub.app.presentation.ui.common.input.TextBox
+import com.studhub.app.presentation.ui.common.input.*
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 private var buttonLabel = "This is a button"
 private var fieldLabel = "This is a field"
@@ -30,13 +29,18 @@ private var title = "This is some title"
 @Preview(showBackground = true)
 @Composable
 fun BasicFilledButtonPreview() {
-    BasicFilledButton(onClick = { }, label = buttonLabel)
+    StudHubTheme() {
+        BasicFilledButton(onClick = { }, label = buttonLabel)
+    }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun PlusButtonPreview() {
-    PlusButton(onClick = {})
+    StudHubTheme() {
+        PlusButton(onClick = {})
+    }
 }
 
 /** Inputs preview */
@@ -44,7 +48,9 @@ fun PlusButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 fun BasicTextFieldPreview() {
-    BasicTextField(label = fieldLabel)
+    StudHubTheme() {
+        BasicTextField(label = fieldLabel)
+    }
 }
 
 //opens email keyboard
@@ -52,7 +58,15 @@ fun BasicTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 fun EmailTextFieldPreview() {
-    EmailTextField(label = fieldLabel)
+    EmailTextField(email = TextFieldValue(""), onEmailValueChange = {})
+}
+
+//opens password keyboard
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun PasswordTextFieldPreview() {
+    PasswordTextField(password = TextFieldValue(""), onPasswordValueChange = {})
 }
 
 //opens numerical keyboard
@@ -60,13 +74,18 @@ fun EmailTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 fun NumericTextFieldPreview() {
-    NumericTextField(label = fieldLabel)
+    StudHubTheme() {
+        NumericTextField(label = fieldLabel)
+    }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
-fun TextBoxPeview() {
-    TextBox(fieldLabel)
+fun TextBoxPreview() {
+    StudHubTheme() {
+        TextBox(fieldLabel)
+    }
 }
 
 /** Text elements preview */
@@ -74,7 +93,9 @@ fun TextBoxPeview() {
 @Preview(showBackground = true)
 @Composable
 fun BigLabelPreview() {
-    BigLabel(label = title)
+    StudHubTheme() {
+        BigLabel(label = title)
+    }
 }
 
 /** Misc elements preview */
@@ -82,5 +103,7 @@ fun BigLabelPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProgressBarPreview() {
-    LoadingCircle()
+    StudHubTheme() {
+        LoadingCircle()
+    }
 }
