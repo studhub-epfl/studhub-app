@@ -81,7 +81,10 @@ class ListingRepositoryImpl : ListingRepository {
         }
     }
 
-    override suspend fun getListingsBySearch(keyword: String, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<List<Listing>>> =
+    override suspend fun getListingsBySearch(
+        keyword: String,
+        blockedUsers: Map<String, Boolean>
+    ): Flow<ApiResponse<List<Listing>>> =
         flow {
             emit(ApiResponse.Loading)
             val query = db.get()
@@ -100,8 +103,6 @@ class ListingRepositoryImpl : ListingRepository {
                         listings.add(listing)
                     }
                 }
-
-
                 emit(ApiResponse.Success(listings))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()

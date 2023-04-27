@@ -3,19 +3,11 @@ package com.studhub.app.data.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.repository.CategoryRepository
+import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
-import com.studhub.app.domain.usecase.listing.CreateListing
-import com.studhub.app.domain.usecase.listing.GetListing
-import com.studhub.app.domain.usecase.listing.GetListings
-import com.studhub.app.domain.usecase.listing.GetListingsBySearch
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -119,7 +111,7 @@ class ListingRepositoryImplTest {
     }
 
     @Test
-    fun getListingsBySearchshouldNotFailonDescription() {
+    fun getListingsBySearchShouldNotFailOnDescription() {
         lateinit var listing: Listing
         lateinit var listing2: Listing
         lateinit var listing3: Listing
@@ -174,7 +166,6 @@ class ListingRepositoryImplTest {
 
 
         }
-        // TODO: substitute mapOf()
         runBlocking {
             listingRepo.getListingsBySearch("a key", mapOf()).collect {
                 when (it) {
@@ -188,12 +179,10 @@ class ListingRepositoryImplTest {
                 }
             }
         }
-
-
     }
 
     @Test
-    fun getListingsBySearchshouldNotFailonName() {
+    fun getListingsBySearchShouldNotFailOnName() {
         lateinit var listing: Listing
         lateinit var listing2: Listing
         lateinit var listing3: Listing
@@ -248,7 +237,6 @@ class ListingRepositoryImplTest {
 
 
         }
-        // TODO: substitute mapOf()
         runBlocking {
             listingRepo.getListingsBySearch("Product 3", mapOf()).collect {
                 when (it) {
@@ -260,34 +248,112 @@ class ListingRepositoryImplTest {
                 }
             }
         }
-
-
     }
-}
-   /* = runBlockingTest {
 
+    @Test
+    fun getListingsBySearchShouldConsiderBlockedUsers() {
+        lateinit var listing: Listing
+        lateinit var listing2: Listing
+        lateinit var listing3: Listing
+        lateinit var listing4: Listing
 
-        val listing1 = Listing("Listing 1", "This is listing 1.")
-        val listing2 = Listing("Listing 2", "This is listing 2.")
-        val listing3 = Listing("Test Listing", "This is a test listing.")
+        runBlocking {
 
-        firebaseDatabase.child("listing1").setValue(listing1).await()
-        firebaseDatabase.child("listing2").setValue(listing2).await()
-        firebaseDatabase.child("test-listing").setValue(listing3).await()
+            val product = Listing(
+                description = Random.nextLong().toString(),
+                name = "Product ${Random.nextLong()}",
+                seller = User( id = Random.nextLong().toString())
+            )
+            val product2 = Listing(
+                description = Random.nextLong().toString(),
+                name = "Product ${Random.nextLong()}",
+                seller = User( id = Random.nextLong().toString())
+            )
+            val product3 = Listing(
+                description = "a key",
+                name = "Product ${Random.nextLong()}",
+                seller = User( id = Random.nextLong().toString())
+            )
+            val product4 = Listing(
+                description = "a key",
+                name = "Product ${Random.nextLong()}",
+                seller = User( id = Random.nextLong().toString())
+            )
 
-        val flow = repository.getListingsBySearch("test")
-
-        flow.collect {
-            when (it) {
-                is ApiResponse.Loading -> {}
-                is ApiResponse.Success -> {
-                    Assert.assertEquals(1, it.data.size)
-                    Assert.assertTrue(it.data.contains(listing3))
+            listingRepo.createListing(product).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
                 }
-                is ApiResponse.Failure -> fail(it.message)
+            }
+            listingRepo.createListing(product2).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing2 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            listingRepo.createListing(product3).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing3 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            listingRepo.createListing(product4).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing4 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
             }
         }
-        */
+
+        runBlocking {
+            val user = User(
+                id = Random.nextLong().toString(),
+                userName = "Testing User ${Random.nextLong()}",
+                blockedUsers = mapOf(listing4.seller.id to true)
+            )
+            listingRepo.getListingsBySearch("a key", user.blockedUsers).collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(
+                        it.data.contains(listing3) && it.data.contains(
+                            listing4
+                        ).not()
+                    )
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
+}
+/* = runBlockingTest {
+
+
+     val listing1 = Listing("Listing 1", "This is listing 1.")
+     val listing2 = Listing("Listing 2", "This is listing 2.")
+     val listing3 = Listing("Test Listing", "This is a test listing.")
+
+     firebaseDatabase.child("listing1").setValue(listing1).await()
+     firebaseDatabase.child("listing2").setValue(listing2).await()
+     firebaseDatabase.child("test-listing").setValue(listing3).await()
+
+     val flow = repository.getListingsBySearch("test")
+
+     flow.collect {
+         when (it) {
+             is ApiResponse.Loading -> {}
+             is ApiResponse.Success -> {
+                 Assert.assertEquals(1, it.data.size)
+                 Assert.assertTrue(it.data.contains(listing3))
+             }
+             is ApiResponse.Failure -> fail(it.message)
+         }
+     }
+     */
 
 /*
     @Test
