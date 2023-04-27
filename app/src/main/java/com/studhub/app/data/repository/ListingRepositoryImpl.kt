@@ -96,7 +96,7 @@ class ListingRepositoryImpl : ListingRepository {
 
                 query.result.children.forEach { snapshot ->
                     val listing = snapshot.getValue(Listing::class.java)
-                    if (listing != null && blockedUsers[listing.seller.id] != true && 
+                    if (listing != null && (blockedUsers[listing.seller.id] != true) &&
                       (listing.name.contains(keyword) || listing.description.contains(keyword)
                                 || listing.price.toString().contains(keyword))) {
                         listings.add(listing)
@@ -108,8 +108,8 @@ class ListingRepositoryImpl : ListingRepository {
                           listings.add(listing)
                       }
                     }
-                    emit(ApiResponse.Success(listings))
                 }
+                emit(ApiResponse.Success(listings))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
                 emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
