@@ -25,7 +25,7 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
         Route(stringResource(R.string.nav_home_button), "Home", Icons.Filled.Home),
         Route(stringResource(R.string.nav_browse_button), "Browse", Icons.Filled.Search),
         Route(stringResource(R.string.nav_sell_button), "AddListing", Icons.Filled.AddCircle),
-        Route(stringResource(R.string.nav_cart_button), "Cart", Icons.Filled.ShoppingCart),
+        Route(stringResource(R.string.nav_chat_button), "Conversations", Icons.Filled.MailOutline),
         Route(stringResource(R.string.nav_profile_button), "Profile", Icons.Filled.AccountBox)
     )
 
