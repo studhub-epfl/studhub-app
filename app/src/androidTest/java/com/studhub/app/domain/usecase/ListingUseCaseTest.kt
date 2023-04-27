@@ -49,7 +49,6 @@ class ListingUseCaseTest {
             }
         }
 
-        // TODO: Filter the blockedUsers
         override suspend fun getListingsBySearch(
             keyword: String,
             blockedUsers: Map<String, Boolean>
@@ -59,7 +58,7 @@ class ListingUseCaseTest {
                 emit(ApiResponse.Success(listingDB.values.filter { k ->
                     (k.description.contains(
                         keyword
-                    ) || k.name.contains(keyword))
+                    ) || k.name.contains(keyword)) && blockedUsers[k.seller.id] != true
                 }))
             }
         }

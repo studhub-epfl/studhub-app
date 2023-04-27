@@ -40,7 +40,7 @@ class MockListingRepositoryImpl: ListingRepository {
     override suspend fun getListingsBySearch(keyword: String, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<List<Listing>>> {
         return flow {
             emit(ApiResponse.Loading)
-            emit(ApiResponse.Success(listingDB.values.filter { k-> ((k.description.compareTo(keyword)==0 || k.name.compareTo(keyword) == 0))
+            emit(ApiResponse.Success(listingDB.values.filter { k-> (k.description.compareTo(keyword)==0 || k.name.compareTo(keyword) == 0)
                     && blockedUsers[k.seller.id] != true}))
         }
     }

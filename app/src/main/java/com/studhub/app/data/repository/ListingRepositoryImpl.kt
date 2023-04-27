@@ -107,8 +107,9 @@ class ListingRepositoryImpl : ListingRepository {
                           && listing.price <= keyword.substringAfter('-').toFloat()){
                           listings.add(listing)
                       }
+                    }
+                    emit(ApiResponse.Success(listings))
                 }
-                emit(ApiResponse.Success(listings))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
                 emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
