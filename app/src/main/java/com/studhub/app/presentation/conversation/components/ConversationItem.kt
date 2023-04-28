@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.Conversation
 import java.text.SimpleDateFormat
@@ -37,19 +39,29 @@ fun ConversationItem(
             Column {
                 Row {
                     Text(
-                        text = conversation.user2Id,
+                        text = conversation.user2Name.ifEmpty { stringResource(R.string.conversation_unknown_user) },
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Row {
-                    Text(shortenText(conversation.lastMessageContent))
-                }
-                Row {
-                    Text(
-                        text = "Last message: ${formatTime(conversation.updatedAt)}",
-                        fontSize = 12.sp
-                    )
+                if (conversation.lastMessageContent.isNotEmpty()) {
+                    Row {
+                        Text(
+                            shortenText(
+                                conversation.lastMessageContent,
+                                ellipsis = stringResource(R.string.misc_ellipsis)
+                            )
+                        )
+                    }
+                    Row {
+                        Text(
+                            text = String.format(
+                                stringResource(R.string.conversation_last_message_at),
+                                formatTime(conversation.updatedAt)
+                            ),
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             }
         }
@@ -65,8 +77,8 @@ private fun formatTime(date: Date): String {
     return formatter.format(calendar.time)
 }
 
-private fun shortenText(text: String, limit: Int = 40): String {
-    return text.take(limit) + if (text.length >= limit) "..." else ""
+private fun shortenText(text: String, limit: Int = 40, ellipsis: String = ""): String {
+    return text.take(limit) + if (text.length > limit) ellipsis else ""
 }
 
 
