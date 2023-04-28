@@ -55,6 +55,9 @@ fun PasswordTextField(
                     contentDescription = null
                 )
             }
-        }
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = MaterialTheme.colorScheme.onBackground
+        )
     )
 }

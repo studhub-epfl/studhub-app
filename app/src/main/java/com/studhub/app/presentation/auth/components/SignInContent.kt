@@ -3,6 +3,8 @@ package com.studhub.app.presentation.auth.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,68 +41,72 @@ fun SignInContent(
         stateSaver = TextFieldValue.Saver
     ) { mutableStateOf(TextFieldValue("")) }
     val keyboard = LocalSoftwareKeyboardController.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        BigLabel(label = stringResource(id = R.string.auth_signin_welcome_message))
-
-        Spacer("large")
-
-        EmailTextField(
-            email = email,
-            onEmailValueChange = { newValue ->
-                email = newValue
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        PasswordTextField(
-            password = password,
-            onPasswordValueChange = { newValue ->
-                password = newValue
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = {
-                keyboard?.hide()
-                signIn(email.text, password.text)
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(id = R.string.auth_signin_btn_submit),
-                fontSize = 15.sp
+            BigLabel(label = stringResource(id = R.string.auth_signin_welcome_message))
+
+            Spacer("large")
+
+            EmailTextField(
+                email = email,
+                onEmailValueChange = { newValue ->
+                    email = newValue
+                }
             )
-        }
-        Row {
-            Text(
-                modifier = Modifier.clickable {
-                    navigateToForgotPasswordScreen()
-                },
-                text = stringResource(id = R.string.auth_signin_btn_forgot_password),
-                fontSize = 15.sp
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            PasswordTextField(
+                password = password,
+                onPasswordValueChange = { newValue ->
+                    password = newValue
+                }
             )
-            Text(
-                modifier = Modifier.padding(start = 4.dp, end = 4.dp),
-                text = " | ",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                modifier = Modifier.clickable {
-                    navigateToSignUpScreen()
-                },
-                text = stringResource(id = R.string.auth_signin_btn_no_account),
-                fontSize = 15.sp
-            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    keyboard?.hide()
+                    signIn(email.text, password.text)
+                }
+            ) {
+                Text(
+                    text = stringResource(id = R.string.auth_signin_btn_submit),
+                    fontSize = 15.sp
+                )
+            }
+            Row {
+                Text(
+                    modifier = Modifier.clickable {
+                        navigateToForgotPasswordScreen()
+                    },
+                    text = stringResource(id = R.string.auth_signin_btn_forgot_password),
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+                    text = " | ",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    modifier = Modifier.clickable {
+                        navigateToSignUpScreen()
+                    },
+                    text = stringResource(id = R.string.auth_signin_btn_no_account),
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }
