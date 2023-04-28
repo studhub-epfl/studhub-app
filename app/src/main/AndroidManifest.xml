@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
     <application
         android:name=".StudHubApp"
         android:allowBackup="true"
@@ -41,9 +48,10 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".MeetingPointPickerActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps" />
+            android:label="MeetingPointPickerActivity"
+            android:theme="@style/Theme.Bootcamp" />
 
 
         <activity
@@ -81,6 +89,7 @@
             android:exported="false"
             android:label="Auth Wrapper"
             android:theme="@style/Theme.Bootcamp" />
+
     </application>
 
 </manifest>

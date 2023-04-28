@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.listing.CreateListing
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class CreateListingViewModel @Inject constructor(
@@ -45,6 +45,7 @@ class CreateListingViewModel @Inject constructor(
         description: String,
         category: Category,
         price: Float,
+        meetingPoint: MeetingPoint,
         callback: (id: String) -> Unit
     ) {
         val listing = Listing(
@@ -52,12 +53,15 @@ class CreateListingViewModel @Inject constructor(
             description = description,
             categories = listOf(category),
             price = price,
+            meetingPoint = meetingPoint
         )
 
         viewModelScope.launch {
             _createListing(listing).collect {
                 when (it) {
-                    is ApiResponse.Success -> { callback(it.data.id) }
+                    is ApiResponse.Success -> {
+                        callback(it.data.id)
+                    }
                     is ApiResponse.Failure -> { /* should not fail */
                     }
                     is ApiResponse.Loading -> { /* TODO SHOW LOADING ICON */

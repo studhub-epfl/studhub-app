@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.ui.browse.ListingContent
 import com.studhub.app.presentation.ui.theme.StudHubTheme
@@ -46,7 +47,8 @@ fun ListingThumbnailPreview() {
         name = "Scooter brand new from 2021",
         seller = User(firstName = "Jimmy", lastName = "Poppin"),
         categories = listOf(Category(name = "Mobility")),
-        price = 1560.45F
+        price = 1560.45F,
+        meetingPoint = MeetingPoint(1.0,1.0)
     )
     lateinit var navController: NavHostController
     navController = rememberNavController()

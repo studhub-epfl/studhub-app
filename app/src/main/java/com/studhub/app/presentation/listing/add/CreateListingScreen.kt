@@ -1,5 +1,9 @@
 package com.studhub.app.presentation.listing.add
 
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,13 +17,17 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
+import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
+import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
@@ -38,7 +46,7 @@ fun CreateListingScreen(
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
-
+    val meetingPoint = rememberSaveable { mutableStateOf<MeetingPoint?>(null) }
     StudHubTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -58,12 +66,14 @@ fun CreateListingScreen(
                         description = description,
                         price = price,
                         category = category,
+                        meetingPoint = meetingPoint,
                         onSubmit = {
                             viewModel.createListing(
                                 title.value,
                                 description.value,
                                 category.value,
                                 price.value.toFloat(),
+                                meetingPoint.value!!,
                                 navigateToListing
                             )
                         }
@@ -82,6 +92,7 @@ fun ListingForm(
     price: MutableState<String>,
     category: MutableState<Category>,
     onSubmit: () -> Unit,
+    meetingPoint: MutableState<MeetingPoint?>,
 ) {
 
     BasicTextField(label = "Item title", rememberedValue = title)
@@ -89,9 +100,10 @@ fun ListingForm(
     TextBox(label = "Item description", rememberedValue = description)
     PriceRow(rememberedValue = price)
     CategoryDropDown(categories, selected = category)
+    MeetingPointInput(meetingPoint = meetingPoint)
     BasicFilledButton(
         onClick = {
-            if (category.value.name != "Choose a category") {
+            if (category.value.name != "Choose a category" && meetingPoint.value != null) {
                 onSubmit()
             }
         },
@@ -202,5 +214,33 @@ fun CategoryDropDown(
                 }
             }
         }
+    }
+}
+@Composable
+fun MeetingPointInput(meetingPoint: MutableState<MeetingPoint?>) {
+    val context = LocalContext.current
+    val requestLocationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val location = data?.getParcelableExtra<LatLng>("location")
+            location?.let { latLng ->
+                meetingPoint.value = MeetingPoint(latitude = latLng.latitude, longitude = latLng.longitude)
+            }
+        }
+    }
+
+    Button(
+        onClick = {
+            val intent = Intent(context, MeetingPointPickerActivity::class.java)
+            requestLocationLauncher.launch(intent)
+        }
+    ) {
+        Text("Set Meeting Point")
+    }
+
+    meetingPoint.value?.let { location ->
+        Text("Meeting Point: (${location.latitude}, ${location.longitude})")
     }
 }

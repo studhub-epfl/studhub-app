@@ -5,16 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.listing.GetListing
-import com.studhub.app.presentation.listing.add.FakeListingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,4 +27,25 @@ class DetailedListingViewModel @Inject constructor(
             }
         }
     }
+
+    fun getMeetingPoint(listingId: String, callback: (LatLng) -> Unit) {
+        viewModelScope.launch {
+            getListing(listingId).collect {
+                when (it) {
+                    is ApiResponse.Success -> {
+                        val listing = it.data
+                        val meetingPoint = listing.meetingPoint
+                        if (meetingPoint != null) {
+                            callback(LatLng(meetingPoint.latitude, meetingPoint.longitude))
+                        }
+                    }
+                    is ApiResponse.Failure -> { /* handle failure */
+                    }
+                    is ApiResponse.Loading -> { /* handle loading */
+                    }
+                }
+            }
+        }
+    }
+
 }

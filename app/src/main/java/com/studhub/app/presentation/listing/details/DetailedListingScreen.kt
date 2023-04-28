@@ -1,20 +1,24 @@
 package com.studhub.app.presentation.listing.details
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
+import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.listing.details.components.DetailsButtons
 import com.studhub.app.presentation.listing.details.components.ListingDescription
@@ -33,6 +37,16 @@ fun DetailedListingScreen(
         viewModel.fetchListing(id)
     }
 
+    val activityContext = LocalContext.current
+
+    fun displayMeetingPoint(location: LatLng) {
+        val intent = Intent(activityContext, MeetingPointPickerActivity::class.java).apply {
+            putExtra("viewOnly", true)
+            putExtra("location", location)
+        }
+        activityContext.startActivity(intent)
+    }
+
     when (val currentListing = viewModel.currentListing) {
         is ApiResponse.Loading -> LoadingCircle()
         is ApiResponse.Failure -> {}
@@ -42,9 +56,25 @@ fun DetailedListingScreen(
                 listing = listing,
                 onContactSellerClick = { /*TODO*/ },
                 onFavouriteClick = { /* TODO */ })
+            Button(
+                onClick = {
+                    viewModel.getMeetingPoint(id) { location ->
+                        displayMeetingPoint(location)
+                    }
+                }
+            ) {
+                Text("View Meeting Point")
+            }
         }
+
+
     }
+
+
+
+
 }
+
 
 @Composable
 fun Details(
@@ -84,10 +114,13 @@ fun DetailsPreview() {
             firstName = "Josh",
             lastName = "Marley",
         ),
-        price = 545.45F
+        price = 545.45F,
+        meetingPoint = MeetingPoint((1.0),1.0)
     )
     Details(
         listing = listing,
         onContactSellerClick = { },
         onFavouriteClick = { })
+
+
 }
