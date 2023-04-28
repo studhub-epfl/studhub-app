@@ -32,10 +32,14 @@ class DetailedListingViewModel @Inject constructor(
     var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
         private set
 
-    fun contactSeller(seller: User) {
+    fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
         viewModelScope.launch {
             startConversationWith(seller).collect {
                 startConversationWithResponse = it
+                when (it) {
+                    is ApiResponse.Success -> callback(it.data)
+                    else -> {}
+                }
             }
         }
     }

@@ -11,7 +11,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.presentation.listing.details.components.*
+import com.studhub.app.presentation.listing.details.components.DetailsButtons
+import com.studhub.app.presentation.listing.details.components.ListingDescription
+import com.studhub.app.presentation.listing.details.components.ListingImage
+import com.studhub.app.presentation.listing.details.components.ListingPrice
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
@@ -35,12 +38,14 @@ fun DetailedListingScreen(
             val listing = currentListing.data
             Details(
                 listing = listing,
-                onContactSellerClick = { viewModel.contactSeller(listing.seller) },
+                onContactSellerClick = {
+                    viewModel.contactSeller(listing.seller) { conv ->
+                        navigateToConversation(conv.id)
+                    }
+                },
                 onFavouriteClick = { /* TODO */ })
         }
     }
-
-    StartConversation(navigateToConversation = navigateToConversation)
 }
 
 @Composable
