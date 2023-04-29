@@ -7,6 +7,8 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.listing.GetListings
+import com.studhub.app.domain.usecase.listing.GetListingsByMax
+import com.studhub.app.domain.usecase.listing.GetListingsByMin
 import com.studhub.app.domain.usecase.listing.GetListingsBySearch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BrowseViewModel @Inject constructor(
     private val getListingsBySearch: GetListingsBySearch,
+    private val getListingsByMin: GetListingsByMin,
+    private val getListingsByMax: GetListingsByMax,
     private val getListings: GetListings
 ) : ViewModel() {
     private val _listingsState = MutableStateFlow(emptyList<Listing>())
@@ -25,6 +29,29 @@ class BrowseViewModel @Inject constructor(
     fun searchListings(keyword: String) {
         viewModelScope.launch {
             getListingsBySearch(keyword).collect {
+                when (it) {
+                    is ApiResponse.Loading -> _listingsState.value = emptyList()
+                    is ApiResponse.Failure -> {}
+                    is ApiResponse.Success -> _listingsState.value = it.data
+                }
+            }
+        }
+    }
+
+    fun rangeListings1(keyword: String) {
+        viewModelScope.launch {
+            getListingsByMin(keyword).collect {
+                when (it) {
+                    is ApiResponse.Loading -> _listingsState.value = emptyList()
+                    is ApiResponse.Failure -> {}
+                    is ApiResponse.Success -> _listingsState.value = it.data
+                }
+            }
+        }
+    }
+    fun rangeListings2(keyword: String) {
+        viewModelScope.launch {
+            getListingsByMax(keyword).collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
                     is ApiResponse.Failure -> {}

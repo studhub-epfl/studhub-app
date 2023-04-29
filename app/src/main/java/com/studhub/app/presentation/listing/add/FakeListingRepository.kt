@@ -48,6 +48,15 @@ class FakeListingRepository : ListingRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun getListingsByMin(keyword: String): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getListingsByMax(keyword: String): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
+    }
+
+
     override suspend fun updateListing(
         listingId: String,
         updatedListing: Listing

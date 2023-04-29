@@ -1,19 +1,14 @@
 package com.studhub.app.presentation.ui.common.input
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
@@ -24,14 +19,14 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun SearchBar(
+fun MinSearch(
     search: MutableState<String> = remember { mutableStateOf("") },
     onSearch: () -> Unit = {}
 ) {
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(58.dp),
+            .width(250.dp)
+            .height(60.dp),
         color = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
         shape = MaterialTheme.shapes.medium,
@@ -43,13 +38,21 @@ fun SearchBar(
                 .fillMaxSize()
                 .padding(horizontal = 8.dp),
         ) {
-
+            IconButton(
+                onClick = { /* Handle menu button click */ }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowForward,
+                    contentDescription = "Menu button",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
             OutlinedTextField(
                 value = search.value,
                 onValueChange = { search.value = it },
                 label = {
                     Text(
-                        text = "Search...",
+                        text = "MIN....CHF",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
