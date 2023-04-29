@@ -33,9 +33,8 @@ interface ListingRepository {
      */
     suspend fun getListingsBySearch(keyword: String, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<List<Listing>>>
 
-    suspend fun getListingsByMin(keyword: String): Flow<ApiResponse<List<Listing>>>
+    suspend fun getListingsByRange(keyword: String, keyword2: String): Flow<ApiResponse<List<Listing>>>
 
-    suspend fun getListingsByMax(keyword: String): Flow<ApiResponse<List<Listing>>>
 
     /**
      * update a listing with the given [listingId]

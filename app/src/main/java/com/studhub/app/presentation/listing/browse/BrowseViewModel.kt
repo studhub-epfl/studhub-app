@@ -7,8 +7,7 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.listing.GetListings
-import com.studhub.app.domain.usecase.listing.GetListingsByMax
-import com.studhub.app.domain.usecase.listing.GetListingsByMin
+import com.studhub.app.domain.usecase.listing.GetListingsByRange
 import com.studhub.app.domain.usecase.listing.GetListingsBySearch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BrowseViewModel @Inject constructor(
     private val getListingsBySearch: GetListingsBySearch,
-    private val getListingsByMin: GetListingsByMin,
-    private val getListingsByMax: GetListingsByMax,
+    private val getListingsByRange: GetListingsByRange,
     private val getListings: GetListings
 ) : ViewModel() {
     private val _listingsState = MutableStateFlow(emptyList<Listing>())
@@ -38,9 +36,9 @@ class BrowseViewModel @Inject constructor(
         }
     }
 
-    fun rangeListings1(keyword: String) {
+    fun rangeListings1(keyword1: String, keyword2: String) {
         viewModelScope.launch {
-            getListingsByMin(keyword).collect {
+            getListingsByRange(keyword1, keyword2).collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
                     is ApiResponse.Failure -> {}
@@ -49,17 +47,7 @@ class BrowseViewModel @Inject constructor(
             }
         }
     }
-    fun rangeListings2(keyword: String) {
-        viewModelScope.launch {
-            getListingsByMax(keyword).collect {
-                when (it) {
-                    is ApiResponse.Loading -> _listingsState.value = emptyList()
-                    is ApiResponse.Failure -> {}
-                    is ApiResponse.Success -> _listingsState.value = it.data
-                }
-            }
-        }
-    }
+
 
     fun getCurrentListings() {
         viewModelScope.launch {

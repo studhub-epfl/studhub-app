@@ -13,18 +13,18 @@ import javax.inject.Inject
  *
  * @param [repository] the repository which the use case will act on
  */
-class GetListingsByMax @Inject constructor(private val repository: ListingRepository) {
+class GetListingsByRange @Inject constructor(private val repository: ListingRepository) {
 
     /**
      * Retrieves all listings matching the given [keyword] from the [repository]
      *
      * @param [keyword] the value to compare to the listings
      */
-    suspend operator fun invoke(keyword: String): Flow<ApiResponse<List<Listing>>> {
-        if (keyword.length < 3) {
-            return flowOf(ApiResponse.Failure("Too few characters"))
-        }
+    suspend operator fun invoke(keyword1: String, keyword2: String): Flow<ApiResponse<List<Listing>>> {
+        //if (keyword1.length < 3 && keyword1.length < 3) {
+         //   return flowOf(ApiResponse.Failure("Too few characters"))
+        //}
 
-        return repository.getListingsByMax(keyword)
+        return repository.getListingsByRange(keyword1,keyword2)
     }
 }

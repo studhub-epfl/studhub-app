@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class ListingRepositoryImpl : ListingRepository {
 
     private val db = Firebase.database.getReference("listings")
-    private var l = mutableListOf<Listing>()
+    private var provisionalListing = mutableListOf<Listing>()
 
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
@@ -118,8 +118,10 @@ class ListingRepositoryImpl : ListingRepository {
             }
         }
 
-    override suspend fun getListingsByMin(keyword: String): Flow<ApiResponse<List<Listing>>> = flow {
+    override suspend fun getListingsByRange(keyword1: String, keyword2: String): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
+
+
         val query = db.get()
         query.await()
 
@@ -132,22 +134,30 @@ class ListingRepositoryImpl : ListingRepository {
 
                 if(listing != null) {
 
-                    if(listing.price >= keyword.toFloat()){
+                    if(listing.price >= keyword1.toFloat() && listing.price <= keyword2.toFloat() ){
                         listings.add(listing)
                     }
 
                 }
             }
 
-            l = listings
-            emit(ApiResponse.Success(l))
+            provisionalListing = listings
+            emit(ApiResponse.Success(provisionalListing))
         } else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
-    }
 
-    override suspend fun getListingsByMax(keyword: String): Flow<ApiResponse<List<Listing>>> = flow {
+
+
+
+
+
+
+
+/*
+
+
         emit(ApiResponse.Loading)
         val query = db.get()
         query.await()
@@ -160,20 +170,30 @@ class ListingRepositoryImpl : ListingRepository {
 
                 if(listing != null) {
 
-                        if(listing.price < keyword.toFloat()){
-                            l.remove(listing)
-                        }
+
+
+                    if(listing.price > keyword.toFloat()){
+                        provisionalListing.remove(listing)
+                    }
+
 
                 }
             }
 
 
-            emit(ApiResponse.Success(l))
+            emit(ApiResponse.Success(provisionalListing))
         } else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
+
+
+
+        */
+
+
     }
+
 
     override suspend fun updateListing(
         listingId: String,

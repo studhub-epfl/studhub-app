@@ -16,8 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
-import com.studhub.app.presentation.ui.common.input.MaxSearch
-import com.studhub.app.presentation.ui.common.input.MinSearch
+import com.studhub.app.presentation.ui.common.input.RangeBar
 import com.studhub.app.presentation.ui.common.input.SearchBar
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import kotlinx.coroutines.launch
@@ -54,11 +53,11 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
         SearchBar(search = search1, onSearch = {
             viewModel.searchListings(search1.value)
         })
-        MinSearch("MIN....CHF", search = search2, onSearch = {
-            viewModel.rangeListings1(search2.value)
+        RangeBar("MIN....CHF", search = search2, onSearch = {
+            viewModel.rangeListings1(search2.value, search3.value)
         })
-        MinSearch("MAX....CHF",search = search3, onSearch = {
-            viewModel.rangeListings2(search2.value)
+        RangeBar("MAX....CHF",search = search3, onSearch = {
+            viewModel.rangeListings1(search2.value, search3.value)
         })
 
         if (listings.isNotEmpty()) {
