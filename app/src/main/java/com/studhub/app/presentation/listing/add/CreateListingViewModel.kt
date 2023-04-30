@@ -1,5 +1,8 @@
 package com.studhub.app.presentation.listing.add
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
@@ -17,11 +20,14 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateListingViewModel @Inject constructor(
     private val _createListing: CreateListing,
-    private val getCategories: GetCategories
+    private val getCategories: GetCategories,
+
 ) : ViewModel() {
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories: StateFlow<List<Category>> = _categories
 
+    private val _navigateToListing = MutableLiveData<String>()
+    val navigateToListing: LiveData<String> = _navigateToListing
 
     init {
         fetchCategories()
@@ -45,7 +51,7 @@ class CreateListingViewModel @Inject constructor(
         description: String,
         category: Category,
         price: Float,
-        meetingPoint: MeetingPoint,
+        meetingPoint: MeetingPoint?,
         callback: (id: String) -> Unit
     ) {
         val listing = Listing(
@@ -57,6 +63,7 @@ class CreateListingViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
+            Log.d("CreateListingViewModel", "Before createListing call")
             _createListing(listing).collect {
                 when (it) {
                     is ApiResponse.Success -> {
@@ -68,6 +75,7 @@ class CreateListingViewModel @Inject constructor(
                     }
                 }
             }
+            Log.d("CreateListingViewModel", "After createListing call")
         }
     }
 }

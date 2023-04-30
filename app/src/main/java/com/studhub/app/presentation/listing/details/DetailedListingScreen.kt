@@ -1,7 +1,11 @@
 package com.studhub.app.presentation.listing.details
 
 import android.content.Intent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -12,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
@@ -33,9 +38,15 @@ fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
     id: String
 ) {
-    LaunchedEffect(Unit) {
+
+    val navController = rememberNavController()
+
+    val currentListing = viewModel.currentListing
+
+    LaunchedEffect(id) {
         viewModel.fetchListing(id)
     }
+
 
     val activityContext = LocalContext.current
 
@@ -47,32 +58,26 @@ fun DetailedListingScreen(
         activityContext.startActivity(intent)
     }
 
-    when (val currentListing = viewModel.currentListing) {
-        is ApiResponse.Loading -> LoadingCircle()
-        is ApiResponse.Failure -> {}
-        is ApiResponse.Success -> {
-            val listing = currentListing.data
-            Details(
-                listing = listing,
-                onContactSellerClick = { /*TODO*/ },
-                onFavouriteClick = { /* TODO */ })
-            Button(
-                onClick = {
-                    viewModel.getMeetingPoint(id) { location ->
-                        displayMeetingPoint(location)
-                    }
+
+    if (currentListing is ApiResponse.Success) {
+        val listing = (currentListing as ApiResponse.Success<Listing>).data
+        Details(
+            listing = listing,
+            onContactSellerClick = { /*TODO*/ },
+            onFavouriteClick = { /* TODO */ })
+
+        Button(
+            onClick = {
+                viewModel.getMeetingPoint(id) { location ->
+                    displayMeetingPoint(location)
                 }
-            ) {
-                Text("View Meeting Point")
             }
+        ) {
+            Text("View Meeting Point")
         }
-
-
+    } else {
+        LoadingCircle()
     }
-
-
-
-
 }
 
 
@@ -115,7 +120,7 @@ fun DetailsPreview() {
             lastName = "Marley",
         ),
         price = 545.45F,
-        meetingPoint = MeetingPoint((1.0),1.0)
+        meetingPoint = MeetingPoint((1.0), 1.0)
     )
     Details(
         listing = listing,

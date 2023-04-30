@@ -2,6 +2,7 @@ package com.studhub.app.presentation.listing.add
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -33,7 +34,9 @@ import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import androidx.compose.runtime.livedata.observeAsState
 import com.studhub.app.presentation.ui.theme.StudHubTheme
+
 
 @Composable
 fun CreateListingScreen(
@@ -46,7 +49,15 @@ fun CreateListingScreen(
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
-    val meetingPoint = rememberSaveable { mutableStateOf<MeetingPoint?>(null) }
+    val meetingPoint = remember { mutableStateOf<MeetingPoint?>(null) }
+
+
+    val navigateId by viewModel.navigateToListing.observeAsState("")
+    if (navigateId.isNotBlank()) {
+        navigateToListing(navigateId)
+    }
+
+
     StudHubTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -68,15 +79,18 @@ fun CreateListingScreen(
                         category = category,
                         meetingPoint = meetingPoint,
                         onSubmit = {
+                            Log.d("CreateListingScreen", "Before creating listing")
                             viewModel.createListing(
                                 title.value,
                                 description.value,
                                 category.value,
                                 price.value.toFloat(),
-                                meetingPoint.value!!,
+                                meetingPoint.value,
                                 navigateToListing
                             )
+                            Log.d("CreateListingScreen", "After creating listing")
                         }
+
                     )
                 }
             }
@@ -103,12 +117,15 @@ fun ListingForm(
     MeetingPointInput(meetingPoint = meetingPoint)
     BasicFilledButton(
         onClick = {
-            if (category.value.name != "Choose a category" && meetingPoint.value != null) {
-                onSubmit()
+            if (category.value.name != "Choose a category") {
+                meetingPoint.value?.let { point ->
+                    onSubmit()
+                }
             }
         },
         label = "Create"
     )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

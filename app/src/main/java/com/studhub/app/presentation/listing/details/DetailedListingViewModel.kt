@@ -28,24 +28,24 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    fun getMeetingPoint(listingId: String, callback: (LatLng) -> Unit) {
-        viewModelScope.launch {
-            getListing(listingId).collect {
-                when (it) {
-                    is ApiResponse.Success -> {
-                        val listing = it.data
-                        val meetingPoint = listing.meetingPoint
-                        if (meetingPoint != null) {
-                            callback(LatLng(meetingPoint.latitude, meetingPoint.longitude))
+        fun getMeetingPoint(listingId: String, callback: (LatLng) -> Unit) {
+            viewModelScope.launch {
+                getListing(listingId).collect {
+                    when (it) {
+                        is ApiResponse.Success -> {
+                            val listing = it.data
+                            val meetingPoint = listing.meetingPoint
+                            if (meetingPoint != null) {
+                                callback(LatLng(meetingPoint.latitude, meetingPoint.longitude))
+                            }
                         }
-                    }
-                    is ApiResponse.Failure -> { /* handle failure */
-                    }
-                    is ApiResponse.Loading -> { /* handle loading */
+                        is ApiResponse.Failure -> { /* handle failure */
+                        }
+                        is ApiResponse.Loading -> { /* handle loading */
+                        }
                     }
                 }
             }
         }
-    }
 
 }
