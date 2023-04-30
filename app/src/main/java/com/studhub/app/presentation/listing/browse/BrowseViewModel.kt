@@ -36,7 +36,7 @@ class BrowseViewModel @Inject constructor(
         }
     }
 
-    fun rangeListings1(keyword1: String, keyword2: String) {
+    fun rangeListings(keyword1: String, keyword2: String) {
         viewModelScope.launch {
             getListingsByRange(keyword1, keyword2).collect {
                 when (it) {

@@ -150,48 +150,6 @@ class ListingRepositoryImpl : ListingRepository {
 
 
 
-
-
-
-
-
-/*
-
-
-        emit(ApiResponse.Loading)
-        val query = db.get()
-        query.await()
-
-        if (query.isSuccessful) {
-
-            query.result.children.forEach { snapshot ->
-                val listing = snapshot.getValue(Listing::class.java)
-
-
-                if(listing != null) {
-
-
-
-                    if(listing.price > keyword.toFloat()){
-                        provisionalListing.remove(listing)
-                    }
-
-
-                }
-            }
-
-
-            emit(ApiResponse.Success(provisionalListing))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-        }
-
-
-
-        */
-
-
     }
 
 

@@ -54,10 +54,10 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
             viewModel.searchListings(search1.value)
         })
         RangeBar("MIN....CHF", search = search2, onSearch = {
-            viewModel.rangeListings1(search2.value, search3.value)
+            viewModel.rangeListings(search2.value, search3.value)
         })
         RangeBar("MAX....CHF",search = search3, onSearch = {
-            viewModel.rangeListings1(search2.value, search3.value)
+            viewModel.rangeListings(search2.value, search3.value)
         })
 
         if (listings.isNotEmpty()) {
