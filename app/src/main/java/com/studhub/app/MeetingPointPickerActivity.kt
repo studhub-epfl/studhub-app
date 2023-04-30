@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -27,9 +28,8 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewOnly = intent.getBooleanExtra("viewOnly", false)
+
         super.onCreate(savedInstanceState)
-
-
 
         mapView = MapView(this).apply {
             id = View.generateViewId()
@@ -55,21 +55,12 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        val mapViewWrapper = FrameLayout(this).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            addView(mapView)
-        }
-
         val layout = RelativeLayout(this).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            addView(mapViewWrapper)
-            addView(confirmButton)
+            addView(mapView)
             if (!viewOnly) {
                 addView(confirmButton)
             }
@@ -79,11 +70,12 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
-
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+        val initialLatLng = LatLng(0.0, 0.0)
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 10f))
         googleMap.setOnMapClickListener { latLng ->
             googleMap.clear()
             googleMap.addMarker(MarkerOptions().position(latLng))
@@ -101,9 +93,48 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        mapView.onPause()
+        super.onPause()
+    }
+
+    override fun onStop() {
+        mapView.onStop()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        mapView.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        mapView.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
 }
 
-fun Int.dpToPx(context: Context): Int {
-    val metrics = context.resources.displayMetrics
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), metrics).toInt()
-}
+
+    fun Int.dpToPx(context: Context): Int {
+        val metrics = context.resources.displayMetrics
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), metrics)
+            .toInt()
+    }
+
