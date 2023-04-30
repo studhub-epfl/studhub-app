@@ -45,13 +45,14 @@ class MockListingRepositoryImpl: ListingRepository {
         }
     }
 
-    override suspend fun getListingsByMin(keyword: String): Flow<ApiResponse<List<Listing>>> {
+    override suspend fun getListingsByRange(
+        keyword: String,
+        keyword2: String
+    ): Flow<ApiResponse<List<Listing>>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getListingsByMax(keyword: String): Flow<ApiResponse<List<Listing>>> {
-        TODO("Not yet implemented")
-    }
+
 
     override suspend fun updateListing(
         listingId: String,

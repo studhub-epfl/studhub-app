@@ -131,7 +131,6 @@ class ListingRepositoryImpl : ListingRepository {
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
 
-
                 if(listing != null) {
 
                     if(listing.price >= keyword1.toFloat() && listing.price <= keyword2.toFloat() ){
