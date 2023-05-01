@@ -38,7 +38,7 @@ fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
     id: String
 ) {
-  val currentListing = viewModel.currentListing
+   val currentListing = viewModel.currentListing
 
     LaunchedEffect(id) {
         viewModel.fetchListing(id)
