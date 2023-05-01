@@ -38,26 +38,22 @@ fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
     id: String
 ) {
-
-    val navController = rememberNavController()
-
-    val currentListing = viewModel.currentListing
+  val currentListing = viewModel.currentListing
 
     LaunchedEffect(id) {
         viewModel.fetchListing(id)
     }
-
 
     val activityContext = LocalContext.current
 
     fun displayMeetingPoint(location: LatLng) {
         val intent = Intent(activityContext, MeetingPointPickerActivity::class.java).apply {
             putExtra("viewOnly", true)
-            putExtra("location", location)
+            putExtra("latitude", location.latitude)
+            putExtra("longitude", location.longitude)
         }
         activityContext.startActivity(intent)
     }
-
 
     if (currentListing is ApiResponse.Success) {
         val listing = (currentListing as ApiResponse.Success<Listing>).data
@@ -66,19 +62,21 @@ fun DetailedListingScreen(
             onContactSellerClick = { /*TODO*/ },
             onFavouriteClick = { /* TODO */ })
 
-        Button(
-            onClick = {
-                viewModel.getMeetingPoint(id) { location ->
-                    displayMeetingPoint(location)
+        val meetingPoint = listing.meetingPoint
+        if (meetingPoint != null) {
+            Button(
+                onClick = {
+                    displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
                 }
+            ) {
+                Text("View Meeting Point")
             }
-        ) {
-            Text("View Meeting Point")
         }
     } else {
         LoadingCircle()
     }
 }
+
 
 
 @Composable
