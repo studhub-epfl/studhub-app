@@ -11,12 +11,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
@@ -35,10 +35,9 @@ import com.studhub.app.presentation.ui.common.text.BigLabel
 
 @Composable
 fun DetailedListingScreen(
-    viewModel: DetailedListingViewModel = hiltViewModel(),
-    id: String
+    viewModel: DetailedListingViewModel = hiltViewModel(), id: String
 ) {
-   val currentListing = viewModel.currentListing
+    val currentListing = viewModel.currentListing
 
     LaunchedEffect(id) {
         viewModel.fetchListing(id)
@@ -60,28 +59,24 @@ fun DetailedListingScreen(
         Details(
             listing = listing,
             onContactSellerClick = { /*TODO*/ },
-            onFavouriteClick = { /* TODO */ })
-
-        val meetingPoint = listing.meetingPoint
-        if (meetingPoint != null) {
-            Button(
-                onClick = {
+            onFavouriteClick = { /* TODO */ },
+            onMeetingPointClick = {
+                val meetingPoint = listing.meetingPoint
+                if (meetingPoint != null) {
                     displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
                 }
-            ) {
-                Text("View Meeting Point")
             }
-        }
+        )
     } else {
         LoadingCircle()
     }
 }
 
 
-
 @Composable
 fun Details(
-    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit
+    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit,
+    onMeetingPointClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -100,6 +95,17 @@ fun Details(
             ListingDescription(description = listing.description)
             Spacer(modifier = Modifier.height(35.dp))
             ListingPrice(price = listing.price)
+            Spacer(modifier = Modifier.height(80.dp))
+            val meetingPoint = listing.meetingPoint
+            if (meetingPoint != null) {
+                Button(
+                    onClick = onMeetingPointClick,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text("View Meeting Point")
+                }
+            }
         }
     }
 }
@@ -120,10 +126,7 @@ fun DetailsPreview() {
         price = 545.45F,
         meetingPoint = MeetingPoint((1.0), 1.0)
     )
-    Details(
-        listing = listing,
-        onContactSellerClick = { },
-        onFavouriteClick = { })
+    Details(listing = listing, onContactSellerClick = { }, onFavouriteClick = { }, onMeetingPointClick={})
 
 
 }
