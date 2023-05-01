@@ -257,7 +257,4 @@ fun MeetingPointInput(meetingPoint: MutableState<MeetingPoint?>) {
         Text("Set Meeting Point")
     }
 
-    meetingPoint.value?.let { location ->
-        Text("Meeting Point: (${location.latitude}, ${location.longitude})")
-    }
 }
