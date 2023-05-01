@@ -42,7 +42,6 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
     private lateinit var googleMap: GoogleMap
     private var selectedLatLng: LatLng? = null
     private lateinit var searchButton: Button
-    private lateinit var location: LatLng
     private var viewOnly = false
 
     companion object {
@@ -56,11 +55,12 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val viewOnly = intent.getBooleanExtra("viewOnly", false)
+        viewOnly = intent.getBooleanExtra("viewOnly", false)
 
         super.onCreate(savedInstanceState)
 
         setupSearchBar()
+
 
         mapView = MapView(this).apply {
             id = View.generateViewId()
@@ -154,9 +154,14 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             }
         }
 
+        searchView.visibility = if (viewOnly) View.GONE else View.VISIBLE
+        searchButton.visibility = if (viewOnly) View.GONE else View.VISIBLE
+
         searchButton.setOnClickListener {
-            val query = searchView.text.toString()
-            searchLocation(query)
+            if (!viewOnly) {
+                val query = searchView.text.toString()
+                searchLocation(query)
+            }
         }
 
         searchView.threshold = 1
@@ -166,17 +171,20 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         searchView.setAdapter(autocompleteAdapter)
 
         searchView.setOnItemClickListener { _, _, position, _ ->
-            val selectedItem =
-                autocompleteAdapter.getItem(position) ?: return@setOnItemClickListener
-            searchLocation(selectedItem)
+            if (!viewOnly) {
+                val selectedItem =
+                    autocompleteAdapter.getItem(position) ?: return@setOnItemClickListener
+                searchLocation(selectedItem)
+            }
         }
+
 
         searchView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null) {
+                if (!viewOnly && s != null) {
                     launchPlacesAutocompleteRequest(s.toString(), autocompleteAdapter)
                 }
             }
@@ -260,7 +268,20 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }
+
+        val initialLatitude = intent.getDoubleExtra("latitude", 0.0)
+        val initialLongitude = intent.getDoubleExtra("longitude", 0.0)
+
+        if (initialLatitude != 0.0 && initialLongitude != 0.0) {
+            val initialLatLng = LatLng(initialLatitude, initialLongitude)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 15f))
+            googleMap.addMarker(MarkerOptions().position(initialLatLng))
+        } else {
+            val initialLatLng = LatLng(0.0, 0.0)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 10f))
+        }
     }
+
 
     private fun setupMap() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
