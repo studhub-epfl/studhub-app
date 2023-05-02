@@ -48,7 +48,7 @@ fun RangeBar(label: String = "",
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
-            textField(label = label,
+            RangeBarField(label = label,
                               search = search,
                               onSearch = onSearch
             )
@@ -58,8 +58,8 @@ fun RangeBar(label: String = "",
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun textField(label: String = "",
-                      search: MutableState<String> = remember { mutableStateOf("") } ,
+fun RangeBarField(label: String = "",
+                      search: MutableState<String> = rememberSaveable { mutableStateOf("") } ,
                       onSearch: () -> Unit = {}) {
     OutlinedTextField(
         value = search.value,
@@ -86,7 +86,7 @@ fun textField(label: String = "",
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        trailingIcon = { rangeBarTrailingIcon(search)},
+        trailingIcon = { RangeBarTrailingIcon(search)},
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = MaterialTheme.colorScheme.onSurface,
@@ -105,7 +105,7 @@ fun textField(label: String = "",
 
 
 @Composable
-fun rangeBarTrailingIcon(search: MutableState<String> = remember { mutableStateOf("") }) {
+fun RangeBarTrailingIcon(search: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     if (search.value.isNotEmpty()) {
         IconButton(
             onClick = { search.value = "" },
