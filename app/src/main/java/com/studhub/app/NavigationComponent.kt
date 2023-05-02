@@ -37,12 +37,19 @@ fun AppNavigation(
         composable(
             route = "Auth"
         ) {
-            Globals.showBottomBar = false
             AuthScreen(
+                onLoginComplete = { isNewUser ->
+                    if (isNewUser) {
+                        navController.navigate("EditProfile")
+                    } else {
+                        navController.navigate("Home")
+                    }
+                },
                 navigateToForgotPasswordScreen = { navController.navigate("Auth/ForgotPassword") },
                 navigateToSignUpScreen = { navController.navigate("Auth/SignUp") }
             )
         }
+
 
         composable(route = "Auth/SignUp") {
             Globals.showBottomBar = false
@@ -107,33 +114,23 @@ fun AppNavigation(
         composable("DetailedListing/{id}") { backStackEntry ->
             Globals.showBottomBar = false
             val id = backStackEntry.arguments?.getString("id")
-            if (id == null) {
-                navController.navigate("Browse")
-                return@composable
-            }
 
-            DetailedListingScreen(
-                id = id,
-                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") })
         }
-
         composable("Conversations") {
             Globals.showBottomBar = true
             ConversationScreen(navigateToDiscussion = { conversationId -> navController.navigate("Conversations/$conversationId") })
         }
 
-        composable("Conversations/{id}") {
-            Globals.showBottomBar = false
-            val id = it.arguments?.getString("id")
-            if (id == null) {
-                navController.navigate("Conversations")
-                return@composable
-            }
 
-            ChatScreen(conversationId = id, navigateBack = { navController.popBackStack() })
-        }
-        composable("RatingScreen") {
-            UserRatingScreen(targetUserId = "-NQSUz5EY7-EfBG7PCIu")
+//        composable("RatingScreen") {
+//            UserRatingScreen(targetUserId = "-NRpD74U8sedQAH5_hdn")
+//        }
+
+        composable("RatingScreen/{targetUserId}") { backStackEntry ->
+            val targetUserId = backStackEntry.arguments?.getString("targetUserId")
+            if (targetUserId != null) {
+                UserRatingScreen(targetUserId = targetUserId)
+            }
         }
     }
 }

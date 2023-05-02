@@ -22,8 +22,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
+import androidx.navigation.compose.rememberNavController
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
@@ -44,6 +46,7 @@ import com.studhub.app.presentation.ui.common.text.BigLabel
 fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
     navigateToConversation: (conversationId: String) -> Unit,
+    navController: NavHostController,
     id: String?
 ) {
     LaunchedEffect(id) {
@@ -83,6 +86,9 @@ fun DetailedListingScreen(
                     if (meetingPoint != null) {
                         displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
                     }
+                },
+                onRateUserClick = {
+                    navController.navigate("RatingScreen/${listing.seller.id}")
                 })
         }
     }
@@ -94,7 +100,8 @@ fun Details(
     listing: Listing,
     onContactSellerClick: () -> Unit,
     isFavorite: Boolean,
-    onFavoriteClicked: () -> Unit
+    onFavoriteClicked: () -> Unit,
+    onRateUserClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     Surface(
@@ -114,9 +121,12 @@ fun Details(
             ) {
                 // "Contact seller" button
                 BasicFilledButton(onClick = { onContactSellerClick() }, label = "Contact seller")
+                // Rate user
+                BasicFilledButton(onClick = { onRateUserClick() }, label = "Rate user")
                 // "Favorite" button
                 FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
             }
+
             Spacer("large")
 
             BigLabel(label = listing.name)
@@ -147,7 +157,6 @@ fun Details(
         }
     }
 }
-
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
@@ -168,6 +177,6 @@ fun DetailsPreview() {
         onContactSellerClick = { },
         onFavoriteClicked = { },
         isFavorite = true,
-        onMeetingPointClick = {}
-        )
+        onMeetingPointClick = {},
+        onRateUserClick = {})
 }
