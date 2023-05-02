@@ -45,6 +45,15 @@ class MockListingRepositoryImpl: ListingRepository {
         }
     }
 
+    override suspend fun getListingsByRange(
+        keyword: String,
+        keyword2: String
+    ): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
+    }
+
+
+
     override suspend fun updateListing(
         listingId: String,
         updatedListing: Listing

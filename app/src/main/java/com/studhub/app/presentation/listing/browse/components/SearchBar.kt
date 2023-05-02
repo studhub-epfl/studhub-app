@@ -25,69 +25,59 @@ import androidx.compose.ui.unit.dp
 @Preview
 @Composable
 fun SearchBar(
-    search: MutableState<String> = remember {
-        mutableStateOf("")
-    }, onSearch: () -> Unit = {}
+    search: MutableState<String> = remember { mutableStateOf("") },
+    onSearch: () -> Unit = {}
 ) {
-
-
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(58.dp),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = 8.dp,
     ) {
         Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = { /* Handle menu button click */ }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu button"
-                )
-            }
-            TextField(
+
+            OutlinedTextField(
                 value = search.value,
                 onValueChange = { search.value = it },
-                textStyle = MaterialTheme.typography.bodyLarge,
                 label = {
                     Text(
                         text = "Search...",
-                        style = MaterialTheme.typography.bodyLarge.copy(color = Color.LightGray)
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
                     )
                 },
+                maxLines = 1,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search
+                    imeAction = ImeAction.Search,
                 ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        onSearch()
-
-                    }
-                ),
+                keyboardActions = KeyboardActions(onSearch = { onSearch() }),
+                textStyle = MaterialTheme.typography.bodyLarge,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "Search icon"
+                        contentDescription = "Search icon",
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 },
                 trailingIcon = {
                     if (search.value.isNotEmpty()) {
                         IconButton(
-                            onClick = {
-                                search.value = ""
-                            },
+                            onClick = { search.value = "" },
                             content = {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "Clear button"
+                                    contentDescription = "Clear button",
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         )
@@ -97,27 +87,18 @@ fun SearchBar(
                 },
                 singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    cursorColor = Color.White,
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent,
+                    textColor = MaterialTheme.colorScheme.onSurface,
+                    focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    cursorColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = Color.Transparent,
-                    textColor = MaterialTheme.colorScheme.onSurface
                 ),
-                maxLines = 1,
-                shape = MaterialTheme.shapes.small,
-                //onLeadingIconClick = {
-                // Handle leading icon click
-                //},
-                interactionSource = remember { MutableInteractionSource() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { focusState ->
                         // Handle focus change
-                    }
+                    },
             )
-
-
         }
     }
 }
-

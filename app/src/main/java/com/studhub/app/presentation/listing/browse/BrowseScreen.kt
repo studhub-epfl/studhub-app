@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
+import com.studhub.app.presentation.ui.common.input.RangeBar
 import com.studhub.app.presentation.ui.common.input.SearchBar
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import kotlinx.coroutines.launch
@@ -24,7 +25,13 @@ import kotlinx.coroutines.launch
 fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: NavController) {
     BigLabel(label = stringResource(R.string.listings_browsing_title))
     val scope = rememberCoroutineScope()
-    val search = remember {
+    val search1 = remember {
+        mutableStateOf("")
+    }
+    val search2 = remember {
+        mutableStateOf("")
+    }
+    val search3 = remember {
         mutableStateOf("")
     }
     LaunchedEffect(viewModel) {
@@ -43,8 +50,14 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
     val listings = viewModel.listingsState.collectAsState().value
 
     Column {
-        SearchBar(search = search, onSearch = {
-            viewModel.searchListings(search.value)
+        SearchBar(search = search1, onSearch = {
+            viewModel.searchListings(search1.value)
+        })
+        RangeBar("MIN....CHF", search = search2, onSearch = {
+            viewModel.rangeListings(search2.value, search3.value)
+        })
+        RangeBar("MAX....CHF",search = search3, onSearch = {
+            viewModel.rangeListings(search2.value, search3.value)
         })
 
         if (listings.isNotEmpty()) {
