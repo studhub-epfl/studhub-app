@@ -1,22 +1,36 @@
 package com.studhub.app.presentation.ratings
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Rating
-import com.studhub.app.presentation.ratings.components.*
-import java.util.*
+import com.studhub.app.presentation.ratings.components.AddRatingButton
+import com.studhub.app.presentation.ratings.components.RatingDialog
+import com.studhub.app.presentation.ratings.components.RatingsList
+import com.studhub.app.presentation.ratings.components.UserHeader
+import com.studhub.app.presentation.ratings.components.handleSubmitRating
 
-
+/**
+ * Ratings screen for a user with [targetUserId]
+ */
 @Composable
 fun UserRatingScreen(
     targetUserId: String,
     viewModel: IUserRatingViewModel = hiltViewModel<UserRatingViewModel>()
 ) {
-
 
     val ratings = viewModel.ratings.collectAsState(initial = ApiResponse.Loading)
     val currentUserLoading = viewModel.currentUserLoading.collectAsState(initial = true)
@@ -32,12 +46,13 @@ fun UserRatingScreen(
     val thumbsDownCount = remember { mutableStateOf(0) }
 
 
-
+    // wait for current user to be fetched before enabling rating button
     LaunchedEffect(currentUser.value, currentUserLoading.value) {
         buttonEnabled.value = currentUser.value is ApiResponse.Success && !currentUserLoading.value
     }
 
-
+    // wait for the targetuser to be fetched before
+    // fetching its ratings
     LaunchedEffect(targetUser.value) {
         viewModel.initTargetUser(targetUserId)
         if (targetUser.value is ApiResponse.Success) {
@@ -48,7 +63,6 @@ fun UserRatingScreen(
     var currentUserHasRating by remember { mutableStateOf(false) }
 
     LaunchedEffect(ratings.value) {
-
         if (ratings.value is ApiResponse.Success) {
             val currentUserData = currentUser.value
             if (currentUserData is ApiResponse.Success) {
@@ -60,6 +74,8 @@ fun UserRatingScreen(
             }
         }
     }
+
+    // cannot be modularized more than that
 
     RatingDialog(
         showDialog = showDialog,

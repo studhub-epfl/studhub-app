@@ -27,23 +27,32 @@ class UserRatingViewModel @Inject constructor(
 
     ) : ViewModel(), IUserRatingViewModel {
 
+    // ratings related to the user
+
     private val _ratings = MutableStateFlow<ApiResponse<List<Rating>>>(ApiResponse.Loading)
     override val ratings: StateFlow<ApiResponse<List<Rating>>> = _ratings
+
+    // user doing the rating
 
     private val _currentUser = MutableStateFlow<ApiResponse<User>>(ApiResponse.Loading)
     override val currentUser: StateFlow<ApiResponse<User>> = _currentUser
 
+    // user receiving the rating
+
     private val _targetUser = MutableStateFlow<ApiResponse<User>>(ApiResponse.Loading)
     override val targetUser: StateFlow<ApiResponse<User>> = _targetUser
 
-    private val _targetUserLoading = MutableStateFlow(true)
-
     private lateinit var targetUserId: String
+
+    // state indicating whether or not the current user was fetched successfully
+    // needed to load user before processing the current user's rating [rating button
+    // disabled in the screen if loading]
 
     private val _currentUserLoading = MutableStateFlow(true)
     override val currentUserLoading: StateFlow<Boolean> = _currentUserLoading.asStateFlow()
 
 
+    // function that implements the hilt-injected usecase, to be used by the screen
     override suspend fun getUserById(id: String): ApiResponse<User> {
         println("Attempting to fetch user with id: $id")
         val response = getUser(id).first()
@@ -51,6 +60,7 @@ class UserRatingViewModel @Inject constructor(
         return response
     }
 
+    // fetches the user and rating states
     override suspend fun initTargetUser(targetUserId: String) {
         this.targetUserId = targetUserId
         viewModelScope.launch {
@@ -74,7 +84,7 @@ class UserRatingViewModel @Inject constructor(
             getUserRatingsUseCase(targetUserId).collect { userRatingsResponse ->
                 Log.d("ViewModel", "User ratings response: $userRatingsResponse")
                 when (userRatingsResponse) {
-                    is ApiResponse.Loading -> _ratings.value = ApiResponse.Loading
+                    is ApiResponse.Loading -> {}
                     is ApiResponse.Failure -> _ratings.value =
                         ApiResponse.Failure(userRatingsResponse.message)
                     is ApiResponse.Success -> {
@@ -85,14 +95,11 @@ class UserRatingViewModel @Inject constructor(
             getUser(targetUserId).collect { targetUserResponse ->
                 when (targetUserResponse) {
                     is ApiResponse.Loading -> {
-                        _targetUserLoading.value = true
                     }
                     is ApiResponse.Failure -> {
-                        _targetUserLoading.value = false
                         _targetUser.value = ApiResponse.Failure(targetUserResponse.message)
                     }
                     is ApiResponse.Success -> {
-                        _targetUserLoading.value = false
                         _targetUser.value = targetUserResponse
                     }
                 }
@@ -100,7 +107,9 @@ class UserRatingViewModel @Inject constructor(
         }
     }
 
-
+    /**
+     * adds a [rating] object to the user with ID userId
+     */
     override fun addRating(userId: String, rating: Rating) {
         Log.d(TAG, "addRating called with rating: $rating, comment: ${rating.comment}")
         viewModelScope.launch {
@@ -128,7 +137,9 @@ class UserRatingViewModel @Inject constructor(
         }
     }
 
-
+    /**
+     * updates the rating with ID [ratingId] of the user with ID [userId] with the [rating] object
+     */
     override fun updateRating(userId: String, ratingId: String, rating: Rating) {
         Log.d("UserRatingViewModel", "Updating rating")
         viewModelScope.launch {
@@ -141,7 +152,9 @@ class UserRatingViewModel @Inject constructor(
             }
         }
     }
-
+    /**
+     * adds a [rating] object to the user with ID userId
+     */
     override fun deleteRating(userId: String, ratingId: String) {
         viewModelScope.launch {
             deleteRatingUseCase(userId, ratingId).collect { response ->
@@ -154,6 +167,9 @@ class UserRatingViewModel @Inject constructor(
         }
     }
 
+    /**
+     * fetches all the ratings corresponding to the user with ID userId
+     */
     override fun getUserRatings(userId: String) {
         viewModelScope.launch {
             when (val targetUserResponse = targetUser.value) {
