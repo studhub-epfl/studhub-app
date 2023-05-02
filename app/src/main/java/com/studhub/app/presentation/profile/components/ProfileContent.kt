@@ -3,6 +3,8 @@ package com.studhub.app.presentation.profile.components
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,23 +22,27 @@ fun ProfileContent(
     navigateToProfileFavorites: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background)
+    {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .horizontalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(48.dp))
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .horizontalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(48.dp))
+            BigLabel(label = profile.userName)
 
-        BigLabel(label = profile.userName)
-
-        BasicFilledButton(
-            onClick = {
-                navigateToProfileFavorites()
-            },
-            label = stringResource(R.string.profile_btn_display_favs)
-        )
+            BasicFilledButton(
+                onClick = {
+                    navigateToProfileFavorites()
+                },
+                label = stringResource(R.string.profile_btn_display_favs)
+            )
+        }
     }
 }

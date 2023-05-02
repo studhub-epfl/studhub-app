@@ -1,9 +1,7 @@
 package com.studhub.app.presentation.ui.common.input
 
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -34,5 +32,8 @@ fun EmailTextField(
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email
         ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = MaterialTheme.colorScheme.onBackground
+        )
     )
 }
