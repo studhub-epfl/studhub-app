@@ -4,8 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
@@ -24,7 +22,6 @@ import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -33,8 +30,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.studhub.app.BuildConfig.MAPS_API_KEY
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import kotlin.coroutines.CoroutineContext
 
-class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope{
+class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
 
     private lateinit var mapView: MapView
     private var confirmButton: Button? = null
@@ -54,76 +59,27 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         viewOnly = intent.getBooleanExtra("viewOnly", false)
-
         super.onCreate(savedInstanceState)
 
         setupSearchBar()
+        createMapView()
+        createConfirmButton()
 
-
-        mapView = MapView(this).apply {
-            id = View.generateViewId()
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        }
-
-        if (!viewOnly) {
-            confirmButton = Button(this).apply {
-                id = View.generateViewId()
-                text = "Confirm Location"
-                layoutParams = RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                    addRule(RelativeLayout.ALIGN_PARENT_END)
-                    bottomMargin = 16.dpToPx(this@MeetingPointPickerActivity)
-                    marginEnd = 16.dpToPx(this@MeetingPointPickerActivity)
-                }
-            }
-        }
-
-
-
-        val mapViewFrame = FrameLayout(this).apply {
-            id = View.generateViewId()
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            addView(mapView)
-        }
-
-        val layout = RelativeLayout(this).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            addView(mapViewFrame) // Change this line to add mapViewFrame instead of mapView
-            addView(searchView)
-            addView(searchButton)
-            if (!viewOnly) {
-                addView(confirmButton)
-            }
-        }
+        val layout = createLayout()
 
         setContentView(layout)
-
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this)
+        initializeMapView(savedInstanceState)
     }
 
     private fun setupSearchBar() {
 
         // Initialize the Places SDK
         if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, "AIzaSyCxsRHWa5Wo_wLLq91ndpQmXi3JedpSpZc")
+            Places.initialize(applicationContext, MAPS_API_KEY)
         }
 
-        searchView =  AutoCompleteTextView(this).apply {
+        searchView = AutoCompleteTextView(this).apply {
             id = View.generateViewId()
             layoutParams = RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -201,6 +157,63 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
 
     }
 
+    private fun createMapView() {
+        mapView = MapView(this).apply {
+            id = View.generateViewId()
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+    }
+
+    private fun createConfirmButton() {
+        if (!viewOnly) {
+            confirmButton = Button(this).apply {
+                id = View.generateViewId()
+                text = "Confirm Location"
+                layoutParams = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    addRule(RelativeLayout.ALIGN_PARENT_END)
+                    bottomMargin = 16.dpToPx(this@MeetingPointPickerActivity)
+                    marginEnd = 16.dpToPx(this@MeetingPointPickerActivity)
+                }
+            }
+        }
+    }
+
+    private fun createLayout(): RelativeLayout {
+        val mapViewFrame = FrameLayout(this).apply {
+            id = View.generateViewId()
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            addView(mapView)
+        }
+
+        return RelativeLayout(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            addView(mapViewFrame) // Change this line to add mapViewFrame instead of mapView
+            addView(searchView)
+            addView(searchButton)
+            if (!viewOnly) {
+                addView(confirmButton)
+            }
+        }
+    }
+
+    private fun initializeMapView(savedInstanceState: Bundle?) {
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
+    }
+
     private fun launchPlacesAutocompleteRequest(query: String, adapter: ArrayAdapter<String>) {
         Log.d("PRED", "method started")
         val placesClient = Places.createClient(this)
@@ -252,7 +265,6 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             }
         }
     }
-
 
 
     override fun onMapReady(map: GoogleMap) {
