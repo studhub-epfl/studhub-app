@@ -54,9 +54,6 @@ fun HomeScreen(
             BrowseButton(onClick = onBrowseClick)
             Spacer(Modifier.height(16.dp))
 
-            CartButton(onClick = onCartClick)
-            Spacer(Modifier.height(16.dp))
-
             ProfileButton(onClick = onProfileClick)
             Spacer(Modifier.height(16.dp))
 

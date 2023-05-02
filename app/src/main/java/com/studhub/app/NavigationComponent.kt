@@ -12,7 +12,6 @@ import com.studhub.app.presentation.auth.AuthScreen
 import com.studhub.app.presentation.auth.forgot.ForgotPasswordScreen
 import com.studhub.app.presentation.auth.signup.SignUpScreen
 import com.studhub.app.presentation.auth.verify.VerifyEmailScreen
-import com.studhub.app.presentation.cart.CartScreen
 import com.studhub.app.presentation.conversation.ConversationScreen
 import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
@@ -92,9 +91,7 @@ fun AppNavigation(
 
             BrowseScreen(navController = navController)
         }
-        composable("Cart") {
-            CartScreen()
-        }
+
         composable("About") {
             AboutScreen()
         }

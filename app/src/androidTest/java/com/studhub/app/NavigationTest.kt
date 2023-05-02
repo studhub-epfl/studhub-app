@@ -56,15 +56,6 @@ class NavigationTest {
     }
 
     @Test
-    fun clickCart_navigatesToCartScreen() {
-        composeTestRule
-            .onNodeWithText(str(R.string.home_button_cart)).assertExists()
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithText(str(R.string.cart_title)).assertIsDisplayed()
-    }
-
-    @Test
     fun clickProfile_navigateToProfileScreenAndSignOut() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_profile)).assertExists()

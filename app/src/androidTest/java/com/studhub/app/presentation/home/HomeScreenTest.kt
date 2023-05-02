@@ -51,10 +51,6 @@ class HomeScreenTest {
             .performScrollTo()
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(str(R.string.home_button_cart))
-            .performScrollTo()
-            .assertIsDisplayed()
-        composeTestRule
             .onNodeWithText(str(R.string.home_button_profile))
             .performScrollTo()
             .assertIsDisplayed()
