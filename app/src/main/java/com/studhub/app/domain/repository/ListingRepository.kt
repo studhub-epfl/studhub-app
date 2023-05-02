@@ -18,7 +18,7 @@ interface ListingRepository {
      */
     suspend fun getListings(): Flow<ApiResponse<List<Listing>>>
 
-    /**00
+    /**
      * get a  [listing] with all the listings on the database of Firebase
      * @param [listingId] the listingId we want to match
      * @return A [Flow] of [ApiResponse] with the last one containing the [Listing] pushed to the database on success
