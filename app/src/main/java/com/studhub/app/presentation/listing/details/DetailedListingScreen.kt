@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
@@ -27,13 +29,13 @@ import com.studhub.app.presentation.ui.common.text.BigLabel
 @Composable
 fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
-    navigateToConversation: (conversationId: String) -> Unit,
-    id: String?
+    navController: NavHostController,
+    id: String
 ) {
-    LaunchedEffect(id) {
-        if (id != null)
-            viewModel.fetchListing(id)
+    LaunchedEffect(Unit) {
+        viewModel.fetchListing(id)
     }
+
 
     when (val currentListing = viewModel.currentListing) {
         is ApiResponse.Loading -> LoadingCircle()
@@ -42,27 +44,32 @@ fun DetailedListingScreen(
             val listing = currentListing.data
             Details(
                 listing = listing,
-                onContactSellerClick = {
-                    viewModel.contactSeller(listing.seller) { conv ->
-                        navigateToConversation(conv.id)
-                    }
-                },
-                onFavouriteClick = { /* TODO */ })
+                onContactSellerClick = { /*TODO*/ },
+                onFavouriteClick = { /* TODO */ },
+                onRateUserClick = {
+                    navController.navigate("RatingScreen/${listing.seller.id}")
+                }
+            )
         }
     }
 }
 
 @Composable
 fun Details(
-    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit
+    listing: Listing,
+    onContactSellerClick: () -> Unit,
+    onFavouriteClick: () -> Unit,
+    onRateUserClick: () -> Unit
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            DetailsButtons(onContactSellerClick, onFavouriteClick)
+            DetailsButtons(onContactSellerClick, onFavouriteClick, onRateUserClick)
 
             Spacer("large")
 
@@ -81,6 +88,7 @@ fun Details(
         }
     }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
@@ -99,5 +107,6 @@ fun DetailsPreview() {
     Details(
         listing = listing,
         onContactSellerClick = { },
-        onFavouriteClick = { })
+        onFavouriteClick = { }
+    ,  onRateUserClick = {})
 }
