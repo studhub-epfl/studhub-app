@@ -12,9 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
-import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.listing.browse.components.RangeBar
 import com.studhub.app.presentation.listing.browse.components.SearchBar
 import com.studhub.app.presentation.ui.common.text.BigLabel
@@ -91,34 +89,4 @@ fun LoadListings(listings: List<Listing>, navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
-}
-
-fun fakeListings(): List<Listing> {
-    return listOf(
-        Listing(
-            id = "33",
-            name = "Algebra for the dummies",
-            seller = User(firstName = "Jacky", lastName = "Chan"),
-            categories = listOf(Category(name = "Books")),
-            description = "Really great book to learn Algebra for entry level readers.",
-            price = 34.50F
-        ),
-        Listing(
-            id = "32",
-            name = "Brand new Nike Air One",
-            seller = User(firstName = "Kristina", lastName = "Gordova"),
-            categories = listOf(Category(name = "Clothing")),
-            description = "Brand new shoes, full white and ready for any custom work if needed.",
-            price = 194.25F
-        ),
-        Listing(
-            id = "31",
-            name = "Super VTT 2000 with custom paint",
-            seller = User(firstName = "Marc", lastName = "Marquez"),
-            categories = listOf(Category(name = "Mobility")),
-            description = "Robust bike for downhill riding and will " +
-                    "look absolutely unique with this custom paint work",
-            price = 1500F
-        )
-    )
 }
