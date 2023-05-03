@@ -2,7 +2,7 @@ package com.studhub.app.presentation.conversation.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -13,10 +13,11 @@ import androidx.compose.ui.unit.sp
 import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.Conversation
+import com.studhub.app.presentation.ui.common.container.Card
 import java.text.SimpleDateFormat
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun ConversationItem(
     conversation: Conversation,
@@ -25,11 +26,8 @@ fun ConversationItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(96.dp)
-            .padding(8.dp),
+            .height(96.dp),
         onClick = onClick,
-        elevation = CardDefaults.cardElevation()
-
     ) {
         Box(
             Modifier

@@ -1,31 +1,47 @@
 package com.studhub.app.presentation.conversation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.studhub.app.core.extensions.darken
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Message
+import com.studhub.app.presentation.ui.common.container.Card
 
 @Composable
 fun MessageCard(conversation: Conversation, message: Message) {
+    val DARKEN_FACTOR = 0.2F
+
+    val alignment: Alignment
+    val containerColor: Color
+
+    // user1 is ensured to be the logged-in user
+    if (message.senderId == conversation.user1Id) {
+        alignment = Alignment.CenterEnd
+        containerColor = MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        alignment = Alignment.CenterStart
+        containerColor = MaterialTheme.colorScheme.secondaryContainer.darken(DARKEN_FACTOR)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
     ) {
+
         Card(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.background)
-                .padding(8.dp)
                 .fillMaxWidth(0.75F)
-                .align(if (message.senderId == conversation.user1Id) Alignment.CenterEnd else Alignment.CenterStart)
+                .align(alignment),
+            containerColor = containerColor,
         ) {
             Text(modifier = Modifier.padding(16.dp), text = message.content)
         }
