@@ -39,36 +39,34 @@ fun CreateListingScreen(
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
 
-    StudHubTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    BigLabel(label = stringResource(R.string.listings_add_title))
-                    ListingForm(
-                        categories,
-                        title = title,
-                        description = description,
-                        price = price,
-                        category = category,
-                        onSubmit = {
-                            viewModel.createListing(
-                                title.value,
-                                description.value,
-                                category.value,
-                                price.value.toFloat(),
-                                navigateToListing
-                            )
-                        }
-                    )
-                }
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                BigLabel(label = stringResource(R.string.listings_add_title))
+                ListingForm(
+                    categories,
+                    title = title,
+                    description = description,
+                    price = price,
+                    category = category,
+                    onSubmit = {
+                        viewModel.createListing(
+                            title.value,
+                            description.value,
+                            category.value,
+                            price.value.toFloat(),
+                            navigateToListing
+                        )
+                    }
+                )
             }
         }
     }
@@ -189,7 +187,7 @@ fun CategoryDropDown(
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 categories.forEach { cat ->
                     ListingDropDownItem (
@@ -210,7 +208,7 @@ fun ListingDropDownItem(label: String, onClick: () -> Unit = {}) {
         text = {
             Text(
                 text = label,
-                color = MaterialTheme.colorScheme.onBackground)
+                color = MaterialTheme.colorScheme.onSecondaryContainer)
         },
         onClick = onClick,
         colors = MenuDefaults.itemColors()
@@ -226,7 +224,7 @@ fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Bo
         readOnly = true,
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onBackground),
+            textColor = MaterialTheme.colorScheme.onSecondaryContainer),
         modifier = modifier
     )
 }
