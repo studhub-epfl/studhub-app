@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.common.input
+package com.studhub.app.presentation.listing.browse.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -86,7 +86,7 @@ fun RangeBarField(label: String = "",
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        trailingIcon = { RangeBarTrailingIcon(search)},
+        trailingIcon = { RangeBarTrailingIcon(search) },
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = MaterialTheme.colorScheme.onSurface,
@@ -117,7 +117,5 @@ fun RangeBarTrailingIcon(search: MutableState<String> = rememberSaveable { mutab
                 )
             }
         )
-    } else {
-        null
     }
 }
