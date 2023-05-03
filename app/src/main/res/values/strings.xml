@@ -8,4 +8,5 @@
     <string name="title_activity_create_listing">CreateListingActivity</string>
     <string name="title_activity_browse">BrowseActivity</string>
     <string name="title_activity_detailed_listing_view">DetailedListingView</string>
+    <string name="profile_edit_form_error_invalid_phone">Please enter a valid Swiss phone number</string>
 </resources>
