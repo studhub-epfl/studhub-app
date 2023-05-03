@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.util.*
 import javax.inject.Singleton
 
 @Singleton
@@ -25,7 +26,7 @@ class MessageRepositoryImpl : MessageRepository {
 
     override suspend fun createMessage(message: Message): Flow<ApiResponse<Message>> {
         val messageId: String = db.push().key.orEmpty()
-        val messageToPush: Message = message.copy(id = messageId)
+        val messageToPush: Message = message.copy(id = messageId, createdAt = Date())
 
         return flow {
             emit(ApiResponse.Loading)
