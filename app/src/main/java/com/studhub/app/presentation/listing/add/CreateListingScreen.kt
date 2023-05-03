@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -88,15 +89,36 @@ fun ListingForm(
     AddImageLayout(onClick = {})
     TextBox(label = "Item description", rememberedValue = description)
     PriceRow(rememberedValue = price)
+
+    val priceValidationResult = validatePrice(price.value)
+
+    if (priceValidationResult != PriceValidationResult.VALID) {
+        Text(
+            text = when (priceValidationResult) {
+                PriceValidationResult.NEGATIVE -> "Please enter a non-negative price"
+                PriceValidationResult.NON_NUMERIC -> "Please enter a valid price"
+                else -> ""
+            },
+            modifier = Modifier.padding(4.dp),
+            color = Color.Red
+        )
+    }
+
     CategoryDropDown(categories, selected = category)
-    BasicFilledButton(
+
+    // Check if the category is selected and the price is non-negative
+    val isFormValid = category.value.name != "Choose a category" && priceValidationResult == PriceValidationResult.VALID
+    Button(
         onClick = {
-            if (category.value.name != "Choose a category") {
+            if (isFormValid) {
                 onSubmit()
             }
         },
-        label = "Create"
-    )
+        enabled = isFormValid,
+        modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
+    ) {
+        Text("Create")
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,6 +177,24 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         Text("CHF")
+    }
+}
+enum class PriceValidationResult {
+    VALID,
+    EMPTY,
+    NON_NUMERIC,
+    NEGATIVE
+}
+
+fun validatePrice(price: String): PriceValidationResult {
+    if (price.isEmpty()) {
+        return PriceValidationResult.EMPTY
+    }
+    val parsedPrice = price.toDoubleOrNull()
+    return when {
+        parsedPrice == null -> PriceValidationResult.NON_NUMERIC
+        parsedPrice < 0 -> PriceValidationResult.NEGATIVE
+        else -> PriceValidationResult.VALID
     }
 }
 
