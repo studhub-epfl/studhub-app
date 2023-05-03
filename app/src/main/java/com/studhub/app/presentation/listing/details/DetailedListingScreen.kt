@@ -7,10 +7,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.listing.details.components.DetailsButtons
 import com.studhub.app.presentation.listing.details.components.ListingDescription
 import com.studhub.app.presentation.listing.details.components.ListingImage
@@ -76,4 +80,24 @@ fun Details(
             ListingPrice(price = listing.price)
         }
     }
+}
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun DetailsPreview() {
+    val listing = Listing(
+        name = "Large white wooden desk",
+        description = "This is the perfect desk for a home workplace",
+        categories = listOf(Category(name = "Furniture")),
+        seller = User(
+            userName = "SuperChad",
+            firstName = "Josh",
+            lastName = "Marley",
+        ),
+        price = 545.45F
+    )
+    Details(
+        listing = listing,
+        onContactSellerClick = { },
+        onFavouriteClick = { })
 }
