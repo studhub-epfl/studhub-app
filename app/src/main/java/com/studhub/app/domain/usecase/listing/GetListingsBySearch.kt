@@ -2,7 +2,6 @@ package com.studhub.app.domain.usecase.listing
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.repository.UserRepository
@@ -29,9 +28,14 @@ class GetListingsBySearch @Inject constructor(
      * @param [keyword] the value to compare to the listings
      */
     suspend operator fun invoke(keyword: String): Flow<ApiResponse<List<Listing>>> {
+        if (keyword.isEmpty()) {
+            return repository.getListings()
+        }
+
         if (keyword.length < 3) {
             return flowOf(ApiResponse.Failure("Too few characters"))
         }
+
         return flow {
             userRepository.getUser(authRepository.currentUserUid).collect { userQuery ->
                 when (userQuery) {

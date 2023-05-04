@@ -39,36 +39,34 @@ fun CreateListingScreen(
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
 
-    StudHubTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    BigLabel(label = stringResource(R.string.listings_add_title))
-                    ListingForm(
-                        categories,
-                        title = title,
-                        description = description,
-                        price = price,
-                        category = category,
-                        onSubmit = {
-                            viewModel.createListing(
-                                title.value,
-                                description.value,
-                                category.value,
-                                price.value.toFloat(),
-                                navigateToListing
-                            )
-                        }
-                    )
-                }
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                BigLabel(label = stringResource(R.string.listings_add_title))
+                ListingForm(
+                    categories,
+                    title = title,
+                    description = description,
+                    price = price,
+                    category = category,
+                    onSubmit = {
+                        viewModel.createListing(
+                            title.value,
+                            description.value,
+                            category.value,
+                            price.value.toFloat(),
+                            navigateToListing
+                        )
+                    }
+                )
             }
         }
     }
@@ -148,6 +146,8 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
             modifier = Modifier
                 .width(100.dp)
                 .padding(end = 4.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = MaterialTheme.colorScheme.onBackground),
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
@@ -175,32 +175,56 @@ fun CategoryDropDown(
                 expanded = !expanded
             }
         ) {
-            OutlinedTextField(
-                value = selected.value.name,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+
+            ListingSelectedCategoryField(
                 modifier = Modifier
                     .menuAnchor()
-                    .width(TextFieldDefaults.MinWidth)
-            )
+                    .width(TextFieldDefaults.MinWidth),
+                value = selected.value.name,
+                expanded = expanded)
 
+            //Would like to have that block in a separate composable but ExposedDropdownMenu
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 categories.forEach { cat ->
-                    DropdownMenuItem(
-                        text = { Text(text = cat.name) },
+                    ListingDropDownItem (
+                        label = cat.name,
                         onClick = {
                             selected.value = cat
                             expanded = false
-                        },
-                        colors = MenuDefaults.itemColors()
-                    )
+                        })
                 }
             }
         }
     }
+}
+
+@Composable
+fun ListingDropDownItem(label: String, onClick: () -> Unit = {}) {
+    DropdownMenuItem(
+        text = {
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.onSecondaryContainer)
+        },
+        onClick = onClick,
+        colors = MenuDefaults.itemColors()
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Boolean) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = {},
+        readOnly = true,
+        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = MaterialTheme.colorScheme.onSecondaryContainer),
+        modifier = modifier
+    )
 }

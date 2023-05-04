@@ -1,10 +1,10 @@
-package com.studhub.app.presentation.ui.common
+package com.studhub.app.presentation
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.studhub.app.presentation.ui.common.input.SearchBar
+import com.studhub.app.presentation.listing.browse.components.SearchBar
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
