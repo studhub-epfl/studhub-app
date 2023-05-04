@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
@@ -111,7 +112,8 @@ fun UserRatingScreen(
         UserHeader(
             targetUser = targetUser,
             thumbsUpCount = thumbsUpCount.value,
-            thumbsDownCount = thumbsDownCount.value
+            thumbsDownCount = thumbsDownCount.value,
+            modifier = Modifier.testTag("UserHeader")
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +121,8 @@ fun UserRatingScreen(
         AddRatingButton(
             onShowDialogToggle = { showDialog = !showDialog },
             currentUser = currentUser,
-            currentUserLoading = currentUserLoading
+            currentUserLoading = currentUserLoading,
+            modifier = Modifier.testTag("AddRatingButton")
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -142,7 +145,9 @@ fun UserRatingScreen(
                 )
                 thumbsUpCount.value -= if (thumbUp) 1 else 0
                 thumbsDownCount.value -= if (thumbDown) 1 else 0
-            })
+            },
+            modifier = Modifier.testTag("RatingsList")
+        )
     }
 }
 

@@ -20,7 +20,8 @@ fun RatingsList(
     currentUser: State<ApiResponse<User>>,
     currentUserHasRating: Boolean,
     onEditRating: (Rating) -> Unit,
-    onRemoveRating: (Rating) -> Unit
+    onRemoveRating: (Rating) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     when (val ratingsResponse = ratings.value) {
         is ApiResponse.Loading -> {
@@ -28,7 +29,7 @@ fun RatingsList(
         }
         is ApiResponse.Success -> {
             LazyColumn(
-                modifier = Modifier
+                modifier = modifier
                     .padding(top = 16.dp, start = 16.dp)
                     .clip(MaterialTheme.shapes.medium)
                     .fillMaxWidth(0.7f)
