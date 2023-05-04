@@ -30,7 +30,6 @@ class AuthActivity : AppCompatActivity() {
                     AppNavigation()
                 })
             AuthScreen(
-                onLoginComplete = {},
                 navigateToSignUpScreen = {},
                 navigateToForgotPasswordScreen = {})
         }
