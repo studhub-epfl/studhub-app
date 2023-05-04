@@ -3,7 +3,6 @@ package com.studhub.app.presentation.conversation.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.studhub.app.core.extensions.darken
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Message
 import com.studhub.app.presentation.ui.common.container.Card
