@@ -1,7 +1,5 @@
 package com.studhub.app.data.repository
 
-import com.google.android.gms.auth.api.identity.BeginSignInResult
-import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
@@ -32,16 +30,6 @@ class MockAuthRepositoryImpl(isLoggedInByDefault: Boolean = true) : AuthReposito
 
     override val currentUserUid: String
         get() = if (isLoggedIn) loggedInUser.id else ""
-
-    override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> {
-        isLoggedIn = true
-        return flowOf(ApiResponse.Loading)
-    }
-
-    override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>> {
-        isLoggedIn = true
-        return flowOf(ApiResponse.Loading)
-    }
 
     override suspend fun signUpWithEmailAndPassword(
         email: String,

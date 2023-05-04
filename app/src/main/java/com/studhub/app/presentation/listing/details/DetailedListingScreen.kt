@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -30,6 +29,7 @@ import com.studhub.app.presentation.listing.details.components.ListingDescriptio
 import com.studhub.app.presentation.listing.details.components.ListingImage
 import com.studhub.app.presentation.listing.details.components.ListingPrice
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
+import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 
@@ -78,22 +78,27 @@ fun Details(
     listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit,
     onMeetingPointClick: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
             DetailsButtons(onContactSellerClick, onFavouriteClick)
-            Spacer(modifier = Modifier.height(24.dp))
+
+            Spacer("large")
+
             BigLabel(label = listing.name)
+
             // Add the placeholder image here
             ListingImage(contentDescription = "Item picture")
-            Spacer(modifier = Modifier.height(30.dp))
+
+            Spacer("large")
+
             ListingDescription(description = listing.description)
-            Spacer(modifier = Modifier.height(35.dp))
+
+            Spacer("large")
+
             ListingPrice(price = listing.price)
             Spacer(modifier = Modifier.height(80.dp))
             val meetingPoint = listing.meetingPoint
@@ -109,7 +114,6 @@ fun Details(
         }
     }
 }
-
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable

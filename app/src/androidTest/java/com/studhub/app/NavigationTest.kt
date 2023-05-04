@@ -46,6 +46,16 @@ class NavigationTest {
     }
 
     @Test
+    fun clickConversations_navigatesToConversationScreen() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_conversations)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.conversation_title)).assertIsDisplayed()
+    }
+
+    @Test
     fun clickBrowse_navigatesToBrowseScreen() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_browse)).assertExists()
@@ -53,15 +63,6 @@ class NavigationTest {
             .performClick()
 
         composeTestRule.onNodeWithText(str(R.string.listings_browsing_title)).assertIsDisplayed()
-    }
-
-    @Test
-    fun clickCart_navigatesToCartScreen() {
-        composeTestRule
-            .onNodeWithText(str(R.string.home_button_cart)).assertExists()
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithText(str(R.string.cart_title)).assertIsDisplayed()
     }
 
     @Test

@@ -47,11 +47,11 @@ class HomeScreenTest {
             .performScrollTo()
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(str(R.string.home_button_browse))
+            .onNodeWithText(str(R.string.home_button_conversations))
             .performScrollTo()
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(str(R.string.home_button_cart))
+            .onNodeWithText(str(R.string.home_button_browse))
             .performScrollTo()
             .assertIsDisplayed()
         composeTestRule

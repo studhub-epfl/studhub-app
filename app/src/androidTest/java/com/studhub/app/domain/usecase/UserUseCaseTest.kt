@@ -1,7 +1,5 @@
 package com.studhub.app.domain.usecase
 
-import com.google.android.gms.auth.api.identity.BeginSignInResult
-import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
@@ -32,12 +30,6 @@ class UserUseCaseTest {
             get() = true
         override val currentUserUid: String
             get() = loggedInUser.id
-
-        override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> =
-            flowOf(ApiResponse.Loading)
-
-        override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>> =
-            flowOf(ApiResponse.Loading)
 
         override suspend fun signUpWithEmailAndPassword(
             email: String,

@@ -14,6 +14,8 @@ import javax.inject.Singleton
 class ListingRepositoryImpl : ListingRepository {
 
     private val db = Firebase.database.getReference("listings")
+    private var provisionalListing = mutableListOf<Listing>()
+
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
         val listingId: String = db.push().key.orEmpty()
@@ -97,16 +99,19 @@ class ListingRepositoryImpl : ListingRepository {
                 query.result.children.forEach { snapshot ->
                     val listing = snapshot.getValue(Listing::class.java)
                     if (listing != null && (blockedUsers[listing.seller.id] != true) &&
-                      (listing.name.contains(keyword) || listing.description.contains(keyword)
-                                || listing.price.toString().contains(keyword))) {
+                        (listing.name.contains(keyword, true) || listing.description.contains(keyword, true)
+                                || listing.price.toString().contains(keyword, true))) {
                         listings.add(listing)
                     }
 
+                    //TODO - later
+                    // Sam implemented his price filtering that way but it's not a robust implementation
+                    // Instead, extend the ListingRepository with a method getListingsByPriceRange()
                     if(listing != null && keyword.contains('-')) {
-                      if(listing.price >= keyword.substringBefore('-').toFloat()
-                          && listing.price <= keyword.substringAfter('-').toFloat()){
-                          listings.add(listing)
-                      }
+                        if(listing.price >= keyword.substringBefore('-').toFloat()
+                            && listing.price <= keyword.substringAfter('-').toFloat()){
+                            listings.add(listing)
+                        }
                     }
                 }
                 emit(ApiResponse.Success(listings))
@@ -115,6 +120,39 @@ class ListingRepositoryImpl : ListingRepository {
                 emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
             }
         }
+
+    override suspend fun getListingsByRange(keyword1: String, keyword2: String): Flow<ApiResponse<List<Listing>>> = flow {
+        emit(ApiResponse.Loading)
+
+        val query = db.get()
+        query.await()
+
+        if (query.isSuccessful) {
+            val listings = mutableListOf<Listing>()
+
+            query.result.children.forEach { snapshot ->
+                val listing = snapshot.getValue(Listing::class.java)
+
+                if(listing != null) {
+
+                    if(listing.price >= keyword1.toFloat() && listing.price <= keyword2.toFloat() ){
+                        listings.add(listing)
+                    }
+
+                }
+            }
+
+            provisionalListing = listings
+            emit(ApiResponse.Success(provisionalListing))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+
+
+
+    }
+
 
     override suspend fun updateListing(
         listingId: String,
