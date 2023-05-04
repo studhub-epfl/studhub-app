@@ -13,7 +13,7 @@ class RatingActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         setContent {
-            UserRatingScreen("")
+            UserRatingScreen("-NQSUz5EY7-EfBG7PCIu")
         }
     }
 

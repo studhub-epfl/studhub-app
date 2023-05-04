@@ -22,13 +22,17 @@ import com.studhub.app.presentation.ratings.components.RatingsList
 import com.studhub.app.presentation.ratings.components.UserHeader
 import java.util.*
 @Composable
-fun AddRatingButton(onShowDialogToggle: () -> Unit, currentUser: State<ApiResponse<User>>, currentUserLoading: State<Boolean>) {
+fun AddRatingButton(onShowDialogToggle: () -> Unit,
+                    currentUser: State<ApiResponse<User>>,
+                    currentUserLoading: State<Boolean>,
+                    modifier: Modifier = Modifier) {
     TextButton(
         onClick = {
             onShowDialogToggle()
         },
         colors = ButtonDefaults.textButtonColors(contentColor = Color.DarkGray),
-        enabled = currentUser.value is ApiResponse.Success && !currentUserLoading.value
+        enabled = currentUser.value is ApiResponse.Success && !currentUserLoading.value,
+        modifier = modifier
     ) {
         Text("Add Rating", fontSize = 14.sp)
     }
