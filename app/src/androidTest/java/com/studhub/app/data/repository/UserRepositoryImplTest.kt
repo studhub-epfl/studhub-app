@@ -39,7 +39,8 @@ class UserRepositoryImplTest {
 
     @Test
     fun setAndGetSameUser() {
-
+        val userRepo = UserRepositoryImpl() // real repo
+        val getUser = GetUser(userRepo)
         lateinit var user: User
 
         runBlocking {
@@ -63,7 +64,7 @@ class UserRepositoryImplTest {
         }
 
         runBlocking {
-            getUser.invoke(user.id).collect {
+            getUser(user.id).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(it.data == user)
                     is ApiResponse.Failure -> fail(it.message)
