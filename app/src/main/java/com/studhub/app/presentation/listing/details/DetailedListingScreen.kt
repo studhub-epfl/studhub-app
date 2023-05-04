@@ -16,10 +16,8 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.listing.details.components.DetailsButtons
-import com.studhub.app.presentation.listing.details.components.ListingDescription
-import com.studhub.app.presentation.listing.details.components.ListingImage
-import com.studhub.app.presentation.listing.details.components.ListingPrice
+import com.studhub.app.presentation.listing.details.components.*
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
@@ -38,17 +36,21 @@ fun DetailedListingScreen(
         is ApiResponse.Failure -> {}
         is ApiResponse.Success -> {
             val listing = currentListing.data
+            val isFavorite = viewModel.isFavorite.value
             Details(
                 listing = listing,
                 onContactSellerClick = { /*TODO*/ },
-                onFavouriteClick = { /* TODO */ })
+                onFavoriteClicked = {viewModel.onFavoriteClicked(isFavorite)},
+                isFavorite = isFavorite,
+                getFavorites = {viewModel.getFavorites()})
         }
     }
 }
 
 @Composable
 fun Details(
-    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit
+    listing: Listing, onContactSellerClick: () -> Unit, isFavorite: Boolean,
+    onFavoriteClicked: (Boolean) -> Unit, getFavorites: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -58,7 +60,15 @@ fun Details(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            DetailsButtons(onContactSellerClick, onFavouriteClick)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // "Contact seller" button
+                BasicFilledButton(onClick = { onContactSellerClick() }, label = "Contact seller")
+                // "Favorite" button
+                FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked, getFavorites = getFavorites)
+            }
             Spacer(modifier = Modifier.height(24.dp))
             BigLabel(label = listing.name)
             // Add the placeholder image here
@@ -89,5 +99,8 @@ fun DetailsPreview() {
     Details(
         listing = listing,
         onContactSellerClick = { },
-        onFavouriteClick = { })
+        onFavoriteClicked = { },
+        isFavorite = true,
+        getFavorites = {}
+        )
 }

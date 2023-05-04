@@ -39,14 +39,16 @@ class DetailedListingScreenTest {
             Details(
                 listing = listing,
                 onContactSellerClick = { },
-                onFavouriteClick = { })
+                onFavoriteClicked = { },
+                getFavorites = {},
+                isFavorite = true)
         }
     }
 
     @Test
     fun detailsListingScreenDisplaysAllElements() {
         composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Favourite").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Remove from favorites").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Item picture").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
