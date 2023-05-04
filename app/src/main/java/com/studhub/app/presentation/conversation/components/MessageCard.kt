@@ -18,18 +18,16 @@ import com.studhub.app.presentation.ui.common.container.Card
 
 @Composable
 fun MessageCard(conversation: Conversation, message: Message) {
-    val DARKEN_FACTOR = 0.2F
-
     val alignment: Alignment
     val containerColor: Color
 
     // user1 is ensured to be the logged-in user
     if (message.senderId == conversation.user1Id) {
         alignment = Alignment.CenterEnd
-        containerColor = MaterialTheme.colorScheme.secondaryContainer
+        containerColor = MaterialTheme.colorScheme.primaryContainer
     } else {
         alignment = Alignment.CenterStart
-        containerColor = MaterialTheme.colorScheme.secondaryContainer.darken(DARKEN_FACTOR)
+        containerColor = MaterialTheme.colorScheme.secondaryContainer
     }
 
     Box(

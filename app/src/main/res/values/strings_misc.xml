@@ -3,4 +3,5 @@
     <string name="misc_currency_symbol">CHF</string>
     <string name="misc_ellipsis">…</string>
     <string name="misc_text_with_ellipsis">%s…</string>
+    <string name="misc_btn_go_back">Go back</string>
 </resources>

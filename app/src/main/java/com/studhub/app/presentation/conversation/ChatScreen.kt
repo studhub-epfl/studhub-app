@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.presentation.conversation.components.ChatTopBar
 import com.studhub.app.presentation.conversation.components.MessageInput
 import com.studhub.app.presentation.conversation.components.MessageList
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
@@ -33,10 +34,10 @@ fun ChatScreen(
         is ApiResponse.Success -> {
             Scaffold(
                 topBar = {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        BasicFilledButton(onClick = navigateBack, label = "<")
-                        BigLabel(label = viewModel.conversation!!.user2Name)
-                    }
+                    ChatTopBar(
+                        correspondentName = viewModel.conversation!!.user2Name,
+                        navigateBack = navigateBack
+                    )
                 },
                 content = {
                     Column(modifier = Modifier.padding(it)) {
