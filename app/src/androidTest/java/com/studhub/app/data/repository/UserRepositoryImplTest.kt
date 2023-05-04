@@ -27,6 +27,11 @@ class UserRepositoryImplTest {
     @Inject
     lateinit var userRepo: UserRepository
 
+    @Inject
+    lateinit var getUser: GetUser
+
+
+
     @Before
     fun init() {
         hiltRule.inject()
@@ -58,7 +63,7 @@ class UserRepositoryImplTest {
         }
 
         runBlocking {
-            userRepo.getUser(user.id).collect {
+            getUser.invoke(user.id).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(it.data == user)
                     is ApiResponse.Failure -> fail(it.message)

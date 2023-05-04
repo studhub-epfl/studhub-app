@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.common.input
+package com.studhub.app.presentation.listing.browse.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.mutableStateOf

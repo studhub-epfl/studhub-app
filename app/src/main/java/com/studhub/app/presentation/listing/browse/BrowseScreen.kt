@@ -16,8 +16,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
-import com.studhub.app.presentation.ui.common.input.RangeBar
-import com.studhub.app.presentation.ui.common.input.SearchBar
+import com.studhub.app.presentation.listing.browse.components.RangeBar
+import com.studhub.app.presentation.listing.browse.components.SearchBar
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import kotlinx.coroutines.launch
 

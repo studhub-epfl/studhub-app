@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.common.input
+package com.studhub.app.presentation.listing.browse.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -39,15 +39,13 @@ fun RangeBar(label: String = "",
                 .fillMaxSize()
                 .padding(horizontal = 8.dp),
         ) {
-            IconButton(
-                onClick = {  }
-            ) {
+
                 Icon(
                     imageVector = Icons.Filled.ArrowForward,
                     contentDescription = "Menu button",
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
-            }
+
             RangeBarField(label = label,
                               search = search,
                               onSearch = onSearch
@@ -86,7 +84,6 @@ fun RangeBarField(label: String = "",
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        trailingIcon = { RangeBarTrailingIcon(search)},
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = MaterialTheme.colorScheme.onSurface,
@@ -104,20 +101,3 @@ fun RangeBarField(label: String = "",
 }
 
 
-@Composable
-fun RangeBarTrailingIcon(search: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
-    if (search.value.isNotEmpty()) {
-        IconButton(
-            onClick = { search.value = "" },
-            content = {
-                Icon(
-                    imageVector = Icons.Filled.Clear,
-                    contentDescription = "Clear button",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        )
-    } else {
-        null
-    }
-}
