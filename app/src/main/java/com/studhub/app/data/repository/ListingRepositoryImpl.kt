@@ -124,7 +124,6 @@ class ListingRepositoryImpl : ListingRepository {
     override suspend fun getListingsByRange(keyword1: String, keyword2: String): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
 
-
         val query = db.get()
         query.await()
 
