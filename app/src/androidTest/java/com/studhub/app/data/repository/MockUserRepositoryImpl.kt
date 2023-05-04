@@ -8,12 +8,14 @@ import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.util.UUID
 import javax.inject.Singleton
 
 @Singleton
 class MockUserRepositoryImpl : UserRepository {
     private val userDB = HashMap<String, User>()
     private val listingDB = HashMap<String, Listing>()
+    private val ratings = mutableMapOf<String, MutableMap<String, Rating>>()
 
     init {
         userDB[MockAuthRepositoryImpl.loggedInUser.id] = MockAuthRepositoryImpl.loggedInUser
@@ -155,27 +157,42 @@ class MockUserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> {
-        TODO("Not yet implemented")
+    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+        val userRatings = ratings.getOrPut(userId) { mutableMapOf() }
+        val ratingId = UUID.randomUUID().toString()
+        val ratingToAdd = rating.copy(id = ratingId)
+        userRatings[ratingId] = ratingToAdd
+
+        emit(ApiResponse.Success(ratingToAdd))
     }
 
-    override suspend fun updateRating(
-        userId: String,
-        ratingId: String,
-        rating: Rating
-    ): Flow<ApiResponse<Rating>> {
-        TODO("Not yet implemented")
+    override suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+        val userRatings = ratings[userId]
+        if (userRatings != null && userRatings.containsKey(ratingId)) {
+            userRatings[ratingId] = rating
+            emit(ApiResponse.Success(rating))
+        } else {
+            emit(ApiResponse.Failure("Rating not found"))
+        }
     }
 
-    override suspend fun deleteRating(
-        userId: String,
-        ratingId: String
-    ): Flow<ApiResponse<Boolean>> {
-        TODO("Not yet implemented")
+    override suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>> = flow {
+        val userRatings = ratings[userId]
+        if (userRatings != null && userRatings.containsKey(ratingId)) {
+            userRatings.remove(ratingId)
+            emit(ApiResponse.Success(true))
+        } else {
+            emit(ApiResponse.Failure("Rating not found"))
+        }
     }
 
-    override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> {
-        TODO("Not yet implemented")
+    override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> = flow {
+        val userRatings = ratings[userId]
+        if (userRatings != null) {
+            emit(ApiResponse.Success(userRatings.values.toList()))
+        } else {
+            emit(ApiResponse.Success(emptyList()))
+        }
     }
 }
 

@@ -414,7 +414,6 @@ class UserUseCaseTest {
         }
     }
 
-
     @Test
     fun getUserUseCaseReturnsFailureForInvalidUserId() = runBlocking {
         val getUser = GetUser(repository)
