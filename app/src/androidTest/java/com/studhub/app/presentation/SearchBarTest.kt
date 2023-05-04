@@ -1,10 +1,11 @@
-package com.studhub.app.presentation
+package com.studhub.app.presentation.listing.browse.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.studhub.app.presentation.listing.browse.components.SearchBar
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,26 +17,20 @@ class SearchBarTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun testSearchBar() {
+    fun searchBar_textChange_updatesSearchTerm() {
+        val searchTerm = mutableStateOf("")
         composeTestRule.setContent {
-            SearchBar()
+
+            SearchBar(
+                search = searchTerm,
+                onSearch = {}
+            )
+
         }
-        /*
+        val testString = "Hello, World!"
 
-        // Check that the menu button is displayed and clickable
-        composeTestRule.onNodeWithContentDescription("Menu button").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Search...").performTextInput(testString)
 
-        // Check that the search bar is displayed and has the correct label
-        composeTestRule.onNodeWithText("Search...").assertIsDisplayed()
-
-        // Type a query into the search bar
-        composeTestRule.onNodeWithText("Search...").performTextInput("Test query")
-        composeTestRule.onNodeWithText("Test query").assertIsDisplayed().assertIsFocused()
-
-        // Clear the query by clicking the clear button
-        composeTestRule.onNodeWithContentDescription("Clear button").assertIsDisplayed().performClick()
-        composeTestRule.onNodeWithText("").assertIsDisplayed().assertIsFocused()
-        */
-
+        assertEquals(testString, searchTerm.value)
     }
 }

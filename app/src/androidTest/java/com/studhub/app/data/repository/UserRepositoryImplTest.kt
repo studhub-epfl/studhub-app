@@ -27,6 +27,11 @@ class UserRepositoryImplTest {
     @Inject
     lateinit var userRepo: UserRepository
 
+    @Inject
+    lateinit var getUser: GetUser
+
+
+
     @Before
     fun init() {
         hiltRule.inject()
@@ -34,7 +39,8 @@ class UserRepositoryImplTest {
 
     @Test
     fun setAndGetSameUser() {
-
+        val userRepo = UserRepositoryImpl() // real repo
+        val getUser = GetUser(userRepo)
         lateinit var user: User
 
         runBlocking {
@@ -58,7 +64,7 @@ class UserRepositoryImplTest {
         }
 
         runBlocking {
-            userRepo.getUser(user.id).collect {
+            getUser(user.id).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(it.data == user)
                     is ApiResponse.Failure -> fail(it.message)
