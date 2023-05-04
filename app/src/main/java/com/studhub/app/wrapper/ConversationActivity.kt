@@ -4,19 +4,17 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.studhub.app.presentation.conversation.ChatScreen
+import com.studhub.app.presentation.conversation.ConversationScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ChatActivity : AppCompatActivity() {
+class ConversationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatScreen(
-                conversationId = "NULL",
-                navigateBack = {}
-            )
+            ConversationScreen(navigateToDiscussion = {})
         }
     }
 }

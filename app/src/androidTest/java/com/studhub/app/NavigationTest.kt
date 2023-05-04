@@ -46,6 +46,16 @@ class NavigationTest {
     }
 
     @Test
+    fun clickConversations_navigatesToConversationScreen() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_conversations)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.conversation_title)).assertIsDisplayed()
+    }
+
+    @Test
     fun clickBrowse_navigatesToBrowseScreen() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_browse)).assertExists()
