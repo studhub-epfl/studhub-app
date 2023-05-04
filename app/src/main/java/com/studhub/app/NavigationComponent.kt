@@ -38,13 +38,6 @@ fun AppNavigation(
             route = "Auth"
         ) {
             AuthScreen(
-                onLoginComplete = { isNewUser ->
-                    if (isNewUser) {
-                        navController.navigate("EditProfile")
-                    } else {
-                        navController.navigate("Home")
-                    }
-                },
                 navigateToForgotPasswordScreen = { navController.navigate("Auth/ForgotPassword") },
                 navigateToSignUpScreen = { navController.navigate("Auth/SignUp") }
             )
