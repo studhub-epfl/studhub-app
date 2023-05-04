@@ -33,7 +33,7 @@ class ConversationRepositoryImpl : ConversationRepository {
 
             // first check that the user is not trying to contact themself
             if (conversation.user1Id == conversation.user2Id) {
-
+                emit(ApiResponse.Failure("User cannot contact itself"))
                 return@flow
             }
 
