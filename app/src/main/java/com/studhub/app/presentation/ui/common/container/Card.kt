@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,6 +23,7 @@ fun Card(
     border: BorderStroke? = null,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
+    shape: Shape = CardDefaults.shape,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     androidx.compose.material3.Card(
@@ -32,6 +34,7 @@ fun Card(
             containerColor = containerColor ?: MaterialTheme.colorScheme.secondaryContainer,
             contentColor = contentColor ?: MaterialTheme.colorScheme.onSecondaryContainer
         ),
+        shape = shape,
         elevation = elevation,
         border = border,
         onClick =  onClick,
