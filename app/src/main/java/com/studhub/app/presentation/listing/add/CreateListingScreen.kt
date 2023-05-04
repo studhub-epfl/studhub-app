@@ -155,9 +155,9 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
             modifier = Modifier
                 .width(100.dp)
                 .padding(end = 4.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = MaterialTheme.colorScheme.onBackground
-            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                focusedTextColor = MaterialTheme.colorScheme.onBackground),
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
@@ -235,9 +235,9 @@ fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Bo
         onValueChange = {},
         readOnly = true,
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onSecondaryContainer
-        ),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer),
         modifier = modifier
     )
 }
