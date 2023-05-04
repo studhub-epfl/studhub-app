@@ -1,15 +1,24 @@
 package com.studhub.app.presentation.listing.details
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
+import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
@@ -24,6 +33,7 @@ import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 
+
 @Composable
 fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
@@ -33,6 +43,18 @@ fun DetailedListingScreen(
     LaunchedEffect(id) {
         if (id != null)
             viewModel.fetchListing(id)
+    }
+
+
+    val activityContext = LocalContext.current
+
+    fun displayMeetingPoint(location: LatLng) {
+        val intent = Intent(activityContext, MeetingPointPickerActivity::class.java).apply {
+            putExtra("viewOnly", true)
+            putExtra("latitude", location.latitude)
+            putExtra("longitude", location.longitude)
+        }
+        activityContext.startActivity(intent)
     }
 
     when (val currentListing = viewModel.currentListing) {
@@ -47,14 +69,21 @@ fun DetailedListingScreen(
                         navigateToConversation(conv.id)
                     }
                 },
-                onFavouriteClick = { /* TODO */ })
+                onFavouriteClick = { /* TODO */ },
+                onMeetingPointClick = {
+                    val meetingPoint = listing.meetingPoint
+                    if (meetingPoint != null) {
+                        displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
+                    }
+                })
         }
     }
 }
 
 @Composable
 fun Details(
-    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit
+    listing: Listing, onContactSellerClick: () -> Unit, onFavouriteClick: () -> Unit,
+    onMeetingPointClick: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -78,6 +107,18 @@ fun Details(
             Spacer("large")
 
             ListingPrice(price = listing.price)
+
+            Spacer(modifier = Modifier.height(80.dp))
+            val meetingPoint = listing.meetingPoint
+            if (meetingPoint != null) {
+                Button(
+                    onClick = onMeetingPointClick,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text("View Meeting Point")
+                }
+            }
         }
     }
 }
@@ -99,5 +140,6 @@ fun DetailsPreview() {
     Details(
         listing = listing,
         onContactSellerClick = { },
-        onFavouriteClick = { })
+        onFavouriteClick = { },
+        onMeetingPointClick = {})
 }
