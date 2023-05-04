@@ -79,7 +79,7 @@
             android:name=".wrapper.RatingActivity"
             android:exported="true"
             android:label="HomeComponent Wrapper"
-            android:theme="@style/Theme.Bootcamp"
+            android:theme="@style/Theme.Studhub"
             />
 
         <activity
