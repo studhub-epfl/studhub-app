@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="conversation_title">My messages</string>
+    <string name="conversation_no_conversations">Your inbox is empty</string>
+    <string name="conversation_unknown_user">Unknown user</string>
+    <string name="conversation_last_message_at">Last message received %s</string>
+    <string name="conversation_message_input_placeholder">Write something…</string>
+    <string name="conversation_message_input_send">Send</string>
 </resources>

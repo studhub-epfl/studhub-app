@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.util.*
 import javax.inject.Singleton
 
 @Singleton
@@ -25,7 +26,7 @@ class MessageRepositoryImpl : MessageRepository {
 
     override suspend fun createMessage(message: Message): Flow<ApiResponse<Message>> {
         val messageId: String = db.push().key.orEmpty()
-        val messageToPush: Message = message.copy(id = messageId)
+        val messageToPush: Message = message.copy(id = messageId, createdAt = Date())
 
         return flow {
             emit(ApiResponse.Loading)
@@ -45,7 +46,7 @@ class MessageRepositoryImpl : MessageRepository {
 
     override suspend fun getConversationMessages(conversation: Conversation): Flow<ApiResponse<List<Message>>> =
         callbackFlow {
-            trySendBlocking(ApiResponse.Loading)
+            trySend(ApiResponse.Loading)
 
             val listener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -60,15 +61,15 @@ class MessageRepositoryImpl : MessageRepository {
 
                     messages.sortBy { it.createdAt }
 
-                    trySendBlocking(ApiResponse.Success(messages))
+                    trySend(ApiResponse.Success(messages))
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    trySendBlocking(ApiResponse.Failure(error.message))
+                    trySend(ApiResponse.Failure(error.message))
                 }
             }
 
-            db.addListenerForSingleValueEvent(listener)
+            db.addValueEventListener(listener)
 
             awaitClose {
                 db.removeEventListener(listener)

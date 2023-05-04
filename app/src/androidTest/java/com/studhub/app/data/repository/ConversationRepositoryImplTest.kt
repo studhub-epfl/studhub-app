@@ -2,7 +2,9 @@ package com.studhub.app.data.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.ConversationRepository
 import com.studhub.app.domain.usecase.conversation.GetCurrentUserConversations
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -10,8 +12,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,9 +33,32 @@ class ConversationRepositoryImplTest {
     @Inject
     lateinit var startConversationWith: StartConversationWith
 
+    @Inject
+    lateinit var conversationRepository: ConversationRepository
+
     @Before
     fun init() {
         hiltRule.inject()
+    }
+
+    @Test
+    fun userCannotCreateConversationWithThemself() {
+        var allowed = true
+        val user = MockAuthRepositoryImpl.loggedInUser
+        val conversation = Conversation(user1Id = user.id, user2Id = user.id)
+
+        runBlocking {
+            conversationRepository.createConversation(conversation).collect {
+                when (it) {
+                    is ApiResponse.Failure -> allowed = false
+                    is ApiResponse.Success -> allowed = true
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+
+        assertFalse(allowed)
+
     }
 
     @Test
