@@ -16,14 +16,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Preview
 @Composable
 fun SearchBar(
     search: MutableState<String> = remember { mutableStateOf("") },
     onSearch: () -> Unit = {}
 ) {
+    var job: Job? = null
+    val coroutineScope = rememberCoroutineScope()
+
+    //delay in miliseconds used for dynamic searching as user types
+    val searchDelay: Long = 800
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,7 +49,18 @@ fun SearchBar(
 
             OutlinedTextField(
                 value = search.value,
-                onValueChange = { search.value = it },
+                //We want to allow a search when text is typed so it searches as soon as possible
+                //but we don't want to send a query to each character change, rather, when the user
+                //has stopped writing. cancelling the job on each change and starting a new one
+                //with a delay achieves this result. A delay of 800ms felt good.
+                onValueChange = {
+                    search.value = it
+                    job?.cancel()
+                    job = coroutineScope.launch {
+                        delay(searchDelay)
+                        onSearch()
+                    }
+                },
                 label = {
                     Text(
                         text = "Search...",
@@ -51,10 +69,8 @@ fun SearchBar(
                         )
                     )
                 },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Search
                 ),
                 keyboardActions = KeyboardActions(onSearch = { onSearch() }),
                 textStyle = MaterialTheme.typography.bodyLarge,
@@ -68,7 +84,10 @@ fun SearchBar(
                 trailingIcon = {
                     if (search.value.isNotEmpty()) {
                         IconButton(
-                            onClick = { search.value = "" },
+                            onClick = {
+                                search.value = ""
+                                onSearch()
+                            },
                             content = {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
@@ -77,8 +96,6 @@ fun SearchBar(
                                 )
                             }
                         )
-                    } else {
-                        null
                     }
                 },
                 singleLine = true,
