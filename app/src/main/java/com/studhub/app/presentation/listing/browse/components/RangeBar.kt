@@ -38,20 +38,19 @@ fun RangeBar(label: String = "",
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp),
-        ) {
-
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowForward,
                     contentDescription = "Menu button",
                     tint = MaterialTheme.colorScheme.onSurface,
-                )
+                    )
 
-            RangeBarField(label = label,
-                              search = search,
-                              onSearch = onSearch
-            )
-        }
-    }
+                RangeBarField(label = label,
+                          search = search,
+                          onSearch = onSearch
+                             )
+              }
+       }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

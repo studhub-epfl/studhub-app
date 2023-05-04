@@ -24,16 +24,15 @@ class RangeBarTest {
 
 
         composeTestRule.setContent {
-            RangeBar("MIN....CHF",
-                search = rememberSaveable { mutableStateOf("")
-
-                },
+            RangeBar(
+                label = "MIN....CHF",
+                search = rememberSaveable { mutableStateOf("") },
                 onSearch = {}
-            )
+                )
         }
         composeTestRule.onNodeWithText("MIN....CHF").performTextInput("5")
     }
 
 
-    // Add more tests as needed
+
 }
