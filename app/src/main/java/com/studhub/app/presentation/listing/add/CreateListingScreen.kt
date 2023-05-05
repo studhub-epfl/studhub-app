@@ -1,13 +1,14 @@
 package com.studhub.app.presentation.listing.add
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -15,18 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
+import com.studhub.app.presentation.listing.add.components.CategorySheet
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.presentation.ui.theme.StudHubTheme
 
+@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @Composable
 fun CreateListingScreen(
     viewModel: CreateListingViewModel = hiltViewModel(),
@@ -37,7 +38,8 @@ fun CreateListingScreen(
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
-    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
+    val chosenCategories = rememberSaveable { mutableStateOf(mutableListOf<Category>()) }
+    val openCategorySheet = rememberSaveable { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -52,16 +54,16 @@ fun CreateListingScreen(
             ) {
                 BigLabel(label = stringResource(R.string.listings_add_title))
                 ListingForm(
-                    categories,
+                    openCategorySheet,
+                    chosenCategories,
                     title = title,
                     description = description,
                     price = price,
-                    category = category,
                     onSubmit = {
                         viewModel.createListing(
                             title.value,
                             description.value,
-                            category.value,
+                            chosenCategories.value[0],
                             price.value.toFloat(),
                             navigateToListing
                         )
@@ -70,15 +72,20 @@ fun CreateListingScreen(
             }
         }
     }
+    CategorySheet(
+        isOpen = openCategorySheet,
+        categories = categories,
+        chosen = chosenCategories
+    )
 }
 
 @Composable
 fun ListingForm(
-    categories: List<Category>,
+    openCategorySheet: MutableState<Boolean>,
+    chosen: MutableState<MutableList<Category>>,
     title: MutableState<String>,
     description: MutableState<String>,
     price: MutableState<String>,
-    category: MutableState<Category>,
     onSubmit: () -> Unit,
 ) {
 
@@ -86,10 +93,10 @@ fun ListingForm(
     AddImageLayout(onClick = {})
     TextBox(label = "Item description", rememberedValue = description)
     PriceRow(rememberedValue = price)
-    CategoryDropDown(categories, selected = category)
+    CategoryChoice(chosen, openCategorySheet)
     BasicFilledButton(
         onClick = {
-            if (category.value.name != "Choose a category") {
+            if (chosen.value.isNotEmpty()) {
                 onSubmit()
             }
         },
@@ -97,7 +104,6 @@ fun ListingForm(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddImageLayout(onClick: () -> Unit) {
     var isVisible by remember { mutableStateOf(false) }
@@ -119,7 +125,7 @@ fun AddImageLayout(onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun ImageCarousel() {
     Box(
@@ -135,7 +141,6 @@ fun ImageCarousel() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -148,7 +153,8 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
                 .padding(end = 4.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground),
+                focusedTextColor = MaterialTheme.colorScheme.onBackground
+            ),
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
@@ -159,74 +165,22 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryDropDown(
-    categories: List<Category>,
-    selected: MutableState<Category> = rememberSaveable { mutableStateOf(Category(name = "Choose a category")) }
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
+fun CategoryChoice(
+    chosen : MutableState<MutableList<Category>>,
+    openCategorySheet: MutableState<Boolean>) {
+    Log.d("CategoryChoice", "Loaded")
+    Row {
+        Text(text = "Chose categories:")
+        Spacer(modifier = Modifier.width(6.dp))
+        PlusButton { openCategorySheet.value = true }
+    }
+    Column(
         modifier = Modifier.padding(top = 8.dp)
     ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-
-            ListingSelectedCategoryField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .width(TextFieldDefaults.MinWidth),
-                value = selected.value.name,
-                expanded = expanded)
-
-            //Would like to have that block in a separate composable but ExposedDropdownMenu
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                categories.forEach { cat ->
-                    ListingDropDownItem (
-                        label = cat.name,
-                        onClick = {
-                            selected.value = cat
-                            expanded = false
-                        })
-                }
-            }
+        chosen.value.forEach() { cat ->
+            Text(cat.name)
         }
     }
 }
 
-@Composable
-fun ListingDropDownItem(label: String, onClick: () -> Unit = {}) {
-    DropdownMenuItem(
-        text = {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onSecondaryContainer)
-        },
-        onClick = onClick,
-        colors = MenuDefaults.itemColors()
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Boolean) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = {},
-        readOnly = true,
-        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer),
-        modifier = modifier
-    )
-}
