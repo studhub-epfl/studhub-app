@@ -56,7 +56,7 @@ class CreateListingViewModel @Inject constructor(
             description = description,
             categories = categories,
             price = price,
-            meetingPoint = meetingPoint
+            meetingPoint = meetingPoint,
             picturesUri = pictures
         )
 

@@ -1,5 +1,6 @@
 package com.studhub.app.presentation.listing.add
 
+import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -162,7 +163,6 @@ fun ListingForm(
 
     PriceRow(rememberedValue = price)
 
-    CategoryDropDown(categories, selected = category)
     Spacer("large")
     MeetingPointInput(meetingPoint = meetingPoint)
 
@@ -179,6 +179,7 @@ fun ListingForm(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -203,6 +204,7 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryChoice(
     chosen: SnapshotStateList<Category>,

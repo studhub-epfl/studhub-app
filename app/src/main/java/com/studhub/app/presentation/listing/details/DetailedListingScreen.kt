@@ -90,7 +90,7 @@ fun DetailedListingScreen(
 
 @Composable
 fun Details(
-    onMeetingPointClick: () -> Unit
+    onMeetingPointClick: () -> Unit,
     listing: Listing,
     onContactSellerClick: () -> Unit,
     isFavorite: Boolean,
