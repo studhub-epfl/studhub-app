@@ -104,16 +104,23 @@ fun AppNavigation(
             AboutScreen()
         }
 
-        composable("DetailedListing/{id}") { backStackEntry ->
-            Globals.showBottomBar = false
-            val id = backStackEntry.arguments?.getString("id")
-
-        }
         composable("Conversations") {
             Globals.showBottomBar = true
             ConversationScreen(navigateToDiscussion = { conversationId -> navController.navigate("Conversations/$conversationId") })
         }
 
+        composable("DetailedListing/{id}") { backStackEntry ->
+            Globals.showBottomBar = false
+            val id = backStackEntry.arguments?.getString("id")
+            if (id == null) {
+                navController.navigate("Browse")
+                return@composable
+            }
+
+            DetailedListingScreen(
+                id = id,
+               navController = navController)
+        }
 
 //        composable("RatingScreen") {
 //            UserRatingScreen(targetUserId = "-NRpD74U8sedQAH5_hdn")
