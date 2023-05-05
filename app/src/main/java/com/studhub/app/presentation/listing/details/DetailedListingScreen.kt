@@ -1,6 +1,10 @@
 package com.studhub.app.presentation.listing.details
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,9 +19,9 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.listing.details.components.FavoriteButton
 import com.studhub.app.presentation.listing.details.components.ListingDescription
-import com.studhub.app.presentation.listing.details.components.ListingImage
 import com.studhub.app.presentation.listing.details.components.ListingPrice
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
+import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
@@ -61,11 +65,17 @@ fun Details(
     isFavorite: Boolean,
     onFavoriteClicked: () -> Unit
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
+    val scrollState = rememberScrollState()
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(scrollState)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -80,8 +90,9 @@ fun Details(
 
             BigLabel(label = listing.name)
 
-            // Add the placeholder image here
-            ListingImage(contentDescription = "Item picture")
+            Spacer("large")
+
+            Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = listing.pictures)
 
             Spacer("large")
 

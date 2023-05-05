@@ -52,7 +52,6 @@ class DetailedListingScreenTest {
         composeTestRule.onNodeWithContentDescription("Remove from favorites").performClick()
         composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Item picture").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
         composeTestRule.onNodeWithTag("price")
     }

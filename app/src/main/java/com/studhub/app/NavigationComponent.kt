@@ -89,7 +89,9 @@ fun AppNavigation(
         }
         composable("AddListing") {
             Globals.showBottomBar = false
-            CreateListingScreen(navigateToListing = { id: String -> navController.navigate("DetailedListing/$id") })
+            CreateListingScreen(
+                navigateToListing = { id: String -> navController.navigate("DetailedListing/$id") },
+                navigateBack = { navController.popBackStack() })
         }
         composable("Browse") {
             Globals.showBottomBar = true

@@ -1,5 +1,6 @@
 package com.studhub.app.presentation.listing.add
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
@@ -45,6 +46,7 @@ class CreateListingViewModel @Inject constructor(
         description: String,
         category: Category,
         price: Float,
+        pictures: MutableList<Uri>,
         callback: (id: String) -> Unit
     ) {
         val listing = Listing(
@@ -52,6 +54,7 @@ class CreateListingViewModel @Inject constructor(
             description = description,
             categories = listOf(category),
             price = price,
+            picturesUri = pictures
         )
 
         viewModelScope.launch {
