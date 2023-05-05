@@ -13,7 +13,10 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.listing.details.components.*
+import com.studhub.app.presentation.listing.details.components.FavoriteButton
+import com.studhub.app.presentation.listing.details.components.ListingDescription
+import com.studhub.app.presentation.listing.details.components.ListingImage
+import com.studhub.app.presentation.listing.details.components.ListingPrice
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
@@ -37,7 +40,7 @@ fun DetailedListingScreen(
             Details(
                 listing = listing,
                 onContactSellerClick = { /*TODO*/ },
-                onFavoriteClicked = {viewModel.onFavoriteClicked()},
+                onFavoriteClicked = { viewModel.onFavoriteClicked() },
                 isFavorite = isFavorite
             )
         }
@@ -100,5 +103,5 @@ fun DetailsPreview() {
         onContactSellerClick = { },
         onFavoriteClicked = { },
         isFavorite = true,
-        )
+    )
 }

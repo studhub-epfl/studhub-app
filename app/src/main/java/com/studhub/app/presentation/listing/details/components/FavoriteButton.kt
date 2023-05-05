@@ -6,12 +6,9 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.studhub.app.presentation.listing.details.DetailedListingViewModel
 
 @Composable
 fun FavoriteButton(

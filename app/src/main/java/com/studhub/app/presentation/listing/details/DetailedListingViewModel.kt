@@ -1,6 +1,5 @@
 package com.studhub.app.presentation.listing.details
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -31,7 +30,7 @@ class DetailedListingViewModel @Inject constructor(
         viewModelScope.launch {
             getListing(id).collect {
                 currentListing = it
-                if(it is ApiResponse.Success){
+                if (it is ApiResponse.Success) {
                     getIsFavorite()
                 }
             }
@@ -47,14 +46,8 @@ class DetailedListingViewModel @Inject constructor(
                         when (it) {
                             is ApiResponse.Success -> {
                                 isFavorite.value = (it.data.contains(listing))
-                                Log.d(
-                                    "Data favorite",
-                                    "Data contains : ${it.data.contains(listing)}"
-                                )
                             }
-                            else -> {
-                                Log.d("Data favorite", "error for getting favorites")
-                            }
+                            else -> {}
                         }
                     }
                 }
