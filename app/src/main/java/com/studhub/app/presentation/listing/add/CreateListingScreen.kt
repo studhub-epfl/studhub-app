@@ -1,5 +1,13 @@
 package com.studhub.app.presentation.listing.add
 
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -13,12 +21,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.LatLng
+import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
+import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.presentation.listing.add.components.CategorySheet
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
@@ -26,6 +38,7 @@ import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
+import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.TextChip
 
@@ -40,6 +53,8 @@ fun CreateListingScreen(
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
+    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
+    val meetingPoint = remember { mutableStateOf<MeetingPoint?>(null) }
     val pictures = rememberSaveable { mutableListOf<Uri>() }
     val chosenCategories = remember { mutableStateListOf<Category>() }
     val openCategorySheet = rememberSaveable { mutableStateOf(false) }
@@ -80,6 +95,8 @@ fun CreateListingScreen(
                     title = title,
                     description = description,
                     price = price,
+                    category = category,
+                    meetingPoint = meetingPoint,
                     pictures = pictures,
                     onSubmit = {
                         viewModel.createListing(
@@ -87,6 +104,7 @@ fun CreateListingScreen(
                             description.value,
                             chosenCategories,
                             price.value.toFloat(),
+                            meetingPoint.value,
                             pictures,
                             navigateToListing
                         )
@@ -109,6 +127,9 @@ fun ListingForm(
     title: MutableState<String>,
     description: MutableState<String>,
     price: MutableState<String>,
+
+    category: MutableState<Category>,
+    meetingPoint: MutableState<MeetingPoint?>,
     pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
     openCategorySheet: MutableState<Boolean>
@@ -139,11 +160,14 @@ fun ListingForm(
 
     Spacer("large")
 
+
     PriceRow(rememberedValue = price)
 
     Spacer("large")
+    MeetingPointInput(meetingPoint = meetingPoint)
 
     Spacer("large")
+
 
     BasicFilledButton(
         onClick = {
@@ -155,6 +179,7 @@ fun ListingForm(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -179,6 +204,7 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryChoice(
     chosen: SnapshotStateList<Category>,
@@ -210,5 +236,34 @@ fun CategoryChoice(
             )
         }
     }
+}
+
+
+
+@Composable
+fun MeetingPointInput(meetingPoint: MutableState<MeetingPoint?>) {
+    val context = LocalContext.current
+    val requestLocationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val location = data?.getParcelableExtra<LatLng>("location")
+            location?.let { position ->
+                meetingPoint.value =
+                    MeetingPoint(latitude = position.latitude, longitude = position.longitude)
+            }
+        }
+    }
+
+    Button(
+        onClick = {
+            val intent = Intent(context, MeetingPointPickerActivity::class.java)
+            requestLocationLauncher.launch(intent)
+        }
+    ) {
+        Text("Set Meeting Point")
+    }
+
 }
 
