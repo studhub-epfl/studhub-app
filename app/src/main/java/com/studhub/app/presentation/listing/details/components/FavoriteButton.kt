@@ -32,5 +32,4 @@ fun FavoriteButton(
             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites"
         )
     }
-
 }

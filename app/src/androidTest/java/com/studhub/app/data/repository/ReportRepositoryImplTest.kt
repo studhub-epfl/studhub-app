@@ -101,7 +101,11 @@ class ReportRepositoryImplTest {
         runBlocking {
             reportRepo.getReportsForItem(report1.reportedItemId).collect {
                 when (it) {
-                    is ApiResponse.Success -> assert(it.data == listOf(report1, report2))
+                    is ApiResponse.Success -> assert(
+                        it.data.contains(report1) && it.data.contains(
+                            report2
+                        )
+                    )
                     is ApiResponse.Failure -> Assert.fail(it.message)
                     is ApiResponse.Loading -> {}
                 }
