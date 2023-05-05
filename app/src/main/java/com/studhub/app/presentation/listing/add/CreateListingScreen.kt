@@ -1,6 +1,7 @@
 package com.studhub.app.presentation.listing.add
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
+import com.studhub.app.presentation.listing.add.components.CategorySheet
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
@@ -39,6 +41,7 @@ fun CreateListingScreen(
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
     val pictures = rememberSaveable { mutableListOf<Uri>() }
+
 
     val scrollState = rememberScrollState()
 
@@ -71,7 +74,8 @@ fun CreateListingScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ListingForm(
-                    categories,
+                    openCategorySheet,
+                    chosenCategories,
                     title = title,
                     description = description,
                     price = price,
@@ -81,7 +85,7 @@ fun CreateListingScreen(
                         viewModel.createListing(
                             title.value,
                             description.value,
-                            category.value,
+                            chosenCategories.value[0],
                             price.value.toFloat(),
                             pictures,
                             navigateToListing
@@ -95,7 +99,8 @@ fun CreateListingScreen(
 
 @Composable
 fun ListingForm(
-    categories: List<Category>,
+    openCategorySheet: MutableState<Boolean>,
+    chosen: MutableState<MutableList<Category>>,
     title: MutableState<String>,
     description: MutableState<String>,
     price: MutableState<String>,
@@ -129,8 +134,6 @@ fun ListingForm(
 
     Spacer("large")
 
-    CategoryDropDown(categories, selected = category)
-
     Spacer("large")
 
     val categoryInputDefaultName = stringResource(R.string.listings_add_form_category)
@@ -144,7 +147,6 @@ fun ListingForm(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -157,7 +159,8 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
                 .padding(end = 4.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground),
+                focusedTextColor = MaterialTheme.colorScheme.onBackground
+            ),
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
@@ -168,76 +171,22 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryDropDown(
-    categories: List<Category>,
-    selected: MutableState<Category> = rememberSaveable { mutableStateOf(Category(name = "Choose a category")) }
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
+fun CategoryChoice(
+    chosen : MutableState<MutableList<Category>>,
+    openCategorySheet: MutableState<Boolean>) {
+    Log.d("CategoryChoice", "Loaded")
+    Row {
+        Text(text = "Chose categories:")
+        Spacer(modifier = Modifier.width(6.dp))
+        PlusButton { openCategorySheet.value = true }
+    }
+    Column(
         modifier = Modifier.padding(top = 8.dp)
     ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-
-            ListingSelectedCategoryField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .width(TextFieldDefaults.MinWidth),
-                value = selected.value.name,
-                expanded = expanded
-            )
-
-            //Would like to have that block in a separate composable but ExposedDropdownMenu
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                categories.forEach { cat ->
-                    ListingDropDownItem(
-                        label = cat.name,
-                        onClick = {
-                            selected.value = cat
-                            expanded = false
-                        })
-                }
-            }
+        chosen.value.forEach() { cat ->
+            Text(cat.name)
         }
     }
 }
 
-@Composable
-fun ListingDropDownItem(label: String, onClick: () -> Unit = {}) {
-    DropdownMenuItem(
-        text = {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        },
-        onClick = onClick,
-        colors = MenuDefaults.itemColors()
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Boolean) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = {},
-        readOnly = true,
-        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer),
-        modifier = modifier
-    )
-}
