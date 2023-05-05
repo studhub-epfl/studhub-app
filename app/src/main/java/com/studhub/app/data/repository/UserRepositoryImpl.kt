@@ -5,6 +5,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl : UserRepository {
     private val db: DatabaseReference = Firebase.database.getReference("users")
+    private val storageHelper = StorageHelper()
 
     override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
         val userId: String = db.push().key.orEmpty()
@@ -63,12 +65,21 @@ class UserRepositoryImpl : UserRepository {
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
+        var profilePicture = updatedUser.profilePicture
+
+        // replace profile picture if there is a new one
+        // in the future, we may want to remove the previous profile picture
+        if (updatedUser.profilePictureUri != null) {
+            profilePicture = storageHelper.storePicture(updatedUser.profilePictureUri, "users")
+        }
+
         val query = db.child(userId).updateChildren(
             mapOf(
                 "firstName" to updatedUser.firstName,
                 "lastName" to updatedUser.lastName,
                 "userName" to updatedUser.userName,
-                "phoneNumber" to updatedUser.phoneNumber
+                "phoneNumber" to updatedUser.phoneNumber,
+                "profilePicture" to profilePicture
             )
         )
 
