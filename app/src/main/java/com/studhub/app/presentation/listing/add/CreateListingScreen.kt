@@ -19,11 +19,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
-import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
+import com.studhub.app.presentation.ui.common.misc.Spacer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +66,8 @@ fun CreateListingScreen(
             Column(
                 modifier = Modifier
                     .padding(it)
-                    .verticalScroll(scrollState),
+                    .verticalScroll(scrollState)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ListingForm(
@@ -102,47 +103,45 @@ fun ListingForm(
     pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
 ) {
-    BasicTextField(label = "Item title", rememberedValue = title)
-    // AddImageLayout(onClick = {})
+    BasicTextField(
+        label = stringResource(R.string.listings_add_form_title),
+        rememberedValue = title
+    )
+
+    Spacer("large")
 
     if (pictures.isNotEmpty()) {
         Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = pictures)
     }
 
     ImagePicker(onNewPicture = { pictures.add(it) })
-    TextBox(label = "Item description", rememberedValue = description)
+
+    Spacer("large")
+
+    TextBox(
+        label = stringResource(R.string.listings_add_form_description),
+        rememberedValue = description
+    )
+
+    Spacer("large")
+
     PriceRow(rememberedValue = price)
+
+    Spacer("large")
+
     CategoryDropDown(categories, selected = category)
+
+    Spacer("large")
+
+    val categoryInputDefaultName = stringResource(R.string.listings_add_form_category)
     BasicFilledButton(
         onClick = {
-            if (category.value.name != "Choose a category") {
+            if (category.value.name != categoryInputDefaultName) {
                 onSubmit()
             }
         },
-        label = "Create"
+        label = stringResource(R.string.listings_add_form_send)
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddImageLayout(onClick: () -> Unit) {
-    var isVisible by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier
-            .defaultMinSize(
-                minWidth = TextFieldDefaults.MinWidth,
-                minHeight = TextFieldDefaults.MinHeight
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        PlusButton(onClick = { isVisible = true })
-        if (!isVisible) {
-            Text("No images yet")
-        }
-    }
-    if (isVisible) {
-        // ImageCarousel()
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -162,10 +161,10 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
-            label = { Text("Price") },
+            label = { Text(stringResource(R.string.listings_add_form_price)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        Text("CHF")
+        Text(stringResource(R.string.misc_currency_symbol))
     }
 }
 
