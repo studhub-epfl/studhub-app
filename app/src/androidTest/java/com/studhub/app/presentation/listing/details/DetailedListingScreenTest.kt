@@ -25,6 +25,7 @@ class DetailedListingScreenTest {
     fun setup() {
         composeTestRule.setContent {
             val isFavorite = remember { mutableStateOf(true) }
+            val isBlocked = remember { mutableStateOf(true) }
             listing = Listing(
                 name = "Large white wooden desk",
                 description = "This is the perfect desk for a home workplace",
@@ -40,7 +41,9 @@ class DetailedListingScreenTest {
                 listing = listing,
                 onContactSellerClick = { },
                 onFavoriteClicked = { isFavorite.value = !isFavorite.value },
-                isFavorite = isFavorite.value
+                isFavorite = isFavorite.value,
+                isBlocked = isBlocked.value,
+                onBlockedClicked = { isBlocked.value = !isBlocked.value }
             )
         }
     }
@@ -51,6 +54,9 @@ class DetailedListingScreenTest {
         composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Remove from favorites").performClick()
         composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Unblock User").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Unblock User").performClick()
+        composeTestRule.onNodeWithContentDescription("Block User").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Item picture").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()

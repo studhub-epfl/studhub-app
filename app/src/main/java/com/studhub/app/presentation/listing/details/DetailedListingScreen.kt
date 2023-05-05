@@ -13,10 +13,7 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.listing.details.components.FavoriteButton
-import com.studhub.app.presentation.listing.details.components.ListingDescription
-import com.studhub.app.presentation.listing.details.components.ListingImage
-import com.studhub.app.presentation.listing.details.components.ListingPrice
+import com.studhub.app.presentation.listing.details.components.*
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.misc.Spacer
@@ -40,15 +37,18 @@ fun DetailedListingScreen(
         is ApiResponse.Success -> {
             val listing = currentListing.data
             val isFavorite = viewModel.isFavorite.value
+            val isBlocked = viewModel.isBlocked.value
             Details(
                 listing = listing,
                 onFavoriteClicked = { viewModel.onFavoriteClicked() },
                 isFavorite = isFavorite,
+                isBlocked = isBlocked,
                 onContactSellerClick = {
                     viewModel.contactSeller(listing.seller) { conv ->
                         navigateToConversation(conv.id)
                     }
-                }
+                },
+                onBlockedClicked = { viewModel.onBlockedClicked() }
             )
         }
     }
@@ -59,7 +59,9 @@ fun Details(
     listing: Listing,
     onContactSellerClick: () -> Unit,
     isFavorite: Boolean,
-    onFavoriteClicked: () -> Unit
+    isBlocked: Boolean,
+    onFavoriteClicked: () -> Unit,
+    onBlockedClicked: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -73,6 +75,8 @@ fun Details(
             ) {
                 // "Contact seller" button
                 BasicFilledButton(onClick = { onContactSellerClick() }, label = "Contact seller")
+                // "Block" button
+                BlockButton(isBlocked = isBlocked, onBlockClicked = onBlockedClicked)
                 // "Favorite" button
                 FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
             }
@@ -113,6 +117,8 @@ fun DetailsPreview() {
         listing = listing,
         onContactSellerClick = { },
         onFavoriteClicked = { },
+        onBlockedClicked = {},
         isFavorite = true,
+        isBlocked = true
     )
 }
