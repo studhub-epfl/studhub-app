@@ -52,8 +52,6 @@ fun ProfileFavoritesScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     ListingThumbnailScreen(
                         viewModel = ListingThumbnailViewModel(listing = listing),
-                        // to be removed
-                        navController = rememberNavController(),
                         onClick = {
                             navigateToListing(listing.id)
                         }

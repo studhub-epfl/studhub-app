@@ -3,6 +3,7 @@ package com.studhub.app.data.repository
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,14 +16,22 @@ class ListingRepositoryImpl : ListingRepository {
 
     private val db = Firebase.database.getReference("listings")
     private var provisionalListing = mutableListOf<Listing>()
+    private val storageHelper = StorageHelper()
 
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
         val listingId: String = db.push().key.orEmpty()
-        val listingToPush: Listing = listing.copy(id = listingId)
 
         return flow {
             emit(ApiResponse.Loading)
+
+            // store pictures
+            val listingToPush = listing.copy(
+                id = listingId,
+                picturesUri = null,
+                pictures = listing.picturesUri?.map {
+                    storageHelper.storePicture(it, "listings")
+                } ?: emptyList())
 
             val query = db.child(listingId).setValue(listingToPush)
 
@@ -54,7 +63,6 @@ class ListingRepositoryImpl : ListingRepository {
                     listings.add(retrievedListing)
                 }
             }
-
 
             emit(ApiResponse.Success(listings))
         } else {
@@ -99,17 +107,22 @@ class ListingRepositoryImpl : ListingRepository {
                 query.result.children.forEach { snapshot ->
                     val listing = snapshot.getValue(Listing::class.java)
                     if (listing != null && (blockedUsers[listing.seller.id] != true) &&
-                        (listing.name.contains(keyword, true) || listing.description.contains(keyword, true)
-                                || listing.price.toString().contains(keyword, true))) {
+                        (listing.name.contains(keyword, true) || listing.description.contains(
+                            keyword,
+                            true
+                        )
+                                || listing.price.toString().contains(keyword, true))
+                    ) {
                         listings.add(listing)
                     }
 
                     //TODO - later
                     // Sam implemented his price filtering that way but it's not a robust implementation
                     // Instead, extend the ListingRepository with a method getListingsByPriceRange()
-                    if(listing != null && keyword.contains('-')) {
-                        if(listing.price >= keyword.substringBefore('-').toFloat()
-                            && listing.price <= keyword.substringAfter('-').toFloat()){
+                    if (listing != null && keyword.contains('-')) {
+                        if (listing.price >= keyword.substringBefore('-').toFloat()
+                            && listing.price <= keyword.substringAfter('-').toFloat()
+                        ) {
                             listings.add(listing)
                         }
                     }
@@ -121,7 +134,10 @@ class ListingRepositoryImpl : ListingRepository {
             }
         }
 
-    override suspend fun getListingsByRange(keyword1: String, keyword2: String): Flow<ApiResponse<List<Listing>>> = flow {
+    override suspend fun getListingsByRange(
+        keyword1: String,
+        keyword2: String
+    ): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
 
         val query = db.get()
@@ -133,9 +149,9 @@ class ListingRepositoryImpl : ListingRepository {
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
 
-                if(listing != null) {
+                if (listing != null) {
 
-                    if(listing.price >= keyword1.toFloat() && listing.price <= keyword2.toFloat() ){
+                    if (listing.price >= keyword1.toFloat() && listing.price <= keyword2.toFloat()) {
                         listings.add(listing)
                     }
 
@@ -148,7 +164,6 @@ class ListingRepositoryImpl : ListingRepository {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
-
 
 
     }

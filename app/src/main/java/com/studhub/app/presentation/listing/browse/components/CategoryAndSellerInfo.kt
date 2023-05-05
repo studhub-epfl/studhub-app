@@ -27,11 +27,6 @@ fun CategoryAndSellerInfo(
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.secondary
             )
-            Text(
-                text = "Sold by: " + seller.firstName + " " + seller.lastName,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.tertiary
-            )
         }
     }
 }

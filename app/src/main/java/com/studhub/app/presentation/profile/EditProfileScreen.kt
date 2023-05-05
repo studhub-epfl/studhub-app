@@ -17,6 +17,7 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.profile.components.EditProfileForm
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.presentation.ui.common.misc.Spacer
 
 @Composable
 fun EditProfileScreen(
@@ -33,6 +34,8 @@ fun EditProfileScreen(
             val lastName = rememberSaveable { mutableStateOf(currentUser.data.lastName) }
             val userName = rememberSaveable { mutableStateOf(currentUser.data.userName) }
             val phoneNumber = rememberSaveable { mutableStateOf(currentUser.data.phoneNumber) }
+            val profilePictureUri = rememberSaveable { mutableStateOf(currentUser.data.profilePictureUri) }
+            val profilePicture = currentUser.data.profilePicture
 
             Column(
                 modifier = Modifier
@@ -40,17 +43,19 @@ fun EditProfileScreen(
                     .horizontalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer()
 
                 BigLabel(stringResource(R.string.profile_edit_title))
 
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer()
 
                 EditProfileForm(
                     firstName = firstName,
                     lastName = lastName,
                     userName = userName,
                     phoneNumber = phoneNumber,
+                    profilePictureUri = profilePictureUri,
+                    profilePicture = profilePicture,
                     onSubmit = {
                         viewModel.updateUserInfo(
                             User(
@@ -58,10 +63,11 @@ fun EditProfileScreen(
                                 lastName = lastName.value,
                                 userName = userName.value,
                                 phoneNumber = phoneNumber.value,
-                            )
+                                profilePictureUri = profilePictureUri.value,
+                                profilePicture = profilePicture
+                            ),
+                            navigateToProfile
                         )
-
-                        navigateToProfile()
                     }
                 )
             }

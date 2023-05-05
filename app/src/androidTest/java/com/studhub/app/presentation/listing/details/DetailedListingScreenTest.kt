@@ -1,10 +1,9 @@
 package com.studhub.app.presentation.listing.details
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
@@ -25,6 +24,7 @@ class DetailedListingScreenTest {
     @Before
     fun setup() {
         composeTestRule.setContent {
+            val isFavorite = remember { mutableStateOf(true) }
             listing = Listing(
                 name = "Large white wooden desk",
                 description = "This is the perfect desk for a home workplace",
@@ -40,16 +40,20 @@ class DetailedListingScreenTest {
                 listing = listing,
                 onContactSellerClick = { },
                 onFavouriteClick = { },
-            onMeetingPointClick = {})
+                 onMeetingPointClick = {}
+                onFavoriteClicked = { isFavorite.value = !isFavorite.value },
+                isFavorite = isFavorite.value
+            )
         }
     }
 
     @Test
     fun detailsListingScreenDisplaysAllElements() {
         composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Favourite").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Remove from favorites").performClick()
+        composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Item picture").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
         composeTestRule.onNodeWithTag("price")
     }

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="listings_add_title">Create your Listing</string>
+    <string name="listings_add_form_title">Name</string>
+    <string name="listings_add_form_description">Description</string>
+    <string name="listings_add_form_price">Price</string>
+    <string name="listings_add_form_category">Choose a category</string>
+    <string name="listings_add_form_send">Create</string>
     <string name="listings_browsing_title">Browse all listings</string>
 </resources>

@@ -24,7 +24,6 @@ import com.studhub.app.presentation.ui.theme.StudHubTheme
 fun ListingThumbnailScreen(
     viewModel: ListingThumbnailViewModel,
     onClick: () -> Unit,
-    navController: NavController,
 ) {
     Card(
         onClick = onClick,
@@ -48,10 +47,9 @@ fun ListingThumbnailPreview() {
         categories = listOf(Category(name = "Mobility")),
         price = 1560.45F
     )
-    lateinit var navController: NavHostController
-    navController = rememberNavController()
+    val navController: NavHostController = rememberNavController()
     val viewModel = ListingThumbnailViewModel(listing)
     StudHubTheme() {
-        ListingThumbnailScreen(viewModel = viewModel, onClick = {}, navController = navController)
+        ListingThumbnailScreen(viewModel = viewModel, onClick = {})
     }
 }

@@ -1,6 +1,5 @@
 package com.studhub.app.presentation.listing.add
 
-import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,13 +7,17 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import android.net.Uri
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,127 +30,155 @@ import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.MeetingPoint
+import com.studhub.app.presentation.listing.add.components.CategorySheet
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
+import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
+import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.presentation.ui.common.misc.Spacer
+import com.studhub.app.presentation.ui.common.text.TextChip
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListingScreen(
     viewModel: CreateListingViewModel = hiltViewModel(),
-    navigateToListing: (id: String) -> Unit
+    navigateToListing: (id: String) -> Unit,
+    navigateBack: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState(emptyList())
-
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
     val meetingPoint = remember { mutableStateOf<MeetingPoint?>(null) }
+    val pictures = rememberSaveable { mutableListOf<Uri>() }
+    val chosenCategories = remember { mutableStateListOf<Category>() }
+    val openCategorySheet = rememberSaveable { mutableStateOf(false) }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column {
+
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.listings_add_title)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = navigateBack
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.misc_btn_go_back),
+                        )
+                    }
+                }
+            )
+        },
+        content = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(it)
+                    .verticalScroll(scrollState)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                BigLabel(label = stringResource(R.string.listings_add_title))
                 ListingForm(
-                    categories,
+                    chosenCategories,
                     title = title,
                     description = description,
                     price = price,
                     category = category,
                     meetingPoint = meetingPoint,
+                    pictures = pictures,
                     onSubmit = {
                         viewModel.createListing(
                             title.value,
                             description.value,
-                            category.value,
+                            chosenCategories,
                             price.value.toFloat(),
                             meetingPoint.value,
+                            pictures,
                             navigateToListing
                         )
-                    }
+                    },
+                    openCategorySheet = openCategorySheet
                 )
             }
+            CategorySheet(
+                isOpen = openCategorySheet,
+                categories = categories,
+                chosen = chosenCategories
+            )
         }
-    }
+    )
 }
 
 @Composable
 fun ListingForm(
-    categories: List<Category>,
+    chosen: SnapshotStateList<Category>,
     title: MutableState<String>,
     description: MutableState<String>,
     price: MutableState<String>,
+
     category: MutableState<Category>,
     meetingPoint: MutableState<MeetingPoint?>,
+    pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
+    openCategorySheet: MutableState<Boolean>
+) {
+    BasicTextField(
+        label = stringResource(R.string.listings_add_form_title),
+        rememberedValue = title
+    )
 
-    ) {
+    Spacer("large")
 
-    BasicTextField(label = "Item title", rememberedValue = title)
-    AddImageLayout(onClick = {})
-    TextBox(label = "Item description", rememberedValue = description)
+    if (pictures.isNotEmpty()) {
+        Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = pictures)
+    }
+
+    ImagePicker(onNewPicture = { pictures.add(it) })
+
+    Spacer("large")
+
+    TextBox(
+        label = stringResource(R.string.listings_add_form_description),
+        rememberedValue = description
+    )
+
+    Spacer("large")
+
+    CategoryChoice(chosen = chosen, openCategorySheet = openCategorySheet)
+
+    Spacer("large")
+
+
     PriceRow(rememberedValue = price)
+
     CategoryDropDown(categories, selected = category)
+    Spacer("large")
     MeetingPointInput(meetingPoint = meetingPoint)
+
+    Spacer("large")
+
+
     BasicFilledButton(
         onClick = {
-            if (category.value.name != "Choose a category") {
+            if (chosen.isNotEmpty()) {
                 onSubmit()
             }
         },
-        label = "Create"
+        label = stringResource(R.string.listings_add_form_send)
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddImageLayout(onClick: () -> Unit) {
-    var isVisible by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier
-            .defaultMinSize(
-                minWidth = TextFieldDefaults.MinWidth,
-                minHeight = TextFieldDefaults.MinHeight
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        PlusButton(onClick = { isVisible = true })
-        if (!isVisible) {
-            Text("No images yet")
-        }
-    }
-    if (isVisible) {
-        ImageCarousel()
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ImageCarousel() {
-    Box(
-        modifier = Modifier
-            .width(TextFieldDefaults.MinWidth)
-            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary))
-    ) {
-        Image(
-            imageVector = Icons.Filled.AccountBox,
-            modifier = Modifier.aspectRatio(1f),
-            contentDescription = "placeholder"
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -158,92 +189,54 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
             modifier = Modifier
                 .width(100.dp)
                 .padding(end = 4.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = MaterialTheme.colorScheme.onBackground
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                focusedTextColor = MaterialTheme.colorScheme.onBackground
             ),
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
-            label = { Text("Price") },
+            label = { Text(stringResource(R.string.listings_add_form_price)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        Text("CHF")
+        Text(stringResource(R.string.misc_currency_symbol))
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryDropDown(
-    categories: List<Category>,
-    selected: MutableState<Category> = rememberSaveable { mutableStateOf(Category(name = "Choose a category")) }
+fun CategoryChoice(
+    chosen: SnapshotStateList<Category>,
+    openCategorySheet: MutableState<Boolean>
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier.padding(top = 8.dp)
+    Row(modifier = Modifier.width(TextFieldDefaults.MinWidth)) {
+        Box(modifier = Modifier.padding(top = 12.dp)) {
+            Text(text = "Add a category:")
+        }
+        Spacer(modifier = Modifier.width(6.dp))
+        PlusButton { openCategorySheet.value = true }
+    }
+    Column(
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .width(TextFieldDefaults.MinWidth)
     ) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-
-            ListingSelectedCategoryField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .width(TextFieldDefaults.MinWidth),
-                value = selected.value.name,
-                expanded = expanded
-            )
-
-            //Would like to have that block in a separate composable but ExposedDropdownMenu
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                categories.forEach { cat ->
-                    ListingDropDownItem(
-                        label = cat.name,
-                        onClick = {
-                            selected.value = cat
-                            expanded = false
-                        })
+        chosen.forEach() { cat ->
+            TextChip(
+                onClick = { chosen.remove(cat) },
+                label = cat.name,
+                trailingIcon = {
+                    Icon(
+                        Icons.Filled.Clear,
+                        contentDescription = "Remove ${cat.name}",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
                 }
-            }
+            )
         }
     }
 }
 
-@Composable
-fun ListingDropDownItem(label: String, onClick: () -> Unit = {}) {
-    DropdownMenuItem(
-        text = {
-            Text(
-                text = label,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        },
-        onClick = onClick,
-        colors = MenuDefaults.itemColors()
-    )
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Boolean) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = {},
-        readOnly = true,
-        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onSecondaryContainer
-        ),
-        modifier = modifier
-    )
-}
 
 @Composable
 fun MeetingPointInput(meetingPoint: MutableState<MeetingPoint?>) {
