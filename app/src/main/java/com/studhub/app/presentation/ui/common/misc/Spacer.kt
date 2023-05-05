@@ -6,6 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * A simple vertical spacer
+ *
+ * @param size The size of the space between above and under the spacer.
+ *      [size] can either be "small", "medium" or "large".
+ *      Defaults to "medium"
+ */
 @Composable
 fun Spacer(size: String = "medium") {
 

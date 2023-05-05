@@ -44,10 +44,12 @@ class ProfileViewModel @Inject constructor(
             }
         }
 
-    fun updateUserInfo(updatedUserInfo: User) =
+    fun updateUserInfo(updatedUserInfo: User, callback: () -> Unit) =
         viewModelScope.launch {
             updateCurrentUserInfo(updatedUserInfo).collect {
                 currentUser = it
+                if (it is ApiResponse.Success)
+                    callback()
             }
         }
 
