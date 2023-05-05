@@ -39,8 +39,7 @@ class DetailedListingScreenTest {
             Details(
                 listing = listing,
                 onContactSellerClick = { },
-                onFavouriteClick = { },
-                 onMeetingPointClick = {}
+                 onMeetingPointClick = {},
                 onFavoriteClicked = { isFavorite.value = !isFavorite.value },
                 isFavorite = isFavorite.value
             )
