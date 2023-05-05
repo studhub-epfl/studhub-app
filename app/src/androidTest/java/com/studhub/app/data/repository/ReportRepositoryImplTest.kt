@@ -32,7 +32,6 @@ class ReportRepositoryImplTest {
 
     @Test
     fun setAndGetSameReport() {
-
         lateinit var report: Report
 
         runBlocking {
@@ -53,11 +52,87 @@ class ReportRepositoryImplTest {
         }
 
         runBlocking {
-            reportRepo.getReportsForItem(report.id).collect {
+            reportRepo.getReportsForItem(report.reportedItemId).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(it.data == listOf(report))
                     is ApiResponse.Failure -> Assert.fail(it.message)
                     is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
+
+    @Test
+    fun setAndGetReportsForSameItem() {
+        lateinit var report1: Report
+        lateinit var report2: Report
+
+        runBlocking {
+
+            val reportProduct1 = Report(
+                id = Random.nextLong().toString(),
+                reportedItemId = "Product with many reports",
+                description = "First Report Test"
+            )
+
+            val reportProduct2 = Report(
+                id = Random.nextLong().toString(),
+                reportedItemId = "Product with many reports",
+                description = "First Report Test"
+            )
+
+            reportRepo.createReport(reportProduct1).collect {
+                when (it) {
+                    is ApiResponse.Success -> report1 = it.data
+                    is ApiResponse.Failure -> Assert.fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+
+            reportRepo.createReport(reportProduct2).collect {
+                when (it) {
+                    is ApiResponse.Success -> report2 = it.data
+                    is ApiResponse.Failure -> Assert.fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+
+        runBlocking {
+            reportRepo.getReportsForItem(report1.reportedItemId).collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(it.data == listOf(report1, report2))
+                    is ApiResponse.Failure -> Assert.fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
+
+    @Test
+    fun addAndRemoveReport() {
+        val reportProduct = Report(
+            id = Random.nextLong().toString(),
+            reportedItemId = "Product ${Random.nextLong()}",
+            description = "First Report Test"
+        )
+
+        runBlocking {
+            reportRepo.createReport(reportProduct).collect() {
+                when (it) {
+                    is ApiResponse.Failure -> Assert.fail(it.message)
+                    ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
+                }
+            }
+        }
+
+        runBlocking {
+            reportRepo.deleteReportsForItem(reportProduct.reportedItemId).collect {
+                when (it) {
+                    is ApiResponse.Failure -> Assert.fail(it.message)
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
                 }
             }
         }

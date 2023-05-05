@@ -1,10 +1,8 @@
 package com.studhub.app.data.repository
 
-import com.google.android.gms.measurement.sdk.R
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
-import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.Report
 import com.studhub.app.domain.repository.ReportRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +16,8 @@ class ReportRepositoryImpl : ReportRepository {
 
     override suspend fun createReport(report: Report): Flow<ApiResponse<Report>> {
         val itemId = report.reportedItemId // Get the reported item ID
-        val reportId: String = db.child(itemId).push().key.orEmpty() // Use the item ID as the parent node
+        val reportId: String =
+            db.child(itemId).push().key.orEmpty() // Use the item ID as the parent node
         val reportToPush: Report = report.copy(id = reportId)
 
         return flow {
@@ -60,11 +59,11 @@ class ReportRepositoryImpl : ReportRepository {
         }
     }
 
-    override suspend fun deleteReport(reportId: String): Flow<ApiResponse<Boolean>> = flow {
+    override suspend fun deleteReportsForItem(itemId: String): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
 
         // remove the old value on the database
-        val query = db.child(reportId).removeValue()
+        val query = db.child(itemId).removeValue()
 
         query.await()
 

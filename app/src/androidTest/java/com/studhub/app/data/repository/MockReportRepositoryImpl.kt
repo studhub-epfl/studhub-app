@@ -24,10 +24,10 @@ class MockReportRepositoryImpl : ReportRepository {
         }
     }
 
-    override suspend fun deleteReport(reportId: String): Flow<ApiResponse<Boolean>> {
+    override suspend fun deleteReportsForItem(itemId: String): Flow<ApiResponse<Boolean>> {
         return flow {
             emit(ApiResponse.Loading)
-            reportDB.remove(reportId)
+            reportDB.remove(itemId)
             emit(ApiResponse.Success(true))
         }
     }

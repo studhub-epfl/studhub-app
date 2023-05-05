@@ -21,9 +21,9 @@ interface ReportRepository {
     suspend fun getReportsForItem(itemId: String): Flow<ApiResponse<List<Report>>>
 
     /**
-     * remove a report with the given [reportId]
-     * @param [reportId] the reportId we want to match
+     * remove reports with the given [itemId]
+     * @param [itemId] the itemId we want to match
      * @return A [Flow] of [ApiResponse] with the last one containing the [Boolean] value of the resulting operation
      */
-    suspend fun deleteReport(reportId: String): Flow<ApiResponse<Boolean>>
+    suspend fun deleteReportsForItem(itemId: String): Flow<ApiResponse<Boolean>>
 }
