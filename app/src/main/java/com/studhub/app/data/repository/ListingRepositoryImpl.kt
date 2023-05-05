@@ -29,9 +29,9 @@ class ListingRepositoryImpl : ListingRepository {
             val listingToPush = listing.copy(
                 id = listingId,
                 picturesUri = null,
-                pictures = listing.picturesUri!!.map {
+                pictures = listing.picturesUri?.map {
                     storageHelper.storePicture(it, "listings")
-                })
+                } ?: emptyList())
 
             val query = db.child(listingId).setValue(listingToPush)
 
