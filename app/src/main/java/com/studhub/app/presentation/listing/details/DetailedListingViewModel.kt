@@ -1,5 +1,6 @@
 package com.studhub.app.presentation.listing.details
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,7 +13,6 @@ import com.studhub.app.domain.usecase.user.AddFavoriteListing
 import com.studhub.app.domain.usecase.user.GetFavoriteListings
 import com.studhub.app.domain.usecase.user.RemoveFavoriteListing
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,18 +25,20 @@ class DetailedListingViewModel @Inject constructor(
 ) : ViewModel() {
     var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
         private set
-    private val _userFavorites = MutableSharedFlow<List<Listing>>(replay = 0)
     var isFavorite = mutableStateOf(false)
 
     fun fetchListing(id: String) {
         viewModelScope.launch {
             getListing(id).collect {
                 currentListing = it
+                if(it is ApiResponse.Success){
+                    getIsFavorite()
+                }
             }
         }
     }
 
-    fun getFavorites() {
+    private fun getIsFavorite() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
@@ -44,10 +46,15 @@ class DetailedListingViewModel @Inject constructor(
                     getFavoriteListings().collect {
                         when (it) {
                             is ApiResponse.Success -> {
-                                _userFavorites.emit(it.data)
                                 isFavorite.value = (it.data.contains(listing))
+                                Log.d(
+                                    "Data favorite",
+                                    "Data contains : ${it.data.contains(listing)}"
+                                )
                             }
-                            else -> _userFavorites.emit(emptyList())
+                            else -> {
+                                Log.d("Data favorite", "error for getting favorites")
+                            }
                         }
                     }
                 }
@@ -56,15 +63,23 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    fun onFavoriteClicked(isFavorite: Boolean) {
+    fun onFavoriteClicked() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
                 viewModelScope.launch {
-                    if (isFavorite) {
-                        addFavoriteListing(listing.id)
+                    if (!isFavorite.value) {
+                        addFavoriteListing(listing.id).collect {
+                            if (it is ApiResponse.Success) {
+                                isFavorite.value = true
+                            }
+                        }
                     } else {
-                        removeFavoriteListing(listing.id)
+                        removeFavoriteListing(listing.id).collect {
+                            if (it is ApiResponse.Success) {
+                                isFavorite.value = false
+                            }
+                        }
                     }
                 }
             }

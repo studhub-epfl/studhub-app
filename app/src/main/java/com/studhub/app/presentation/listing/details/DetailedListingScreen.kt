@@ -1,10 +1,7 @@
 package com.studhub.app.presentation.listing.details
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -27,7 +24,7 @@ fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
     id: String
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(id) {
         viewModel.fetchListing(id)
     }
 
@@ -40,17 +37,19 @@ fun DetailedListingScreen(
             Details(
                 listing = listing,
                 onContactSellerClick = { /*TODO*/ },
-                onFavoriteClicked = {viewModel.onFavoriteClicked(isFavorite)},
-                isFavorite = isFavorite,
-                getFavorites = {viewModel.getFavorites()})
+                onFavoriteClicked = {viewModel.onFavoriteClicked()},
+                isFavorite = isFavorite
+            )
         }
     }
 }
 
 @Composable
 fun Details(
-    listing: Listing, onContactSellerClick: () -> Unit, isFavorite: Boolean,
-    onFavoriteClicked: (Boolean) -> Unit, getFavorites: () -> Unit
+    listing: Listing,
+    onContactSellerClick: () -> Unit,
+    isFavorite: Boolean,
+    onFavoriteClicked: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -67,7 +66,7 @@ fun Details(
                 // "Contact seller" button
                 BasicFilledButton(onClick = { onContactSellerClick() }, label = "Contact seller")
                 // "Favorite" button
-                FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked, getFavorites = getFavorites)
+                FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
             }
             Spacer(modifier = Modifier.height(24.dp))
             BigLabel(label = listing.name)
@@ -101,6 +100,5 @@ fun DetailsPreview() {
         onContactSellerClick = { },
         onFavoriteClicked = { },
         isFavorite = true,
-        getFavorites = {}
         )
 }

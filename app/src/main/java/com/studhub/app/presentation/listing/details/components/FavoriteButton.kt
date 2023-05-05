@@ -16,16 +16,13 @@ import com.studhub.app.presentation.listing.details.DetailedListingViewModel
 @Composable
 fun FavoriteButton(
     color: Color = Color(0xffE91E63),
-    isFavorite: Boolean, onFavoriteClicked: (Boolean) -> Unit, getFavorites: () -> Unit
+    isFavorite: Boolean,
+    onFavoriteClicked: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        getFavorites()
-    }
-
     IconToggleButton(
         checked = isFavorite,
         onCheckedChange = {
-            onFavoriteClicked(!isFavorite)
+            onFavoriteClicked()
         }
     ) {
         Icon(
