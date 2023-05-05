@@ -9,6 +9,7 @@ import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.*
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.presentation.ui.common.text.TextChip
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 private var buttonLabel = "This is a button"
@@ -96,6 +97,13 @@ fun BigLabelPreview() {
     StudHubTheme() {
         BigLabel(label = title)
     }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun TextChipPreview() {
+    TextChip(label = "Some text")
 }
 
 /** Misc elements preview */

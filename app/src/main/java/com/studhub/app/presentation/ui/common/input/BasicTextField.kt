@@ -20,9 +20,10 @@ fun BasicTextField(
         singleLine = true,
         value = rememberedValue.value,
         onValueChange = { rememberedValue.value = it },
-        label = { Text(label)},
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onBackground
+        label = { Text(label) },
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground
         )
     )
 }
