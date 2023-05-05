@@ -1,4 +1,4 @@
-package com.studhub.app.ui.chat
+package com.studhub.app.presentation.conversation
 
 import android.util.Log
 import androidx.compose.runtime.getValue

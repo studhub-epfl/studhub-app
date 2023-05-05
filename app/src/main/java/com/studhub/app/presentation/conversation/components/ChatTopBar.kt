@@ -15,20 +15,20 @@ fun ChatTopBar(
     navigateBack: () -> Unit
 ) {
     TopAppBar(
-    title = {
-        Text(
-            text = correspondentName
-        )
-    },
-    navigationIcon = {
-        IconButton(
-            onClick = navigateBack
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ArrowBack,
-                contentDescription = stringResource(R.string.misc_btn_go_back),
+        title = {
+            Text(
+                text = correspondentName
             )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = navigateBack
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.ArrowBack,
+                    contentDescription = stringResource(R.string.misc_btn_go_back),
+                )
+            }
         }
-    }
     )
 }

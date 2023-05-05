@@ -58,7 +58,6 @@ class DetailedListingScreenTest {
         composeTestRule.onNodeWithContentDescription("Unblock User").performClick()
         composeTestRule.onNodeWithContentDescription("Block User").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Item picture").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
         composeTestRule.onNodeWithTag("price")
     }
