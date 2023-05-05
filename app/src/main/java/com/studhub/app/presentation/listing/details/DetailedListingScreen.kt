@@ -43,13 +43,13 @@ fun DetailedListingScreen(
             Details(
                 listing = listing,
                 onFavoriteClicked = { viewModel.onFavoriteClicked() },
-                isFavorite = isFavorite
-            )
+                isFavorite = isFavorite,
                 onContactSellerClick = {
                     viewModel.contactSeller(listing.seller) { conv ->
                         navigateToConversation(conv.id)
                     }
-                })
+                }
+            )
         }
     }
 }
@@ -93,6 +93,7 @@ fun Details(
         }
     }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable

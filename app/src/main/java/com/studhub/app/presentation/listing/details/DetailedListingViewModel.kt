@@ -9,7 +9,6 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.domain.usecase.conversation.SendMessage
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.GetListing
 import com.studhub.app.domain.usecase.user.AddFavoriteListing
