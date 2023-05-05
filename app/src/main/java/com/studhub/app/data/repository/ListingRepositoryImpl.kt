@@ -55,7 +55,6 @@ class ListingRepositoryImpl : ListingRepository {
                 }
             }
 
-
             emit(ApiResponse.Success(listings))
         } else {
             val errorMessage = query.exception?.message.orEmpty()

@@ -58,6 +58,10 @@ class AppTestModule {
     @Provides
     fun provideMessageRepository(): MessageRepository = MessageRepositoryImpl()
 
+    @Singleton
+    @Provides
+    fun provideReportRepository(): ReportRepository = ReportRepositoryImpl()
+
     @Provides
     fun provideGetCurrentUserUseCase(
         userRepository: UserRepository,
