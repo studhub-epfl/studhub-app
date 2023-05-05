@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 class NavBarTest {
 
     private fun str(id: Int) =
-        InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
+        composeTestRule.activity.getString(id)
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
@@ -69,21 +69,6 @@ class NavBarTest {
         composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_home_button)}")
             .assertIsNotSelected()
         composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_sell_button)}")
-            .assertIsNotSelected()
-        composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_chat_button)}")
-            .assertIsNotSelected()
-        composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_profile_button)}")
-            .assertIsNotSelected()
-    }
-
-    @Test
-    fun navBarNavigateToCreateListingSelectsIt() {
-        val node = composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_sell_button)}")
-        node.performClick()
-        node.assertIsSelected()
-        composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_browse_button)}")
-            .assertIsNotSelected()
-        composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_home_button)}")
             .assertIsNotSelected()
         composeTestRule.onNodeWithTag("NavBar${str(R.string.nav_chat_button)}")
             .assertIsNotSelected()

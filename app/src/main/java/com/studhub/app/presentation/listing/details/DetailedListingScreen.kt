@@ -19,16 +19,19 @@ import com.studhub.app.presentation.listing.details.components.ListingImage
 import com.studhub.app.presentation.listing.details.components.ListingPrice
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
+import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 
 @Composable
 fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
-    id: String
+    navigateToConversation: (conversationId: String) -> Unit,
+    id: String?
 ) {
     LaunchedEffect(id) {
-        viewModel.fetchListing(id)
+        if (id != null)
+            viewModel.fetchListing(id)
     }
 
     when (val currentListing = viewModel.currentListing) {
@@ -39,10 +42,14 @@ fun DetailedListingScreen(
             val isFavorite = viewModel.isFavorite.value
             Details(
                 listing = listing,
-                onContactSellerClick = { /*TODO*/ },
                 onFavoriteClicked = { viewModel.onFavoriteClicked() },
                 isFavorite = isFavorite
             )
+                onContactSellerClick = {
+                    viewModel.contactSeller(listing.seller) { conv ->
+                        navigateToConversation(conv.id)
+                    }
+                })
         }
     }
 }
@@ -54,9 +61,7 @@ fun Details(
     isFavorite: Boolean,
     onFavoriteClicked: () -> Unit
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -71,18 +76,23 @@ fun Details(
                 // "Favorite" button
                 FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer("large")
+
             BigLabel(label = listing.name)
+
             // Add the placeholder image here
             ListingImage(contentDescription = "Item picture")
-            Spacer(modifier = Modifier.height(30.dp))
+
+            Spacer("large")
+
             ListingDescription(description = listing.description)
-            Spacer(modifier = Modifier.height(35.dp))
+
+            Spacer("large")
+
             ListingPrice(price = listing.price)
         }
     }
 }
-
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable

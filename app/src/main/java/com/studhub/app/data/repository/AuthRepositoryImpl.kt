@@ -25,21 +25,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private var oneTapClient: SignInClient,
-    @Named(SIGN_IN_REQUEST)
-    private var signInRequest: BeginSignInRequest,
-    @Named(SIGN_UP_REQUEST)
-    private var signUpRequest: BeginSignInRequest,
     private val db: FirebaseDatabase
 ) : AuthRepository {
-    private enum class AuthType {
-        NONE,
-        ONE_TAP,
-        EMAIL
-    }
-
-    private var authType: AuthType = AuthType.NONE
-
     private val internalDb = db.getReference("users")
 
     override val isUserAuthenticatedInFirebase: Boolean
@@ -50,38 +37,6 @@ class AuthRepositoryImpl @Inject constructor(
 
     override val currentUserUid: String
         get() = auth.currentUser?.uid ?: ""
-
-    override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> = flow {
-        try {
-            val signInResult = oneTapClient.beginSignIn(signInRequest).await()
-            authType = AuthType.ONE_TAP
-            emit(ApiResponse.Success(signInResult))
-        } catch (e: Exception) {
-            try {
-                val signUpResult = oneTapClient.beginSignIn(signUpRequest).await()
-                emit(ApiResponse.Success(signUpResult))
-            } catch (e: Exception) {
-                emit(ApiResponse.Failure(e.message.orEmpty()))
-            }
-        }
-    }
-
-    override suspend fun firebaseSignInWithGoogle(
-        googleCredential: AuthCredential
-    ): Flow<ApiResponse<Boolean>> = flow {
-        try {
-            val authResult = auth.signInWithCredential(googleCredential).await()
-            val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
-
-            if (isNewUser) {
-                addUserToFirebase()
-            }
-
-            emit(ApiResponse.Success(isNewUser))
-        } catch (e: Exception) {
-            emit(ApiResponse.Failure(e.message.orEmpty()))
-        }
-    }
 
     override suspend fun signUpWithEmailAndPassword(
         email: String,
@@ -97,7 +52,6 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             auth.createUserWithEmailAndPassword(email, password).await()
             addUserToFirebase()
-            authType = AuthType.EMAIL
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {
             emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "User sign-up failed" }))
@@ -131,7 +85,6 @@ class AuthRepositoryImpl @Inject constructor(
 
         try {
             auth.signInWithEmailAndPassword(email, password).await()
-            authType = AuthType.EMAIL
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {
             emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Authentication failed" }))
@@ -156,10 +109,6 @@ class AuthRepositoryImpl @Inject constructor(
         emit(ApiResponse.Loading)
 
         try {
-            if (authType == AuthType.ONE_TAP) {
-                oneTapClient.signOut().await()
-            }
-
             auth.signOut()
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {

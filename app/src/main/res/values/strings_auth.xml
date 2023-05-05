@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auth_title">Authentication</string>
+    <string name="auth_title">Log In</string>
     <string name="auth_signin_welcome_message">Welcome! =)</string>
     <string name="auth_signin_btn_submit">Sign in</string>
     <string name="auth_signin_btn_forgot_password">Forgot password</string>
