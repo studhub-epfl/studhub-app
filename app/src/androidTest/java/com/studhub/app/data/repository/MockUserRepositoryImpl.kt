@@ -117,4 +117,40 @@ class MockUserRepositoryImpl : UserRepository {
             }
         }
     }
+
+    override suspend fun blockUser(userId: String, blockedUserId: String): Flow<ApiResponse<User>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            if (userDB.containsKey(userId)) {
+                val user = userDB.getValue(userId)
+                val updatedBlockedUsers =
+                    user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
+                val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+                userDB[userId] = updatedUser
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                emit(ApiResponse.Failure("No entry for this key"))
+            }
+        }
+    }
+
+    override suspend fun unblockUser(
+        userId: String,
+        blockedUserId: String
+    ): Flow<ApiResponse<User>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            if (userDB.containsKey(userId)) {
+                val user = userDB[userId]!!
+                val updatedBlockedUsers =
+                    user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
+                val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+                userDB[userId] = updatedUser
+
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                emit(ApiResponse.Failure("No entry for this key"))
+            }
+        }
+    }
 }

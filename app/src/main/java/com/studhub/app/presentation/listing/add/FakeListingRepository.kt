@@ -41,9 +41,19 @@ class FakeListingRepository : ListingRepository {
         return flow { emit(ApiResponse.Success(listing)) }
     }
 
-    override suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>> {
+    override suspend fun getListingsBySearch(
+        keyword: String,
+        blockedUsers: Map<String, Boolean>
+    ): Flow<ApiResponse<List<Listing>>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getListingsByRange(keyword: String, keyword2: String): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
+    }
+
+
+
 
     override suspend fun updateListing(
         listingId: String,

@@ -28,9 +28,19 @@ interface ListingRepository {
     /**
      * get a list of [listing] with all the listings on the database of Firebase with the constraint given on parameter
      * @param [keyword] the constraint we want the listings to filter
+     * @param [blockedUsers] the list of users that we don't want to see their listings
      * @return A [Flow] of [ApiResponse] with the last one containing the filtered list of [Listing] pushed to the database on success
      */
-    suspend fun getListingsBySearch(keyword: String): Flow<ApiResponse<List<Listing>>>
+    suspend fun getListingsBySearch(keyword: String, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<List<Listing>>>
+
+    /**
+     * get a list of [listing] with all the listings on the database of Firebase with the price constraints given on parameter
+     * @param [keyword1] the minimal price constraint
+     * @param [keyword2] the maximal price constraint
+     * @return A [Flow] of [ApiResponse] with the last one containing the filtered list of [Listing] pushed to the database on success
+     */
+    suspend fun getListingsByRange(keyword: String, keyword2: String): Flow<ApiResponse<List<Listing>>>
+
 
     /**
      * update a listing with the given [listingId]

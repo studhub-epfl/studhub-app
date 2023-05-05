@@ -3,6 +3,7 @@ package com.studhub.app.presentation.conversation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
@@ -29,11 +30,14 @@ fun ConversationScreen(
             is ApiResponse.Loading -> LoadingCircle()
             is ApiResponse.Failure -> {}
             is ApiResponse.Success -> {
-                LazyColumn {
-                    items(conversations.data) {
-                        ConversationItem(it, onClick = { navigateToDiscussion(it.id) })
+                if (conversations.data.isEmpty())
+                    Text(text = stringResource(R.string.conversation_no_conversations))
+                else
+                    LazyColumn {
+                        items(conversations.data) {
+                            ConversationItem(it, onClick = { navigateToDiscussion(it.id) })
+                        }
                     }
-                }
             }
         }
     }

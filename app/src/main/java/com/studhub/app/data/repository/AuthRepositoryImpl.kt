@@ -5,6 +5,7 @@ import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.studhub.app.core.Constants.SIGN_IN_REQUEST
@@ -12,7 +13,9 @@ import com.studhub.app.core.Constants.SIGN_UP_REQUEST
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -22,11 +25,6 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private var oneTapClient: SignInClient,
-    @Named(SIGN_IN_REQUEST)
-    private var signInRequest: BeginSignInRequest,
-    @Named(SIGN_UP_REQUEST)
-    private var signUpRequest: BeginSignInRequest,
     private val db: FirebaseDatabase
 ) : AuthRepository {
     private val internalDb = db.getReference("users")
@@ -34,37 +32,76 @@ class AuthRepositoryImpl @Inject constructor(
     override val isUserAuthenticatedInFirebase: Boolean
         get() = auth.currentUser != null
 
-    override val currentUserUid: String
-        get() = if (auth.currentUser != null) auth.currentUser!!.uid else ""
+    override val isEmailVerified: Boolean
+        get() = auth.currentUser?.isEmailVerified ?: false
 
-    override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> = flow {
+    override val currentUserUid: String
+        get() = auth.currentUser?.uid ?: ""
+
+    override suspend fun signUpWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!(email.endsWith("epfl.ch") || email.endsWith("unil.ch"))) {
+            emit(ApiResponse.Failure("You must use an epfl.ch or unil.ch email address in order to register."))
+            return@flow
+        }
+
         try {
-            val signInResult = oneTapClient.beginSignIn(signInRequest).await()
-            emit(ApiResponse.Success(signInResult))
+            auth.createUserWithEmailAndPassword(email, password).await()
+            addUserToFirebase()
+            emit(ApiResponse.Success(true))
         } catch (e: Exception) {
-            try {
-                val signUpResult = oneTapClient.beginSignIn(signUpRequest).await()
-                emit(ApiResponse.Success(signUpResult))
-            } catch (e: Exception) {
-                emit(ApiResponse.Failure(e.message.orEmpty()))
-            }
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "User sign-up failed" }))
         }
     }
 
-    override suspend fun firebaseSignInWithGoogle(
-        googleCredential: AuthCredential
-    ): Flow<ApiResponse<Boolean>> = flow {
-        try {
-            val authResult = auth.signInWithCredential(googleCredential).await()
-            val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+    override suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
 
-            if (isNewUser) {
-                addUserToFirebase()
+        try {
+            if (auth.currentUser == null) {
+                emit(ApiResponse.Failure("No user logged-in"))
+                return@flow
             }
 
-            emit(ApiResponse.Success(isNewUser))
+            auth.currentUser!!.sendEmailVerification().await()
+            emit(ApiResponse.Success(true))
         } catch (e: Exception) {
-            emit(ApiResponse.Failure(e.message.orEmpty()))
+            emit(
+                ApiResponse.Failure(
+                    e.message.orEmpty().ifEmpty { "Sending verification email failed" })
+            )
+        }
+    }
+
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            auth.signInWithEmailAndPassword(email, password).await()
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Authentication failed" }))
+        }
+    }
+
+    override suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            auth.sendPasswordResetEmail(email).await()
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(
+                ApiResponse.Failure(
+                    e.message.orEmpty().ifEmpty { "Sending reset password email failed" })
+            )
         }
     }
 
@@ -72,11 +109,33 @@ class AuthRepositoryImpl @Inject constructor(
         emit(ApiResponse.Loading)
 
         try {
-            oneTapClient.signOut().await()
             auth.signOut()
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {
             emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Error while signing out" }))
+        }
+    }
+
+    override suspend fun reloadUser(): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            auth.currentUser?.reload()?.await()
+            emit(ApiResponse.Success(true))
+        } catch (e: Exception) {
+            emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "Reloading user failed" }))
+        }
+    }
+
+    override fun getAuthState(): Flow<Boolean> = callbackFlow {
+        val authStateListener = AuthStateListener {
+            trySend(it.currentUser != null)
+        }
+
+        auth.addAuthStateListener(authStateListener)
+
+        awaitClose {
+            auth.removeAuthStateListener(authStateListener)
         }
     }
 

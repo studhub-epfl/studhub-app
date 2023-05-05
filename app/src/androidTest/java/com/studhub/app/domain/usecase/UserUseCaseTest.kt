@@ -1,14 +1,11 @@
 package com.studhub.app.domain.usecase
 
-import com.google.android.gms.auth.api.identity.BeginSignInResult
-import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -29,16 +26,32 @@ class UserUseCaseTest {
     private val authRepository: AuthRepository = object : AuthRepository {
         override val isUserAuthenticatedInFirebase: Boolean
             get() = true
+        override val isEmailVerified: Boolean
+            get() = true
         override val currentUserUid: String
             get() = loggedInUser.id
 
-        override suspend fun oneTapSignInWithGoogle(): Flow<ApiResponse<BeginSignInResult>> =
+        override suspend fun signUpWithEmailAndPassword(
+            email: String,
+            password: String
+        ): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+        override suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>> =
             flowOf(ApiResponse.Loading)
 
-        override suspend fun firebaseSignInWithGoogle(googleCredential: AuthCredential): Flow<ApiResponse<Boolean>> =
-            flowOf(ApiResponse.Loading)
+        override suspend fun signInWithEmailAndPassword(
+            email: String,
+            password: String
+        ): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+        override suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>> {
+            TODO("Not yet implemented")
+        }
 
         override suspend fun signOut(): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+        override suspend fun reloadUser(): Flow<ApiResponse<Boolean>> = flowOf(ApiResponse.Loading)
+
+        override fun getAuthState(): Flow<Boolean> = flowOf(true)
 
     }
 
@@ -145,6 +158,45 @@ class UserUseCaseTest {
             }
         }
 
+        override suspend fun blockUser(
+            userId: String,
+            blockedUserId: String
+        ): Flow<ApiResponse<User>> {
+            return flow {
+                emit(ApiResponse.Loading)
+                if (userDB.containsKey(userId)) {
+                    val user = userDB.getValue(userId)
+                    val updatedBlockedUsers =
+                        user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
+                    val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+                    userDB[userId] = updatedUser
+                    emit(ApiResponse.Success(updatedUser))
+                } else {
+                    emit(ApiResponse.Failure("No entry for this key"))
+                }
+            }
+        }
+
+        override suspend fun unblockUser(
+            userId: String,
+            blockedUserId: String
+        ): Flow<ApiResponse<User>> {
+            return flow {
+                emit(ApiResponse.Loading)
+                if (userDB.containsKey(userId)) {
+                    val user = userDB[userId]!!
+                    val updatedBlockedUsers =
+                        user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
+                    val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+                    userDB[userId] = updatedUser
+
+                    emit(ApiResponse.Success(updatedUser))
+                } else {
+                    emit(ApiResponse.Failure("No entry for this key"))
+                }
+            }
+        }
+
     }
 
     @After
@@ -233,6 +285,26 @@ class UserUseCaseTest {
     }
 
     @Test
+    fun addBlockedUserAddsCorrectUserToBlockedUserList() = runBlocking {
+        val addBlockedUser = AddBlockedUser(repository, authRepository)
+        val userId = authRepository.currentUserUid
+        val blockedUserId = Random.nextLong().toString()
+        userDB[userId] = User(id = userId, userName = "Test User", blockedUsers = emptyMap())
+
+        addBlockedUser(blockedUserId).collect { response ->
+            when (response) {
+                is ApiResponse.Success -> {
+                    val user = response.data
+                    Assert.assertNotNull(user)
+                    Assert.assertEquals(mapOf(blockedUserId to true), user.blockedUsers)
+                }
+                is ApiResponse.Failure -> Assert.fail("Request failure")
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+    @Test
     fun removeFavoriteListingRemovesCorrectListingFromUserFavorites() = runBlocking {
         val removeFavoriteListing = RemoveFavoriteListing(repository, authRepository)
 
@@ -252,6 +324,32 @@ class UserUseCaseTest {
                     Assert.assertNotNull(result)
                     val user = userDB.getValue(userId)
                     Assert.assertEquals(mapOf(listingId2 to true), user.favoriteListings)
+                }
+                is ApiResponse.Failure -> Assert.fail("Request failure")
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+    @Test
+    fun unblockUserRemovesCorrectUserFromBlockedUsersList() = runBlocking {
+        val unblockUser = UnblockUser(repository, authRepository)
+        val userId = authRepository.currentUserUid
+        val blockedUserId1 = Random.nextLong().toString()
+        val blockedUserId2 = Random.nextLong().toString()
+        userDB[userId] = User(
+            id = userId,
+            userName = "Test User",
+            blockedUsers = mapOf(blockedUserId1 to true, blockedUserId2 to true)
+        )
+
+        unblockUser(blockedUserId1).collect { response ->
+            when (response) {
+                is ApiResponse.Success -> {
+                    val result = response.data
+                    Assert.assertNotNull(result)
+                    val user = userDB.getValue(userId)
+                    Assert.assertEquals(mapOf(blockedUserId2 to true), user.blockedUsers)
                 }
                 is ApiResponse.Failure -> Assert.fail("Request failure")
                 is ApiResponse.Loading -> {}
@@ -288,6 +386,7 @@ class UserUseCaseTest {
             }
         }
     }
+
 
     @Test
     fun getUserUseCaseReturnsFailureForInvalidUserId() = runBlocking {

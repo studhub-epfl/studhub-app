@@ -15,6 +15,17 @@ interface ConversationRepository {
      */
     suspend fun createConversation(conversation: Conversation): Flow<ApiResponse<Conversation>>
 
+
+    /**
+     * Retrieves the [Conversation] with the given [conversationId] from the repository
+     *
+     * `User1` of the [Conversation] should be [user]
+     *
+     * @param [conversationId] the id of the [Conversation] to retrieve
+     * @return A [Flow] of [ApiResponse] with the last one containing the [Conversation] retrieved from the repository on success
+     */
+    suspend fun getConversation(user: User, conversationId: String): Flow<ApiResponse<Conversation>>
+
     /**
      * Retrieves all conversations from the repository sent by the given [user]
      *

@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auth_title">Authentication</string>
+    <string name="auth_title">Log In</string>
+    <string name="auth_signin_welcome_message">Welcome! =)</string>
+    <string name="auth_signin_btn_submit">Sign in</string>
+    <string name="auth_signin_btn_forgot_password">Forgot password</string>
+    <string name="auth_signin_btn_no_account">No account</string>
+    <string name="auth_forgot_title">Forgot password</string>
+    <string name="auth_forgot_reset_password_msg_sent">A link to reset your password has been sent to your inbox.</string>
+    <string name="auth_forgot_btn_submit">Reset password</string>
+    <string name="auth_signup_title">Sign up</string>
+    <string name="auth_signup_info_title">Welcome student!</string>
+    <string name="auth_signup_info_description">You must register with an epfl.ch or unil.ch email address</string>
+    <string name="auth_signup_btn_submit">Create an account</string>
+    <string name="auth_signup_already_have_account">Already have an account?</string>
+    <string name="auth_signup_verification_email_sent">We\'ve sent you an email to verify your email address</string>
+    <string name="auth_verify_title">Email verification</string>
+    <string name="auth_verify_check_spam">If you don\'t see anything, please check your spam</string>
+    <string name="auth_verify_btn_verified">Verified? Click here</string>
+    <string name="auth_verify_btn_sign_out">Wrong account? Sign out</string>
+    <string name="auth_verify_email_not_verified_error">We\'re sorry but it looks like your email address is still not verified</string>
 </resources>

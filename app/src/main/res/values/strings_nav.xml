@@ -2,7 +2,7 @@
 <resources>
     <string name="nav_home_button">Home</string>
     <string name="nav_browse_button">Browse</string>
-    <string name="nav_cart_button">Cart</string>
+    <string name="nav_chat_button">Chat</string>
     <string name="nav_profile_button">Profile</string>
     <string name="nav_sell_button">Sell</string>
 </resources>

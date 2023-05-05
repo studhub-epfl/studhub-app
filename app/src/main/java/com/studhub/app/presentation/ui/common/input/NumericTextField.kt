@@ -2,10 +2,7 @@ package com.studhub.app.presentation.ui.common.input
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +22,9 @@ fun NumericTextField(
         value = rememberedValue.value,
         onValueChange = { rememberedValue.value = it },
         label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = MaterialTheme.colorScheme.onBackground
+        )
     )
 }

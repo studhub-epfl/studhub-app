@@ -9,4 +9,5 @@ data class User(
     val userName: String = "",
     val profilePicture: String = "",
     val favoriteListings: Map<String, Boolean> = emptyMap(),
+    val blockedUsers: Map<String, Boolean> = emptyMap(),
 )
