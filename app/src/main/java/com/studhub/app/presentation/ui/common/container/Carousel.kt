@@ -1,6 +1,5 @@
 package com.studhub.app.presentation.ui.common.container
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -15,7 +14,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import kotlin.math.absoluteValue
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun <T> Carousel(modifier: Modifier = Modifier, pictures: List<T>) {
@@ -23,7 +21,9 @@ fun <T> Carousel(modifier: Modifier = Modifier, pictures: List<T>) {
         count = pictures.size,
         // Add 32.dp horizontal padding to 'center' the pages
         contentPadding = PaddingValues(horizontal = 32.dp),
-        modifier = Modifier.fillMaxWidth().then(modifier)
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
     ) { page ->
         Card(
             Modifier

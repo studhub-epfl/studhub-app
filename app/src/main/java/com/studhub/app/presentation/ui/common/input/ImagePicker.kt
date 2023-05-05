@@ -1,5 +1,6 @@
 /**
  * @author Francesc Vilarino Guell
+ * @author Studhub Team
  *
  * @see <a href="https://fvilarino.medium.com/using-activity-result-contracts-in-jetpack-compose-14b179fb87de">Medium article</a>
  * @see <a href="https://developer.android.com/reference/androidx/core/content/FileProvider">Android Doc - FileProvider</a>

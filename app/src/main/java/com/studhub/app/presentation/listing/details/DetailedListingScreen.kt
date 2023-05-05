@@ -90,6 +90,8 @@ fun Details(
 
             BigLabel(label = listing.name)
 
+            Spacer("large")
+
             Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = listing.pictures)
 
             Spacer("large")
