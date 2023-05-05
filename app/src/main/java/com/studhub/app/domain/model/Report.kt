@@ -3,7 +3,7 @@ package com.studhub.app.domain.model
 import java.util.*
 
 data class Report(
-    var id: String = "",
+    val id: String = "",
     val reporterUserId: String = "",
     val reportedItemId: String = "",
     val reportType: ReportType = ReportType.CONTENT,
