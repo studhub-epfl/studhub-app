@@ -1,13 +1,12 @@
 package com.studhub.app.presentation.listing.add
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.net.Uri
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -15,22 +14,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
+import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
+import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
-import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.presentation.ui.theme.StudHubTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateListingScreen(
     viewModel: CreateListingViewModel = hiltViewModel(),
-    navigateToListing: (id: String) -> Unit
+    navigateToListing: (id: String) -> Unit,
+    navigateBack: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState(emptyList())
 
@@ -38,38 +38,58 @@ fun CreateListingScreen(
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
     val category = remember { mutableStateOf(Category(name = "Choose a category")) }
+    val pictures = rememberSaveable { mutableListOf<Uri>() }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column {
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.listings_add_title)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = navigateBack
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.misc_btn_go_back),
+                        )
+                    }
+                }
+            )
+        },
+        content = {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(it)
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                BigLabel(label = stringResource(R.string.listings_add_title))
                 ListingForm(
                     categories,
                     title = title,
                     description = description,
                     price = price,
                     category = category,
+                    pictures = pictures,
                     onSubmit = {
                         viewModel.createListing(
                             title.value,
                             description.value,
                             category.value,
                             price.value.toFloat(),
+                            pictures,
                             navigateToListing
                         )
                     }
                 )
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -79,11 +99,17 @@ fun ListingForm(
     description: MutableState<String>,
     price: MutableState<String>,
     category: MutableState<Category>,
+    pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
 ) {
-
     BasicTextField(label = "Item title", rememberedValue = title)
-    AddImageLayout(onClick = {})
+    // AddImageLayout(onClick = {})
+
+    if (pictures.isNotEmpty()) {
+        Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = pictures)
+    }
+
+    ImagePicker(onNewPicture = { pictures.add(it) })
     TextBox(label = "Item description", rememberedValue = description)
     PriceRow(rememberedValue = price)
     CategoryDropDown(categories, selected = category)
@@ -115,23 +141,7 @@ fun AddImageLayout(onClick: () -> Unit) {
         }
     }
     if (isVisible) {
-        ImageCarousel()
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ImageCarousel() {
-    Box(
-        modifier = Modifier
-            .width(TextFieldDefaults.MinWidth)
-            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary))
-    ) {
-        Image(
-            imageVector = Icons.Filled.AccountBox,
-            modifier = Modifier.aspectRatio(1f),
-            contentDescription = "placeholder"
-        )
+        // ImageCarousel()
     }
 }
 
@@ -147,7 +157,8 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
                 .width(100.dp)
                 .padding(end = 4.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = MaterialTheme.colorScheme.onBackground),
+                textColor = MaterialTheme.colorScheme.onBackground
+            ),
             singleLine = true,
             value = rememberedValue.value,
             onValueChange = { rememberedValue.value = it },
@@ -181,7 +192,8 @@ fun CategoryDropDown(
                     .menuAnchor()
                     .width(TextFieldDefaults.MinWidth),
                 value = selected.value.name,
-                expanded = expanded)
+                expanded = expanded
+            )
 
             //Would like to have that block in a separate composable but ExposedDropdownMenu
             ExposedDropdownMenu(
@@ -190,7 +202,7 @@ fun CategoryDropDown(
                 modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 categories.forEach { cat ->
-                    ListingDropDownItem (
+                    ListingDropDownItem(
                         label = cat.name,
                         onClick = {
                             selected.value = cat
@@ -208,7 +220,8 @@ fun ListingDropDownItem(label: String, onClick: () -> Unit = {}) {
         text = {
             Text(
                 text = label,
-                color = MaterialTheme.colorScheme.onSecondaryContainer)
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
         },
         onClick = onClick,
         colors = MenuDefaults.itemColors()
@@ -224,7 +237,8 @@ fun ListingSelectedCategoryField(modifier: Modifier, value: String, expanded: Bo
         readOnly = true,
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onSecondaryContainer),
+            textColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
         modifier = modifier
     )
 }
