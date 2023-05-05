@@ -17,17 +17,13 @@ class ReportRepositoryImpl : ReportRepository {
     private val db = Firebase.database.getReference("reports")
 
     override suspend fun createReport(report: Report): Flow<ApiResponse<Report>> {
-        val reportId: String = db.push().key.orEmpty()
-        val reportToPush: Report = report.copy(id = reportId)
-
+        val reportToPush = report.copy()
         return flow {
             emit(ApiResponse.Loading)
-
-            val query = db.child(reportId).setValue(reportToPush)
-
+            val query = db.child(report.reportedItemId).child(report.id).setValue(reportToPush)
             query.await()
-
             if (query.isSuccessful) {
+                reportToPush.id = query.key.orEmpty()
                 emit(ApiResponse.Success(reportToPush))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
