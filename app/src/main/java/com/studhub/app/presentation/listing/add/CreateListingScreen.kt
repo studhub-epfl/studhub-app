@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +22,7 @@ import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.presentation.listing.add.components.CategorySheet
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
+import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.ImagePicker
@@ -35,12 +37,12 @@ fun CreateListingScreen(
     navigateBack: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState(emptyList())
-
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
-    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
     val pictures = rememberSaveable { mutableListOf<Uri>() }
+    val chosenCategories = rememberSaveable { mutableStateListOf<Category>() }
+    val openCategorySheet = rememberSaveable { mutableStateOf(false)}
 
 
     val scrollState = rememberScrollState()
@@ -74,39 +76,41 @@ fun CreateListingScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ListingForm(
-                    openCategorySheet,
                     chosenCategories,
                     title = title,
                     description = description,
                     price = price,
-                    category = category,
                     pictures = pictures,
                     onSubmit = {
                         viewModel.createListing(
                             title.value,
                             description.value,
-                            chosenCategories.value[0],
+                            chosenCategories[0],
                             price.value.toFloat(),
                             pictures,
                             navigateToListing
                         )
-                    }
+                    },
+                    openCategorySheet = openCategorySheet
                 )
             }
+            CategorySheet(
+                isOpen = openCategorySheet,
+                categories = categories,
+                chosen = chosenCategories)
         }
     )
 }
 
 @Composable
 fun ListingForm(
-    openCategorySheet: MutableState<Boolean>,
-    chosen: MutableState<MutableList<Category>>,
+    chosen: SnapshotStateList<Category>,
     title: MutableState<String>,
     description: MutableState<String>,
     price: MutableState<String>,
-    category: MutableState<Category>,
     pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
+    openCategorySheet: MutableState<Boolean>
 ) {
     BasicTextField(
         label = stringResource(R.string.listings_add_form_title),
@@ -129,6 +133,8 @@ fun ListingForm(
     )
 
     Spacer("large")
+    CategoryChoice(chosen = chosen, openCategorySheet = openCategorySheet)
+    Spacer("large")
 
     PriceRow(rememberedValue = price)
 
@@ -136,10 +142,9 @@ fun ListingForm(
 
     Spacer("large")
 
-    val categoryInputDefaultName = stringResource(R.string.listings_add_form_category)
     BasicFilledButton(
         onClick = {
-            if (category.value.name != categoryInputDefaultName) {
+            if (chosen.isNotEmpty()) {
                 onSubmit()
             }
         },
@@ -173,7 +178,7 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
 
 @Composable
 fun CategoryChoice(
-    chosen : MutableState<MutableList<Category>>,
+    chosen : SnapshotStateList<Category>,
     openCategorySheet: MutableState<Boolean>) {
     Log.d("CategoryChoice", "Loaded")
     Row {
@@ -184,7 +189,7 @@ fun CategoryChoice(
     Column(
         modifier = Modifier.padding(top = 8.dp)
     ) {
-        chosen.value.forEach() { cat ->
+        chosen.forEach() { cat ->
             Text(cat.name)
         }
     }

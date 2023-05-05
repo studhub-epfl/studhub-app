@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +39,7 @@ import com.studhub.app.presentation.ui.theme.StudHubTheme
 fun CategorySheet(
     isOpen: MutableState<Boolean>,
     categories: List<Category>,
-    chosen: MutableState<MutableList<Category>>
+    chosen: SnapshotStateList<Category>
 ) {
     val sheetState = rememberModalBottomSheetState()
     if (isOpen.value) {
@@ -78,7 +79,7 @@ fun CategoryItem(name: String, onClick: () -> Unit = { }) {
 @Composable
 fun CategoryItems(
     categories: List<Category>,
-    chosen: MutableState<MutableList<Category>>
+    chosen: SnapshotStateList<Category>
 ) {
     Column(
         modifier = Modifier
@@ -89,7 +90,7 @@ fun CategoryItems(
             CategoryItem(
                 name = cat.name,
                 onClick = {
-                    chosen.value += cat
+                    chosen += cat
                     Log.d("CategorySheet", "Selected items are $chosen")
                 }
             )
@@ -108,7 +109,7 @@ fun CategoryItems(
 fun CategorySheetPreview() {
     val categories = List(30) { Category(name = "Cat $it") }
     val openCategorySheet = rememberSaveable { mutableStateOf(false) }
-    val chosenCategories = mutableStateOf(mutableListOf<Category>())
+    val chosenCategories = rememberSaveable { mutableStateListOf<Category>() }
     StudHubTheme {
         Box {
             BasicFilledButton(
