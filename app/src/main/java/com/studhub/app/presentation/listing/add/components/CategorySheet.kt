@@ -52,7 +52,7 @@ fun CategorySheet(
                 BigLabel("Pick a category ${sheetState.isVisible}")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            CategoryItems(categories, chosen)
+            CategoryItems(categories, chosen, isOpen)
         }
     }
 }
@@ -79,7 +79,8 @@ fun CategoryItem(name: String, onClick: () -> Unit = { }) {
 @Composable
 fun CategoryItems(
     categories: List<Category>,
-    chosen: SnapshotStateList<Category>
+    chosen: SnapshotStateList<Category>,
+    isOpen: MutableState<Boolean>,
 ) {
     Column(
         modifier = Modifier
@@ -87,14 +88,16 @@ fun CategoryItems(
             .padding(horizontal = 12.dp)
     ) {
         categories.forEach { cat ->
-            CategoryItem(
-                name = cat.name,
-                onClick = {
-                    chosen += cat
-                    Log.d("CategorySheet", "Selected items are $chosen")
-                }
-            )
-            Divider(color = MaterialTheme.colorScheme.onSecondaryContainer)
+            if (!chosen.contains(cat)) {
+                CategoryItem(
+                    name = cat.name,
+                    onClick = {
+                        chosen += cat
+                        isOpen.value = false
+                    }
+                )
+                Divider(color = MaterialTheme.colorScheme.onSecondaryContainer)
+            }
         }
     }
 }

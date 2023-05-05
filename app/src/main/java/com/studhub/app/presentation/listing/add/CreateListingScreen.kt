@@ -1,7 +1,6 @@
 package com.studhub.app.presentation.listing.add
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +27,7 @@ import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.misc.Spacer
+import com.studhub.app.presentation.ui.common.text.TextChip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,8 +41,8 @@ fun CreateListingScreen(
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
     val pictures = rememberSaveable { mutableListOf<Uri>() }
-    val chosenCategories = rememberSaveable { mutableStateListOf<Category>() }
-    val openCategorySheet = rememberSaveable { mutableStateOf(false)}
+    val chosenCategories = remember { mutableStateListOf<Category>() }
+    val openCategorySheet = rememberSaveable { mutableStateOf(false) }
 
 
     val scrollState = rememberScrollState()
@@ -85,7 +85,7 @@ fun CreateListingScreen(
                         viewModel.createListing(
                             title.value,
                             description.value,
-                            chosenCategories[0],
+                            chosenCategories,
                             price.value.toFloat(),
                             pictures,
                             navigateToListing
@@ -97,7 +97,8 @@ fun CreateListingScreen(
             CategorySheet(
                 isOpen = openCategorySheet,
                 categories = categories,
-                chosen = chosenCategories)
+                chosen = chosenCategories
+            )
         }
     )
 }
@@ -133,7 +134,9 @@ fun ListingForm(
     )
 
     Spacer("large")
+
     CategoryChoice(chosen = chosen, openCategorySheet = openCategorySheet)
+
     Spacer("large")
 
     PriceRow(rememberedValue = price)
@@ -178,19 +181,33 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
 
 @Composable
 fun CategoryChoice(
-    chosen : SnapshotStateList<Category>,
-    openCategorySheet: MutableState<Boolean>) {
-    Log.d("CategoryChoice", "Loaded")
-    Row {
-        Text(text = "Chose categories:")
+    chosen: SnapshotStateList<Category>,
+    openCategorySheet: MutableState<Boolean>
+) {
+    Row(modifier = Modifier.width(TextFieldDefaults.MinWidth)) {
+        Box(modifier = Modifier.padding(top = 12.dp)) {
+            Text(text = "Add a category:")
+        }
         Spacer(modifier = Modifier.width(6.dp))
         PlusButton { openCategorySheet.value = true }
     }
     Column(
-        modifier = Modifier.padding(top = 8.dp)
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .width(TextFieldDefaults.MinWidth)
     ) {
         chosen.forEach() { cat ->
-            Text(cat.name)
+            TextChip(
+                onClick = { chosen.remove(cat) },
+                label = cat.name,
+                trailingIcon = {
+                    Icon(
+                        Icons.Filled.Clear,
+                        contentDescription = "Remove ${cat.name}",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            )
         }
     }
 }

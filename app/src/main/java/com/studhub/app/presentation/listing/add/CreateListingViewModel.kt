@@ -44,7 +44,7 @@ class CreateListingViewModel @Inject constructor(
     fun createListing(
         title: String,
         description: String,
-        category: Category,
+        categories: List<Category>,
         price: Float,
         pictures: MutableList<Uri>,
         callback: (id: String) -> Unit
@@ -52,7 +52,7 @@ class CreateListingViewModel @Inject constructor(
         val listing = Listing(
             name = title,
             description = description,
-            categories = listOf(category),
+            categories = categories,
             price = price,
             picturesUri = pictures
         )
