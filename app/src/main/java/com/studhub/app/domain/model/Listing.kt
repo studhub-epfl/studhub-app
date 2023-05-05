@@ -7,5 +7,5 @@ data class Listing(
     val seller: User = User(),
     val price: Float = 0F,
     val categories: List<Category> = emptyList(),
-    val meetingPoint: MeetingPoint? = MeetingPoint(1.0,1.0)
+    val meetingPoint: MeetingPoint? = MeetingPoint(0.0,0.0)
 )

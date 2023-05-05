@@ -254,9 +254,9 @@ fun MeetingPointInput(meetingPoint: MutableState<MeetingPoint?>) {
         if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data
             val location = data?.getParcelableExtra<LatLng>("location")
-            location?.let { latLng ->
+            location?.let { position ->
                 meetingPoint.value =
-                    MeetingPoint(latitude = latLng.latitude, longitude = latLng.longitude)
+                    MeetingPoint(latitude = position.latitude, longitude = position.longitude)
             }
         }
     }
