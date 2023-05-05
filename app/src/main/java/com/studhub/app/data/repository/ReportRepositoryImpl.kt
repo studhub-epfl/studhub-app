@@ -17,13 +17,14 @@ class ReportRepositoryImpl : ReportRepository {
     private val db = Firebase.database.getReference("reports")
 
     override suspend fun createReport(report: Report): Flow<ApiResponse<Report>> {
-        val reportId: String = db.push().key.orEmpty()
+        val itemId = report.reportedItemId // Get the reported item ID
+        val reportId: String = db.child(itemId).push().key.orEmpty() // Use the item ID as the parent node
         val reportToPush: Report = report.copy(id = reportId)
 
         return flow {
             emit(ApiResponse.Loading)
 
-            val query = db.child(reportId).setValue(reportToPush)
+            val query = db.child(itemId).child(reportId).setValue(reportToPush)
 
             query.await()
 
