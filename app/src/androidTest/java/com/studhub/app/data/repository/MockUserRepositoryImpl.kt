@@ -4,7 +4,6 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Singleton
@@ -148,6 +147,22 @@ class MockUserRepositoryImpl : UserRepository {
                 userDB[userId] = updatedUser
 
                 emit(ApiResponse.Success(updatedUser))
+            } else {
+                emit(ApiResponse.Failure("No entry for this key"))
+            }
+        }
+    }
+
+    override suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            if (userDB.containsKey(userId)) {
+                val user = userDB[userId]!!
+                val blockedUsers = mutableListOf<User>()
+                user.blockedUsers.forEach {
+                    blockedUsers.add(userDB[it.key]!!)
+                }
+                emit(ApiResponse.Success(blockedUsers))
             } else {
                 emit(ApiResponse.Failure("No entry for this key"))
             }

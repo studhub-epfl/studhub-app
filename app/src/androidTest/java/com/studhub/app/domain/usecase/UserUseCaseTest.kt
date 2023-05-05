@@ -197,6 +197,21 @@ class UserUseCaseTest {
             }
         }
 
+        override suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>> {
+            return flow {
+                emit(ApiResponse.Loading)
+                if (userDB.containsKey(userId)) {
+                    val user = userDB[userId]!!
+                    val blockedUsers = mutableListOf<User>()
+                    user.blockedUsers.forEach {
+                        blockedUsers.add(userDB[it.key]!!)
+                    }
+                    emit(ApiResponse.Success(blockedUsers))
+                } else {
+                    emit(ApiResponse.Failure("No entry for this key"))
+                }
+            }
+        }
     }
 
     @After
@@ -402,6 +417,36 @@ class UserUseCaseTest {
                     val expectedErrorMessage = "No entry for this key"
                     Assert.assertTrue(response.message.contains(expectedErrorMessage))
                 }
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+    @Test
+    fun getBlockedUsersReturnsCorrectUsers() = runBlocking {
+        val getBlockedUsers = GetBlockedUsers(repository, authRepository)
+
+        val userId = authRepository.currentUserUid
+        val user1 = User(id = Random.nextLong().toString(), userName = "Test User 1")
+        val user2 = User(id = Random.nextLong().toString(), userName = "Test User 2")
+        userDB[user1.id] = user1
+        userDB[user2.id] = user2
+        userDB[userId] = User(
+            id = userId,
+            userName = "Test User",
+            blockedUsers = mapOf(user1.id to true, user2.id to true)
+        )
+
+        getBlockedUsers().collect { response ->
+            when (response) {
+                is ApiResponse.Success -> {
+                    val result = response.data
+                    Assert.assertNotNull(result)
+                    Assert.assertEquals(2, result.size)
+                    Assert.assertTrue(result.contains(user1))
+                    Assert.assertTrue(result.contains(user2))
+                }
+                is ApiResponse.Failure -> Assert.fail("Request failure")
                 is ApiResponse.Loading -> {}
             }
         }

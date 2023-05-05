@@ -23,4 +23,5 @@ interface UserRepository {
     suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>>
     suspend fun blockUser(userId: String, blockedUserId: String): Flow<ApiResponse<User>>
     suspend fun unblockUser(userId: String, blockedUserId: String): Flow<ApiResponse<User>>
+    suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>>
 }

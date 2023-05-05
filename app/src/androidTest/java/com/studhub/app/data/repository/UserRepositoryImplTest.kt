@@ -30,8 +30,6 @@ class UserRepositoryImplTest {
     @Inject
     lateinit var getUser: GetUser
 
-
-
     @Before
     fun init() {
         hiltRule.inject()
@@ -82,12 +80,11 @@ class UserRepositoryImplTest {
         val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
         val getFavoriteListings = GetFavoriteListings(userRepo, authRepo)
         val product = Listing(
-            id = Random.nextLong().toString(),
-            name = "Testing Product ${Random.nextLong()}",
+            id = Random.nextLong().toString()
         )
 
         runBlocking {
-            addFavoriteListing(product.id).collect() {
+            addFavoriteListing(product.id).collect {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     ApiResponse.Loading -> {}
@@ -101,7 +98,7 @@ class UserRepositoryImplTest {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
-                    is ApiResponse.Success -> listOf(product) == it.data
+                    is ApiResponse.Success -> it.data.contains(product)
                 }
             }
         }
@@ -119,7 +116,7 @@ class UserRepositoryImplTest {
         )
 
         runBlocking {
-            addFavoriteListing(product.id).collect() {
+            addFavoriteListing(product.id).collect {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     ApiResponse.Loading -> {}
@@ -151,7 +148,7 @@ class UserRepositoryImplTest {
         )
 
         runBlocking {
-            addBlockedUser(user.id).collect() {
+            addBlockedUser(user.id).collect {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     ApiResponse.Loading -> {}
@@ -165,6 +162,38 @@ class UserRepositoryImplTest {
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
                     is ApiResponse.Success -> {}
+                }
+            }
+        }
+    }
+
+    @Test
+    fun addAndGetBlockedUsers() {
+        val userRepo = UserRepositoryImpl() // real repo
+        val authRepo = MockAuthRepositoryImpl() // fake repo
+        val addBlockedUser = AddBlockedUser(userRepo, authRepo)
+        val getBlockedUsers = GetBlockedUsers(userRepo, authRepo)
+        val user = User(
+            id = Random.nextLong().toString(),
+            userName = "Blocked User ${Random.nextLong()}",
+        )
+
+        runBlocking {
+            addBlockedUser(user.id).collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> {}
+                }
+            }
+        }
+
+        runBlocking {
+            getBlockedUsers().collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> it.data.contains(user)
                 }
             }
         }
