@@ -12,19 +12,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.core.Globals
+import com.studhub.app.core.utils.Utils
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.presentation.auth.AuthViewModel
 import com.studhub.app.presentation.nav.NavBar
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavHostController
 
     private val viewModel by viewModels<AuthViewModel>()
+
+    @Inject
+    lateinit var networkManager: NetworkStatus
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +57,7 @@ class MainActivity : AppCompatActivity() {
                             AppNavigation(navController = navController)
                         }
                         AuthState()
+                        ConnectivityState()
                     })
             }
         }
@@ -72,12 +80,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkAuthState() {
-        if (viewModel.isUserAuthenticated) {
-            handleLoginComplete()
+    @Composable
+    private fun ConnectivityState() {
+        val networkStatus = networkManager.connectivityStatus().collectAsState(initial = true).value
+
+        if (!networkStatus) {
+            Utils.displayMessage(applicationContext, stringResource(R.string.error_network_off))
         }
     }
-
-    private fun handleLoginComplete() = navController.navigate("Home")
 
 }

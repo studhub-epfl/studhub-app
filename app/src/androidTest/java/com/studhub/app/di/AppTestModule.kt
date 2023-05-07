@@ -3,6 +3,8 @@ package com.studhub.app.di
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.studhub.app.data.NetworkStatusImplTest
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.repository.*
 import com.studhub.app.domain.repository.*
 import com.studhub.app.domain.usecase.category.GetCategories
@@ -33,6 +35,9 @@ class AppTestModule {
 
     @Provides
     fun provideFirebaseDatabase() = Firebase.database
+
+    @Provides
+    fun provideNetworkStatus(): NetworkStatus = NetworkStatusImplTest()
 
     @Singleton
     @Provides
