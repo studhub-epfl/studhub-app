@@ -109,14 +109,14 @@ class UserUseCaseTest {
 
         override suspend fun addFavoriteListing(
             userId: String,
-            favListingId: String
+            favListing: Listing
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 if (userDB.containsKey(userId)) {
                     val user = userDB.getValue(userId)
                     val updatedFavoriteListings =
-                        user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+                        user.favoriteListings.toMutableMap().apply { put(favListing.id, true) }
                     val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                     userDB[userId] = updatedUser
                     emit(ApiResponse.Success(updatedUser))
@@ -128,14 +128,14 @@ class UserUseCaseTest {
 
         override suspend fun removeFavoriteListing(
             userId: String,
-            favListingId: String
+            favListing: Listing
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 if (userDB.containsKey(userId)) {
                     val user = userDB[userId]!!
                     val updatedFavoriteListings =
-                        user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+                        user.favoriteListings.toMutableMap().apply { remove(favListing.id) }
                     val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                     userDB[userId] = updatedUser
 
@@ -298,7 +298,7 @@ class UserUseCaseTest {
         val listingId = Random.nextLong().toString()
         userDB[userId] = User(id = userId, userName = "Test User", favoriteListings = emptyMap())
 
-        addFavoriteListing(listingId).collect { response ->
+        addFavoriteListing(Listing(id = listingId)).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val user = response.data
@@ -344,7 +344,7 @@ class UserUseCaseTest {
             favoriteListings = mapOf(listingId1 to true, listingId2 to true)
         )
 
-        removeFavoriteListing(listingId1).collect { response ->
+        removeFavoriteListing(Listing(id = listingId1)).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val result = response.data

@@ -68,14 +68,14 @@ class MockUserRepositoryImpl : UserRepository {
 
     override suspend fun addFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB.getValue(userId)
                 val updatedFavoriteListings =
-                    user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+                    user.favoriteListings.toMutableMap().apply { put(favListing.id, true) }
                 val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                 userDB[userId] = updatedUser
                 emit(ApiResponse.Success(updatedUser))
@@ -87,14 +87,14 @@ class MockUserRepositoryImpl : UserRepository {
 
     override suspend fun removeFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>> {
         return flow {
             emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val updatedFavoriteListings =
-                    user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+                    user.favoriteListings.toMutableMap().apply { remove(favListing.id) }
                 val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                 userDB[userId] = updatedUser
 
