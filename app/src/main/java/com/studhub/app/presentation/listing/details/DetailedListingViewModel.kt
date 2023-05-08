@@ -81,13 +81,13 @@ class DetailedListingViewModel @Inject constructor(
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
                 viewModelScope.launch {
                     if (!isFavorite.value) {
-                        addFavoriteListing(listing.id).collect {
+                        addFavoriteListing(listing).collect {
                             if (it is ApiResponse.Success) {
                                 isFavorite.value = true
                             }
                         }
                     } else {
-                        removeFavoriteListing(listing.id).collect {
+                        removeFavoriteListing(listing).collect {
                             if (it is ApiResponse.Success) {
                                 isFavorite.value = false
                             }

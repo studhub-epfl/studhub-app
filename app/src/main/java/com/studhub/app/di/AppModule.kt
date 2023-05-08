@@ -42,7 +42,9 @@ class AppModule {
             context,
             LocalAppDatabase::class.java,
             "studhub-local-db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     fun provideLocalDatasource(localDatabase: LocalAppDatabase) = LocalDataSource(localDatabase)
@@ -76,7 +78,11 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideListingRepository(): ListingRepository = ListingRepositoryImpl()
+    fun provideListingRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): ListingRepository = ListingRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides
@@ -84,11 +90,19 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideConversationRepository(): ConversationRepository = ConversationRepositoryImpl()
+    fun provideConversationRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): ConversationRepository = ConversationRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides
-    fun provideMessageRepository(): MessageRepository = MessageRepositoryImpl()
+    fun provideMessageRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): MessageRepository = MessageRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Provides
     fun provideGetCurrentUserUseCase(

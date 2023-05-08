@@ -141,7 +141,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun addFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
@@ -151,7 +151,7 @@ class UserRepositoryImpl @Inject constructor(
         }
 
         val userRef = db.child(userId)
-        val favoriteListingsRef = userRef.child("favoriteListings").child(favListingId)
+        val favoriteListingsRef = userRef.child("favoriteListings").child(favListing.id)
 
         val userQuery = userRef.get()
 
@@ -161,13 +161,15 @@ class UserRepositoryImpl @Inject constructor(
 
         if (user != null) {
             val updatedFavoriteListings =
-                user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+                user.favoriteListings.toMutableMap().apply { put(favListing.id, true) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(true)
 
             query.await()
 
             if (query.isSuccessful) {
+                cacheFavListing(userId, favListing)
+                cacheUser(updatedUser)
                 emit(ApiResponse.Success(updatedUser))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
@@ -178,7 +180,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun removeFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
@@ -188,7 +190,7 @@ class UserRepositoryImpl @Inject constructor(
         }
 
         val userRef = db.child(userId)
-        val favoriteListingsRef = userRef.child("favoriteListings").child(favListingId)
+        val favoriteListingsRef = userRef.child("favoriteListings").child(favListing.id)
 
         val userQuery = userRef.get()
 
@@ -198,13 +200,15 @@ class UserRepositoryImpl @Inject constructor(
 
         if (user != null) {
             val updatedFavoriteListings =
-                user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+                user.favoriteListings.toMutableMap().apply { remove(favListing.id) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(null)
 
             query.await()
 
             if (query.isSuccessful) {
+                removeCachedListing(userId, favListing.id)
+                cacheUser(updatedUser)
                 emit(ApiResponse.Success(updatedUser))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
@@ -217,8 +221,9 @@ class UserRepositoryImpl @Inject constructor(
         flow {
             emit(ApiResponse.Loading)
 
+            // if no internet connection, simply returned cached listings
             if (!networkStatus.isConnected) {
-                emit(NO_INTERNET_CONNECTION)
+                emit(ApiResponse.Success(getCachedFavListings(userId)))
                 return@flow
             }
 
@@ -242,6 +247,8 @@ class UserRepositoryImpl @Inject constructor(
 
                     if (listingSnapshot.exists()) {
                         val listing = listingSnapshot.getValue(Listing::class.java)!!
+                        // update cached listing information
+                        cacheFavListing(userId, listing)
                         favoriteListings.add(listing)
                     }
                 }
@@ -410,4 +417,15 @@ class UserRepositoryImpl @Inject constructor(
         return localDb.getUser(userId)
     }
 
+    private suspend fun getCachedFavListings(userId: String): List<Listing> {
+        return localDb.getFavListings(userId)
+    }
+
+    private suspend fun cacheFavListing(userId: String, listing: Listing) {
+        localDb.saveFavoriteListing(userId, listing)
+    }
+
+    private suspend fun removeCachedListing(userId: String, listingId: String) {
+        localDb.removeFavoriteListing(userId, listingId)
+    }
 }
