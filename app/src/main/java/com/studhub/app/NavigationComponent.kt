@@ -119,7 +119,7 @@ fun AppNavigation(
 
             DetailedListingScreen(
                 id = id,
-               navController = navController)
+                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") }, navController = navController)
         }
 
 //        composable("RatingScreen") {
