@@ -8,10 +8,10 @@ import com.studhub.app.domain.model.User
 
 @Dao
 interface UserDao {
-    @Query("SELECT * FROM user WHERE id = :id")
+    @Query("SELECT * FROM user WHERE user_id = :id")
     suspend fun getUser(id: String): User?
 
-    @Query("DELETE FROM user WHERE id = :id")
+    @Query("DELETE FROM user WHERE user_id = :id")
     suspend fun deleteUser(id: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

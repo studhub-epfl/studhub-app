@@ -1,6 +1,7 @@
 package com.studhub.app.data.local
 
 import com.studhub.app.data.local.database.LocalAppDatabase
+import com.studhub.app.data.local.entity.UserFavoriteListings
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.Message
@@ -14,6 +15,7 @@ class LocalDataSource @Inject constructor(
     private val conversationDao = localDatabase.conversationDao()
     private val messageDao = localDatabase.messageDao()
     private val listingDao = localDatabase.listingDao()
+    private val userFavListingsDao = localDatabase.userFavListingsDao()
 
     suspend fun getUser(id: String): User? {
         return userDao.getUser(id)
@@ -29,6 +31,10 @@ class LocalDataSource @Inject constructor(
 
     suspend fun getConversations(userId: String): List<Conversation> {
         return conversationDao.getConversations(userId)
+    }
+
+    suspend fun getConversation(conversationId: String): Conversation {
+        return conversationDao.getConversation(conversationId)
     }
 
     suspend fun saveConversation(conversation: Conversation) {
@@ -49,5 +55,23 @@ class LocalDataSource @Inject constructor(
 
     suspend fun saveListing(listing: Listing) {
         listingDao.insertListing(listing)
+    }
+
+    suspend fun removeListing(id: String) {
+        return listingDao.deleteListing(id)
+    }
+
+    suspend fun getFavListings(userId: String): List<Listing> {
+        return userFavListingsDao.getUserFavorites(userId)
+    }
+
+    suspend fun saveFavoriteListing(userId: String, listing: Listing) {
+        saveListing(listing)
+        userFavListingsDao.insertFavoriteListing(UserFavoriteListings(userId, listing.id))
+    }
+
+    suspend fun removeFavoriteListing(userId: String, listingId: String) {
+        removeListing(listingId)
+        userFavListingsDao.deleteFavoriteListing(userId, listingId)
     }
 }
