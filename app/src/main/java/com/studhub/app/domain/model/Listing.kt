@@ -1,15 +1,27 @@
 package com.studhub.app.domain.model
 
 import android.net.Uri
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "listing")
 data class Listing(
-    val id: String = "",
-    val name: String = "",
-    val description: String = "",
-    val seller: User = User(),
-    val price: Float = 0F,
-    val categories: List<Category> = emptyList(),
-    val meetingPoint: MeetingPoint? = MeetingPoint(0.0,0.0),
-    val pictures: List<String> = emptyList(),
-    val picturesUri: List<Uri>? = null
-)
+    @PrimaryKey
+    var id: String = "",
+    var name: String = "",
+    var description: String = "",
+    var sellerId: String = "",
+    @Ignore
+    var seller: User = User(),
+    var price: Float = 0F,
+    @Ignore
+    var categories: List<Category> = emptyList(),
+    @Ignore
+    var meetingPoint: MeetingPoint? = MeetingPoint(0.0,0.0),
+    var pictures: List<String> = emptyList(),
+    @Ignore
+    var picturesUri: List<Uri>? = null
+) {
+    constructor() : this("")
+}

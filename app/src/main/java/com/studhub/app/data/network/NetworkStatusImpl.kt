@@ -16,19 +16,23 @@ class NetworkStatusImpl @Inject constructor(
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    override val isConnected: Boolean
-        get() = connectivityManager.isDefaultNetworkActive
+    override var isConnected: Boolean = connectivityManager.activeNetwork != null
+        private set
 
     override fun connectivityStatus(): Flow<Boolean> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
+                isConnected = true
                 trySend(true)
             }
 
             override fun onLost(network: Network) {
+                isConnected = false
                 trySend(false)
             }
         }
+
+        connectivityManager.isDefaultNetworkActive
 
         connectivityManager.registerDefaultNetworkCallback(callback)
 

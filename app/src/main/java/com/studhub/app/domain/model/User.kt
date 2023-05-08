@@ -1,19 +1,28 @@
 package com.studhub.app.domain.model
 
 import android.net.Uri
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "user")
 data class User(
-    val id: String = "",
-    val email: String = "",
-    val phoneNumber: String = "",
-    val firstName: String = "",
-    val lastName: String = "",
-    val userName: String = "",
-    val profilePicture: String = "",
-    val profilePictureUri: Uri? = null,
-    val favoriteListings: Map<String, Boolean> = emptyMap(),
-    val blockedUsers: Map<String, Boolean> = emptyMap(),
-    val ratings: Map<String, Rating> = emptyMap(),
-    val thumbsUpCount: Int = 0,
-    val thumbsDownCount: Int = 0
-    )
+    @PrimaryKey
+    var id: String = "",
+    var email: String = "",
+    var phoneNumber: String = "",
+    var firstName: String = "",
+    var lastName: String = "",
+    var userName: String = "",
+    var profilePicture: String = "",
+    @Ignore
+    var profilePictureUri: Uri? = null,
+    var favoriteListings: Map<String, Boolean> = emptyMap(),
+    var blockedUsers: Map<String, Boolean> = emptyMap(),
+    @Ignore
+    var ratings: Map<String, Rating> = emptyMap(),
+    var thumbsUpCount: Int = 0,
+    var thumbsDownCount: Int = 0
+) {
+    constructor() : this("")
+}

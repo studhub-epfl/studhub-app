@@ -1,11 +1,14 @@
 package com.studhub.app.di
 
 import android.content.Context
+import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.local.database.LocalAppDatabase
 import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.network.NetworkStatusImpl
 import com.studhub.app.data.repository.*
@@ -34,6 +37,18 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideLocalDatabase(@ApplicationContext context: Context): LocalAppDatabase =
+        Room.databaseBuilder(
+            context,
+            LocalAppDatabase::class.java,
+            "studhub-local-db"
+        ).build()
+
+    @Provides
+    fun provideLocalDatasource(localDatabase: LocalAppDatabase) = LocalDataSource(localDatabase)
+
+    @Provides
+    @Singleton
     fun provideNetworkStatus(@ApplicationContext context: Context): NetworkStatus =
         NetworkStatusImpl(context)
 
@@ -41,15 +56,23 @@ class AppModule {
     @Provides
     fun provideAuthRepository(
         auth: FirebaseAuth,
-        db: FirebaseDatabase
+        db: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
     ): AuthRepository = AuthRepositoryImpl(
-        auth = auth,
-        db = db
+        auth,
+        db,
+        localDb,
+        networkStatus
     )
 
     @Singleton
     @Provides
-    fun provideUserRepository(): UserRepository = UserRepositoryImpl()
+    fun provideUserRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): UserRepository = UserRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides

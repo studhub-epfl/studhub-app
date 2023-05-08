@@ -1,16 +1,25 @@
 package com.studhub.app.domain.model
 
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import java.util.*
 
+@Entity(tableName = "conversation")
 data class Conversation(
-    val id: String = "",
-    val user1Id: String = "",
-    val user2Id: String = "",
-    val user1Name: String = "",
-    val user2Name: String = "",
-    val user1: User? = null,
-    val user2: User? = null,
-    val createdAt: Date = Date(),
-    val updatedAt: Date = Date(),
-    val lastMessageContent: String = ""
-)
+    @PrimaryKey
+    var id: String = "",
+    var user1Id: String = "",
+    var user2Id: String = "",
+    var user1Name: String = "",
+    var user2Name: String = "",
+    @Ignore
+    var user1: User? = null,
+    @Ignore
+    var user2: User? = null,
+    var createdAt: Date = Date(),
+    var updatedAt: Date = Date(),
+    var lastMessageContent: String = ""
+) {
+    constructor() : this("")
+}
