@@ -1,5 +1,6 @@
 package com.studhub.app.domain.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -8,6 +9,7 @@ import java.util.*
 @Entity(tableName = "conversation")
 data class Conversation(
     @PrimaryKey
+    @ColumnInfo(name = "conversation_id")
     var id: String = "",
     var user1Id: String = "",
     var user2Id: String = "",

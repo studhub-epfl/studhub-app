@@ -1,6 +1,7 @@
 package com.studhub.app.domain.model
 
 import android.net.Uri
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -8,6 +9,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user")
 data class User(
     @PrimaryKey
+    @ColumnInfo(name = "user_id")
     var id: String = "",
     var email: String = "",
     var phoneNumber: String = "",
