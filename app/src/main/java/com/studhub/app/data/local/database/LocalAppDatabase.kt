@@ -12,7 +12,7 @@ import com.studhub.app.domain.model.User
 
 @Database(
     entities = [User::class, Conversation::class, Message::class, Listing::class, UserFavoriteListings::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

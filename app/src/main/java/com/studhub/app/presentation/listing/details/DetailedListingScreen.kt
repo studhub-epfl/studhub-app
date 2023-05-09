@@ -1,16 +1,11 @@
 package com.studhub.app.presentation.listing.details
 
 import android.content.Intent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
-import androidx.navigation.compose.rememberNavController
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
@@ -41,12 +35,11 @@ import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 
-
 @Composable
 fun DetailedListingScreen(
     viewModel: DetailedListingViewModel = hiltViewModel(),
     navigateToConversation: (conversationId: String) -> Unit,
-    navController: NavHostController,
+    navigateToRateUser: (userId: String) -> Unit,
     id: String?
 ) {
     LaunchedEffect(id) {
@@ -87,9 +80,8 @@ fun DetailedListingScreen(
                         displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
                     }
                 },
-                onRateUserClick = {
-                    navController.navigate("RatingScreen/${listing.seller.id}")
-                })
+                onRateUserClick = { navigateToRateUser(listing.seller.id) }
+            )
         }
     }
 }
@@ -157,6 +149,7 @@ fun Details(
         }
     }
 }
+
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
@@ -173,7 +166,7 @@ fun DetailsPreview() {
         price = 545.45F
     )
     Details(
-          listing = listing,
+        listing = listing,
         onContactSellerClick = { },
         onFavoriteClicked = { },
         isFavorite = true,

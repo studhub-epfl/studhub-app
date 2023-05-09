@@ -23,7 +23,6 @@ import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 import com.studhub.app.presentation.ratings.UserRatingScreen
-import com.studhub.app.presentation.ratings.UserRatingViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Preview
@@ -109,6 +108,17 @@ fun AppNavigation(
             ConversationScreen(navigateToDiscussion = { conversationId -> navController.navigate("Conversations/$conversationId") })
         }
 
+        composable("Conversations/{id}") {
+            Globals.showBottomBar = false
+            val id = it.arguments?.getString("id")
+            if (id == null) {
+                navController.navigate("Conversations")
+                return@composable
+            }
+
+            ChatScreen(conversationId = id, navigateBack = { navController.popBackStack() })
+        }
+
         composable("DetailedListing/{id}") { backStackEntry ->
             Globals.showBottomBar = false
             val id = backStackEntry.arguments?.getString("id")
@@ -119,7 +129,9 @@ fun AppNavigation(
 
             DetailedListingScreen(
                 id = id,
-                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") }, navController = navController)
+                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") },
+                navigateToRateUser = { userId -> navController.navigate("RatingScreen/$userId") }
+            )
         }
 
 //        composable("RatingScreen") {
