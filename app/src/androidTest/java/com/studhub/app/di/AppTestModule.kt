@@ -1,8 +1,15 @@
 package com.studhub.app.di
 
+import android.content.Context
+import androidx.room.Room
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.studhub.app.data.NetworkStatusImplTest
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.local.database.LocalAppDatabase
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.repository.*
 import com.studhub.app.domain.repository.*
 import com.studhub.app.domain.usecase.category.GetCategories
@@ -18,6 +25,7 @@ import com.studhub.app.domain.usecase.user.SignOut
 import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
@@ -34,6 +42,20 @@ class AppTestModule {
     @Provides
     fun provideFirebaseDatabase() = Firebase.database
 
+    @Provides
+    @Singleton
+    fun provideLocalDatabase(@ApplicationContext context: Context): LocalAppDatabase =
+        Room.inMemoryDatabaseBuilder(
+            context,
+            LocalAppDatabase::class.java,
+        ).build()
+
+    @Provides
+    fun provideLocalDatasource(localDatabase: LocalAppDatabase) = LocalDataSource(localDatabase)
+
+    @Provides
+    fun provideNetworkStatus(): NetworkStatus = NetworkStatusImplTest()
+
     @Singleton
     @Provides
     fun provideCategoryRepository(): CategoryRepository = CategoryRepositoryImpl()
@@ -44,7 +66,11 @@ class AppTestModule {
 
     @Singleton
     @Provides
-    fun provideListingRepository(): ListingRepository = ListingRepositoryImpl()
+    fun provideListingRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): ListingRepository = ListingRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides
@@ -52,11 +78,19 @@ class AppTestModule {
 
     @Singleton
     @Provides
-    fun provideConversationRepository(): ConversationRepository = ConversationRepositoryImpl()
+    fun provideConversationRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): ConversationRepository = ConversationRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides
-    fun provideMessageRepository(): MessageRepository = MessageRepositoryImpl()
+    fun provideMessageRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): MessageRepository = MessageRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides

@@ -1,10 +1,14 @@
 package com.studhub.app.data.repository
 
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.core.utils.ApiResponse.Companion.NO_INTERNET_CONNECTION
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.Rating
@@ -13,11 +17,16 @@ import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl : UserRepository {
-    private val db: DatabaseReference = Firebase.database.getReference("users")
+class UserRepositoryImpl @Inject constructor(
+    private val remoteDb: FirebaseDatabase,
+    private val localDb: LocalDataSource,
+    private val networkStatus: NetworkStatus
+) : UserRepository {
+    private val db: DatabaseReference = remoteDb.getReference("users")
     private val storageHelper = StorageHelper()
 
     override suspend fun createUser(user: User): Flow<ApiResponse<User>> {
@@ -26,6 +35,11 @@ class UserRepositoryImpl : UserRepository {
 
         return flow {
             emit(ApiResponse.Loading)
+
+            if (!networkStatus.isConnected) {
+                emit(NO_INTERNET_CONNECTION)
+                return@flow
+            }
 
             val query = db.child(userId).setValue(userToPush)
 
@@ -43,6 +57,18 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun getUser(userId: String): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
+        // fetch user from cached data if no internet connection
+        if (!networkStatus.isConnected) {
+            val user: User? = getCachedUser(userId)
+            if (user == null) {
+                emit(NO_INTERNET_CONNECTION)
+            } else {
+                emit(ApiResponse.Success(user))
+            }
+
+            return@flow
+        }
+
         val query = db.child(userId).get()
 
         query.await()
@@ -52,6 +78,7 @@ class UserRepositoryImpl : UserRepository {
             if (retrievedUser == null) {
                 emit(ApiResponse.Failure("User does not exist"))
             } else {
+                cacheUser(retrievedUser)
                 emit(ApiResponse.Success(retrievedUser))
             }
         } else {
@@ -66,12 +93,17 @@ class UserRepositoryImpl : UserRepository {
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
         var profilePicture = updatedUser.profilePicture
 
         // replace profile picture if there is a new one
         // in the future, we may want to remove the previous profile picture
         if (updatedUser.profilePictureUri != null) {
-            profilePicture = storageHelper.storePicture(updatedUser.profilePictureUri, "users")
+            profilePicture = storageHelper.storePicture(updatedUser.profilePictureUri!!, "users")
         }
 
         val query = db.child(userId).updateChildren(
@@ -94,6 +126,7 @@ class UserRepositoryImpl : UserRepository {
             if (retrievedUpdatedUser == null) {
                 emit(ApiResponse.Failure("An error occurred while retrieving the updated user"))
             } else {
+                cacheUser(retrievedUpdatedUser)
                 emit(ApiResponse.Success(retrievedUpdatedUser))
             }
         } else {
@@ -108,12 +141,17 @@ class UserRepositoryImpl : UserRepository {
 
     override suspend fun addFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
         val userRef = db.child(userId)
-        val favoriteListingsRef = userRef.child("favoriteListings").child(favListingId)
+        val favoriteListingsRef = userRef.child("favoriteListings").child(favListing.id)
 
         val userQuery = userRef.get()
 
@@ -122,13 +160,16 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+            val updatedFavoriteListings =
+                user.favoriteListings.toMutableMap().apply { put(favListing.id, true) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(true)
 
             query.await()
 
             if (query.isSuccessful) {
+                cacheFavListing(userId, favListing)
+                cacheUser(updatedUser)
                 emit(ApiResponse.Success(updatedUser))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
@@ -139,12 +180,17 @@ class UserRepositoryImpl : UserRepository {
 
     override suspend fun removeFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
         val userRef = db.child(userId)
-        val favoriteListingsRef = userRef.child("favoriteListings").child(favListingId)
+        val favoriteListingsRef = userRef.child("favoriteListings").child(favListing.id)
 
         val userQuery = userRef.get()
 
@@ -153,13 +199,16 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+            val updatedFavoriteListings =
+                user.favoriteListings.toMutableMap().apply { remove(favListing.id) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(null)
 
             query.await()
 
             if (query.isSuccessful) {
+                removeCachedListing(userId, favListing.id)
+                cacheUser(updatedUser)
                 emit(ApiResponse.Success(updatedUser))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
@@ -171,6 +220,12 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> =
         flow {
             emit(ApiResponse.Loading)
+
+            // if no internet connection, simply returned cached listings
+            if (!networkStatus.isConnected) {
+                emit(ApiResponse.Success(getCachedFavListings(userId)))
+                return@flow
+            }
 
             val userRef = db.child(userId)
             val favoriteListingsRef = userRef.child("favoriteListings")
@@ -192,6 +247,8 @@ class UserRepositoryImpl : UserRepository {
 
                     if (listingSnapshot.exists()) {
                         val listing = listingSnapshot.getValue(Listing::class.java)!!
+                        // update cached listing information
+                        cacheFavListing(userId, listing)
                         favoriteListings.add(listing)
                     }
                 }
@@ -202,42 +259,15 @@ class UserRepositoryImpl : UserRepository {
             }
         }
 
-    override suspend fun unblockUser(
-        userId: String,
-        blockedUserId: String
-    ): Flow<ApiResponse<User>> = flow {
-        emit(ApiResponse.Loading)
-
-        val userRef = db.child(userId)
-        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
-
-        val userQuery = userRef.get()
-
-        userQuery.await()
-
-        val user: User? = userQuery.result.getValue(User::class.java)
-
-        if (user != null) {
-            val updatedBlockedUsers =
-                user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
-            val updatedUser = user.copy(favoriteListings = updatedBlockedUsers)
-            val query = blockedUsersRef.setValue(null)
-
-            query.await()
-
-            if (query.isSuccessful) {
-                emit(ApiResponse.Success(updatedUser))
-            } else {
-                val errorMessage = query.exception?.message.orEmpty()
-                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-            }
-        }
-    }
-
     override suspend fun blockUser(
         userId: String, blockedUserId: String
     ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
 
         val userRef = db.child(userId)
         val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
@@ -265,24 +295,66 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+    override suspend fun unblockUser(
+        userId: String,
+        blockedUserId: String
+    ): Flow<ApiResponse<User>> = flow {
         emit(ApiResponse.Loading)
 
-        val ratingId: String = db.child(userId).child("ratings").push().key.orEmpty()
-        val ratingToPush: Rating = rating.copy(id = ratingId)
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
 
-        val query = db.child(userId).child("ratings").child(ratingId).setValue(ratingToPush)
-        query.await()
+        val userRef = db.child(userId)
+        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
 
-        if (query.isSuccessful) {
-            emit(ApiResponse.Success(ratingToPush))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        val userQuery = userRef.get()
+
+        userQuery.await()
+
+        val user: User? = userQuery.result.getValue(User::class.java)
+
+        if (user != null) {
+            val updatedBlockedUsers =
+                user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
+            val updatedUser = user.copy(favoriteListings = updatedBlockedUsers)
+            val query = blockedUsersRef.setValue(null)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
         }
     }
 
-    override suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> =
+        flow {
+            emit(ApiResponse.Loading)
+
+            val ratingId: String = db.child(userId).child("ratings").push().key.orEmpty()
+            val ratingToPush: Rating = rating.copy(id = ratingId)
+
+            val query = db.child(userId).child("ratings").child(ratingId).setValue(ratingToPush)
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(ratingToPush))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+
+    override suspend fun updateRating(
+        userId: String,
+        ratingId: String,
+        rating: Rating
+    ): Flow<ApiResponse<Rating>> = flow {
         emit(ApiResponse.Loading)
 
         val query = db.child(userId).child("ratings").child(ratingId).setValue(rating)
@@ -296,7 +368,10 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>> = flow {
+    override suspend fun deleteRating(
+        userId: String,
+        ratingId: String
+    ): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
 
         val query = db.child(userId).child("ratings").child(ratingId).removeValue()
@@ -328,11 +403,29 @@ class UserRepositoryImpl : UserRepository {
             }
 
             emit(ApiResponse.Success(ratingsList))
-        }  else {
+        } else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
 
+    private suspend fun cacheUser(user: User) {
+        localDb.saveUser(user)
+    }
 
+    private suspend fun getCachedUser(userId: String): User? {
+        return localDb.getUser(userId)
+    }
+
+    private suspend fun getCachedFavListings(userId: String): List<Listing> {
+        return localDb.getFavListings(userId)
+    }
+
+    private suspend fun cacheFavListing(userId: String, listing: Listing) {
+        localDb.saveFavoriteListing(userId, listing)
+    }
+
+    private suspend fun removeCachedListing(userId: String, listingId: String) {
+        localDb.removeFavoriteListing(userId, listingId)
+    }
 }

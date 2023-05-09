@@ -13,12 +13,12 @@ interface UserRepository {
     suspend fun removeUser(userId: String): Flow<ApiResponse<Boolean>>
     suspend fun addFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>>
 
     suspend fun removeFavoriteListing(
         userId: String,
-        favListingId: String
+        favListing: Listing
     ): Flow<ApiResponse<User>>
 
     suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>>

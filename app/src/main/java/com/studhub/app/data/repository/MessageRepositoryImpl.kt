@@ -2,27 +2,33 @@ package com.studhub.app.data.repository
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Message
 import com.studhub.app.domain.repository.MessageRepository
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.util.*
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MessageRepositoryImpl : MessageRepository {
+class MessageRepositoryImpl @Inject constructor(
+    private val remoteDb: FirebaseDatabase,
+    private val localDb: LocalDataSource,
+    private val networkStatus: NetworkStatus
+) : MessageRepository {
 
-    private val db = Firebase.database.getReference("messages")
+    private val db = remoteDb.getReference("messages")
 
     override suspend fun createMessage(message: Message): Flow<ApiResponse<Message>> {
         val messageId: String = db.push().key.orEmpty()
@@ -30,6 +36,11 @@ class MessageRepositoryImpl : MessageRepository {
 
         return flow {
             emit(ApiResponse.Loading)
+
+            if (!networkStatus.isConnected) {
+                emit(ApiResponse.NO_INTERNET_CONNECTION)
+                return@flow
+            }
 
             val query = db.child(messageId).setValue(messageToPush)
 
@@ -48,6 +59,10 @@ class MessageRepositoryImpl : MessageRepository {
         callbackFlow {
             trySend(ApiResponse.Loading)
 
+            if (!networkStatus.isConnected) {
+                trySend(ApiResponse.Success(getCachedConversationMessages(conversation.id)))
+            }
+
             val listener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val messages = mutableListOf<Message>()
@@ -55,6 +70,7 @@ class MessageRepositoryImpl : MessageRepository {
                     dataSnapshot.children.forEach { snapshot ->
                         val message = snapshot.getValue(Message::class.java)
                         if (message != null && message.conversationId == conversation.id) {
+                            cacheMessage(message)
                             messages.add(message)
                         }
                     }
@@ -76,4 +92,14 @@ class MessageRepositoryImpl : MessageRepository {
                 cancel()
             }
         }
+
+    private fun cacheMessage(message: Message) {
+        runBlocking {
+            localDb.saveMessage(message)
+        }
+    }
+
+    private suspend fun getCachedConversationMessages(conversationId: String): List<Message> {
+        return localDb.getMessages(conversationId)
+    }
 }

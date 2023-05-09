@@ -1,7 +1,10 @@
 package com.studhub.app.data.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.firebase.database.FirebaseDatabase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
@@ -30,6 +33,14 @@ class UserRepositoryImplTest {
     @Inject
     lateinit var getUser: GetUser
 
+    @Inject
+    lateinit var remoteDb: FirebaseDatabase
+
+    @Inject
+    lateinit var localDb: LocalDataSource
+
+    @Inject
+    lateinit var networkStatus: NetworkStatus
 
 
     @Before
@@ -39,7 +50,7 @@ class UserRepositoryImplTest {
 
     @Test
     fun setAndGetSameUser() {
-        val userRepo = UserRepositoryImpl() // real repo
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus) // real repo
         val getUser = GetUser(userRepo)
         lateinit var user: User
 
@@ -77,7 +88,7 @@ class UserRepositoryImplTest {
 
     @Test
     fun addAndGetFavoriteListing() {
-        val userRepo = UserRepositoryImpl() // real repo
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus) // real repo
         val authRepo = MockAuthRepositoryImpl() // fake repo
         val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
         val getFavoriteListings = GetFavoriteListings(userRepo, authRepo)
@@ -87,7 +98,7 @@ class UserRepositoryImplTest {
         )
 
         runBlocking {
-            addFavoriteListing(product.id).collect() {
+            addFavoriteListing(product).collect() {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     ApiResponse.Loading -> {}
@@ -109,7 +120,7 @@ class UserRepositoryImplTest {
 
     @Test
     fun addAndRemoveFavoriteListing() {
-        val userRepo = UserRepositoryImpl() // real repo
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus) // real repo
         val authRepo = MockAuthRepositoryImpl() // fake repo
         val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
         val removeFavoriteListing = RemoveFavoriteListing(userRepo, authRepo)
@@ -119,7 +130,7 @@ class UserRepositoryImplTest {
         )
 
         runBlocking {
-            addFavoriteListing(product.id).collect() {
+            addFavoriteListing(product).collect {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     ApiResponse.Loading -> {}
@@ -129,7 +140,7 @@ class UserRepositoryImplTest {
         }
 
         runBlocking {
-            removeFavoriteListing(product.id).collect {
+            removeFavoriteListing(product).collect {
                 when (it) {
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
@@ -141,7 +152,7 @@ class UserRepositoryImplTest {
 
     @Test
     fun addAndRemoveBlockedUser() {
-        val userRepo = UserRepositoryImpl() // real repo
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus) // real repo
         val authRepo = MockAuthRepositoryImpl() // fake repo
         val addBlockedUser = AddBlockedUser(userRepo, authRepo)
         val removeBlockedUser = UnblockUser(userRepo, authRepo)
