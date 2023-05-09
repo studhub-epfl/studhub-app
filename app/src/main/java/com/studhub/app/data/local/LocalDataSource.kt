@@ -49,18 +49,6 @@ class LocalDataSource @Inject constructor(
         messageDao.insertMessage(message)
     }
 
-    suspend fun getListings(): List<Listing> {
-        return listingDao.getListings()
-    }
-
-    suspend fun saveListing(listing: Listing) {
-        listingDao.insertListing(listing)
-    }
-
-    suspend fun removeListing(id: String) {
-        return listingDao.deleteListing(id)
-    }
-
     suspend fun getFavListings(userId: String): List<Listing> {
         return userFavListingsDao.getUserFavorites(userId)
     }
@@ -73,5 +61,13 @@ class LocalDataSource @Inject constructor(
     suspend fun removeFavoriteListing(userId: String, listingId: String) {
         removeListing(listingId)
         userFavListingsDao.deleteFavoriteListing(userId, listingId)
+    }
+
+    private suspend fun saveListing(listing: Listing) {
+        listingDao.insertListing(listing)
+    }
+
+    private suspend fun removeListing(id: String) {
+        return listingDao.deleteListing(id)
     }
 }
