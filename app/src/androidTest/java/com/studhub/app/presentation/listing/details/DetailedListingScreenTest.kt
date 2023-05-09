@@ -41,8 +41,10 @@ class DetailedListingScreenTest {
                 onContactSellerClick = { },
                  onMeetingPointClick = {},
                 onFavoriteClicked = { isFavorite.value = !isFavorite.value },
-                isFavorite = isFavorite.value
+                isFavorite = isFavorite.value,
+                onRateUserClick = {}
             )
+                
         }
     }
 

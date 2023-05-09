@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
@@ -83,6 +84,7 @@ class UserRepositoryImpl : UserRepository {
             )
         )
 
+
         query.await()
 
         if (query.isSuccessful) {
@@ -120,8 +122,7 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings =
-                user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(true)
 
@@ -152,8 +153,7 @@ class UserRepositoryImpl : UserRepository {
         val user: User? = userQuery.result.getValue(User::class.java)
 
         if (user != null) {
-            val updatedFavoriteListings =
-                user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+            val updatedFavoriteListings = user.favoriteListings.toMutableMap().apply { remove(favListingId) }
             val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
             val query = favoriteListingsRef.setValue(null)
 
@@ -202,37 +202,6 @@ class UserRepositoryImpl : UserRepository {
             }
         }
 
-    override suspend fun blockUser(
-        userId: String, blockedUserId: String
-    ): Flow<ApiResponse<User>> = flow {
-        emit(ApiResponse.Loading)
-
-        val userRef = db.child(userId)
-        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
-
-        val userQuery = userRef.get()
-
-        userQuery.await()
-
-        val user: User? = userQuery.result.getValue(User::class.java)
-
-        if (user != null) {
-            val updatedBlockedUsers =
-                user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
-            val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
-            val query = blockedUsersRef.setValue(true)
-
-            query.await()
-
-            if (query.isSuccessful) {
-                emit(ApiResponse.Success(updatedUser))
-            } else {
-                val errorMessage = query.exception?.message.orEmpty()
-                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-            }
-        }
-    }
-
     override suspend fun unblockUser(
         userId: String,
         blockedUserId: String
@@ -264,4 +233,106 @@ class UserRepositoryImpl : UserRepository {
             }
         }
     }
+
+    override suspend fun blockUser(
+        userId: String, blockedUserId: String
+    ): Flow<ApiResponse<User>> = flow {
+        emit(ApiResponse.Loading)
+
+        val userRef = db.child(userId)
+        val blockedUsersRef = userRef.child("blockedUsers").child(blockedUserId)
+
+        val userQuery = userRef.get()
+
+        userQuery.await()
+
+        val user: User? = userQuery.result.getValue(User::class.java)
+
+        if (user != null) {
+            val updatedBlockedUsers =
+                user.blockedUsers.toMutableMap().apply { put(blockedUserId, true) }
+            val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
+            val query = blockedUsersRef.setValue(true)
+
+            query.await()
+
+            if (query.isSuccessful) {
+                emit(ApiResponse.Success(updatedUser))
+            } else {
+                val errorMessage = query.exception?.message.orEmpty()
+                emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+            }
+        }
+    }
+
+    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+        emit(ApiResponse.Loading)
+
+        val ratingId: String = db.child(userId).child("ratings").push().key.orEmpty()
+        val ratingToPush: Rating = rating.copy(id = ratingId)
+
+        val query = db.child(userId).child("ratings").child(ratingId).setValue(ratingToPush)
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(ratingToPush))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).child("ratings").child(ratingId).setValue(rating)
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(rating))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).child("ratings").child(ratingId).removeValue()
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(true))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> = flow {
+        emit(ApiResponse.Loading)
+
+        val query = db.child(userId).child("ratings").get()
+        query.await()
+
+        if (query.isSuccessful) {
+            val ratingsSnapshot = query.result.children
+            val ratingsList = mutableListOf<Rating>()
+
+            ratingsSnapshot.forEach { snapshot ->
+                val rating = snapshot.getValue(Rating::class.java)
+                if (rating != null) {
+                    ratingsList.add(rating)
+                }
+            }
+
+            emit(ApiResponse.Success(ratingsList))
+        }  else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+
 }

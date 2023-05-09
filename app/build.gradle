@@ -42,6 +42,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    allprojects {
+        tasks.withType(JavaCompile){
+            options.compilerArgs <<"-Xlint:deprecation"
+        }
+    }
     buildFeatures {
         viewBinding true
         compose true
@@ -56,6 +61,8 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+        exclude("META-INF/LICENSE.md")
+        exclude("META-INF/LICENSE-notice.md")
     }
 
     android {
@@ -132,15 +139,11 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.compose.ui:ui-util:$compose_ui_version"
 
-
-
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     // Camera/Pictures
     implementation "io.coil-kt:coil-compose:2.3.0"
     implementation 'com.google.accompanist:accompanist-pager:0.23.0'
-
-
 
 }
 

@@ -22,6 +22,8 @@ import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
 import com.studhub.app.presentation.profile.ProfileScreen
+import com.studhub.app.presentation.ratings.UserRatingScreen
+import com.studhub.app.presentation.ratings.UserRatingViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Preview
@@ -35,12 +37,12 @@ fun AppNavigation(
         composable(
             route = "Auth"
         ) {
-            Globals.showBottomBar = false
             AuthScreen(
                 navigateToForgotPasswordScreen = { navController.navigate("Auth/ForgotPassword") },
                 navigateToSignUpScreen = { navController.navigate("Auth/SignUp") }
             )
         }
+
 
         composable(route = "Auth/SignUp") {
             Globals.showBottomBar = false
@@ -102,6 +104,11 @@ fun AppNavigation(
             AboutScreen()
         }
 
+        composable("Conversations") {
+            Globals.showBottomBar = true
+            ConversationScreen(navigateToDiscussion = { conversationId -> navController.navigate("Conversations/$conversationId") })
+        }
+
         composable("DetailedListing/{id}") { backStackEntry ->
             Globals.showBottomBar = false
             val id = backStackEntry.arguments?.getString("id")
@@ -112,23 +119,18 @@ fun AppNavigation(
 
             DetailedListingScreen(
                 id = id,
-                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") })
+                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") }, navController = navController)
         }
 
-        composable("Conversations") {
-            Globals.showBottomBar = true
-            ConversationScreen(navigateToDiscussion = { conversationId -> navController.navigate("Conversations/$conversationId") })
-        }
+//        composable("RatingScreen") {
+//            UserRatingScreen(targetUserId = "-NRpD74U8sedQAH5_hdn")
+//        }
 
-        composable("Conversations/{id}") {
-            Globals.showBottomBar = false
-            val id = it.arguments?.getString("id")
-            if (id == null) {
-                navController.navigate("Conversations")
-                return@composable
+        composable("RatingScreen/{targetUserId}") { backStackEntry ->
+            val targetUserId = backStackEntry.arguments?.getString("targetUserId")
+            if (targetUserId != null) {
+                UserRatingScreen(targetUserId = targetUserId)
             }
-
-            ChatScreen(conversationId = id, navigateBack = { navController.popBackStack() })
         }
     }
 }
