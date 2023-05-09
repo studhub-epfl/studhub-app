@@ -120,8 +120,9 @@ fun CreateListingScreen(
                 chosen = chosenCategories
             )
         }
-    }
+    )
 }
+
 
 @Composable
 fun ListingForm(
