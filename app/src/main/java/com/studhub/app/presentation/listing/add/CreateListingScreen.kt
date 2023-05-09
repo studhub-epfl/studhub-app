@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -169,14 +170,53 @@ fun ListingForm(
     Spacer("large")
 
 
-    BasicFilledButton(
+    val priceValidationResult = validatePrice(price.value)
+
+    if (priceValidationResult != PriceValidationResult.VALID) {
+        Text(
+            text = when (priceValidationResult) {
+                PriceValidationResult.NEGATIVE -> "Please enter a non-negative price"
+                PriceValidationResult.NON_NUMERIC -> "Please enter a valid price"
+                else -> ""
+            },
+            modifier = Modifier.padding(4.dp),
+            color = Color.Red
+        )
+    }
+
+    // Check if the category is selected and the price is non-negative
+    val isFormValid = category.value.name != "Choose a category" && priceValidationResult == PriceValidationResult.VALID
+    Button(
         onClick = {
-            if (chosen.isNotEmpty()) {
+            if (isFormValid) {
                 onSubmit()
             }
         },
-        label = stringResource(R.string.listings_add_form_send)
-    )
+        enabled = isFormValid,
+        modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
+    ) {
+        //Text("Create")
+        stringResource(R.string.listings_add_form_send)
+    }
+}
+
+enum class PriceValidationResult {
+    VALID,
+    EMPTY,
+    NON_NUMERIC,
+    NEGATIVE
+}
+
+fun validatePrice(price: String): PriceValidationResult {
+    if (price.isEmpty()) {
+        return PriceValidationResult.EMPTY
+    }
+    val parsedPrice = price.toDoubleOrNull()
+    return when {
+        parsedPrice == null -> PriceValidationResult.NON_NUMERIC
+        parsedPrice < 0 -> PriceValidationResult.NEGATIVE
+        else -> PriceValidationResult.VALID
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
