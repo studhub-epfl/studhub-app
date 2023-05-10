@@ -195,8 +195,7 @@ fun ListingForm(
         enabled = isFormValid,
         modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
     ) {
-        //Text("Create")
-        stringResource(R.string.listings_add_form_send)
+        Text(stringResource(R.string.listings_add_form_send))
     }
 }
 

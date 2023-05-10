@@ -69,7 +69,7 @@ fun EditProfileForm(
                 enabled = isPhoneNumberValid,
                 modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
             ) {
-                stringResource(R.string.profile_edit_form_btn_save)
+                Text(stringResource(R.string.profile_edit_form_btn_save))
             }
 
         }
