@@ -9,5 +9,6 @@
     <string name="title_activity_create_listing">CreateListingActivity</string>
     <string name="title_activity_browse">BrowseActivity</string>
     <string name="title_activity_detailed_listing_view">DetailedListingView</string>
-    <string name="profile_edit_form_error_invalid_phone">Please enter a valid Swiss phone number</string>
+    <string name="listing_add_form_validation_neg_price">Please enter a non-negative price</string>
+    <string name="listing_add_form_validation_numeric_price">Please enter a valid price</string>
 </resources>

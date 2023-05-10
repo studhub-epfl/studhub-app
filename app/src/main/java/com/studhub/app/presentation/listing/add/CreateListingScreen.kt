@@ -30,6 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.R
+import com.studhub.app.core.utils.PriceValidationResult
+import com.studhub.app.core.utils.validatePrice
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.presentation.listing.add.components.CategorySheet
@@ -175,8 +177,8 @@ fun ListingForm(
     if (priceValidationResult != PriceValidationResult.VALID) {
         Text(
             text = when (priceValidationResult) {
-                PriceValidationResult.NEGATIVE -> "Please enter a non-negative price"
-                PriceValidationResult.NON_NUMERIC -> "Please enter a valid price"
+                PriceValidationResult.NEGATIVE -> stringResource(R.string.listing_add_form_validation_neg_price)
+                PriceValidationResult.NON_NUMERIC -> stringResource(R.string.listing_add_form_validation_numeric_price)
                 else -> ""
             },
             modifier = Modifier.padding(4.dp),
@@ -196,25 +198,6 @@ fun ListingForm(
         modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
     ) {
         Text(stringResource(R.string.listings_add_form_send))
-    }
-}
-
-enum class PriceValidationResult {
-    VALID,
-    EMPTY,
-    NON_NUMERIC,
-    NEGATIVE
-}
-
-fun validatePrice(price: String): PriceValidationResult {
-    if (price.isEmpty()) {
-        return PriceValidationResult.EMPTY
-    }
-    val parsedPrice = price.toDoubleOrNull()
-    return when {
-        parsedPrice == null -> PriceValidationResult.NON_NUMERIC
-        parsedPrice < 0 -> PriceValidationResult.NEGATIVE
-        else -> PriceValidationResult.VALID
     }
 }
 
