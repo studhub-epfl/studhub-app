@@ -61,7 +61,7 @@ fun EditProfileForm(
             }
 
             Spacer(Modifier.size(10.dp))
-            //r
+
             // Disable the button if the phone number is not a valid Swiss number
             Button(
                 onClick = {
