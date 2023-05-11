@@ -22,6 +22,7 @@ import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -48,6 +49,10 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
     private var selectedLatLng: LatLng? = null
     private lateinit var searchButton: Button
     private var viewOnly = false
+
+    val idlingResourceSearchLocation = CountingIdlingResource("Search")
+    val idlingResourceMapClick = CountingIdlingResource("MapClick")
+    val idlingResourceConfirmButton= CountingIdlingResource("ConfirmButton")
 
     companion object {
         private const val TAG = "MeetingPointPicker"
@@ -243,6 +248,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
     }
 
     private fun searchLocation(locationName: String) {
+        idlingResourceSearchLocation.increment()
         launch {
             try {
                 withTimeout(5000) { // Set a 5-second timeout for the Geocoder request
@@ -255,6 +261,13 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                         googleMap.clear()
                         googleMap.addMarker(MarkerOptions().position(latLng))
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                        // Enable the confirm button
+                        selectedLatLng = latLng
+                        confirmButton?.post {
+                            idlingResourceConfirmButton.increment()
+                            confirmButton?.isEnabled = true
+                            idlingResourceConfirmButton.decrement()
+                        }
                     }
                 }
             } catch (e: TimeoutCancellationException) {
@@ -262,6 +275,8 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                 Log.e(TAG, "Geocoding request took too long", e)
             } catch (e: Exception) {
                 Log.e(TAG, "Geocoding request failed", e)
+            } finally {
+                idlingResourceSearchLocation.decrement()
             }
         }
     }
@@ -307,11 +322,19 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 10f))
         if (confirmButton != null) {
             googleMap.setOnMapClickListener { latLng ->
+                // Increment the counter before the map click action
+                idlingResourceMapClick.increment()
                 googleMap.clear()
                 googleMap.addMarker(MarkerOptions().position(latLng))
                 selectedLatLng = latLng
+                idlingResourceConfirmButton.increment()
                 confirmButton?.isEnabled = true
+                idlingResourceConfirmButton.decrement()
+                // Decrement the counter after the map click action
+                idlingResourceMapClick.decrement()
             }
+
+
 
             confirmButton?.setOnClickListener {
                 selectedLatLng?.let { latLng ->
@@ -322,6 +345,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                     finish()
                 }
             }
+
         }
     }
 
