@@ -7,6 +7,7 @@ import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.input.*
+import com.studhub.app.presentation.ui.common.misc.Avatar
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.common.text.TextChip
@@ -111,9 +112,16 @@ fun TextChipPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProgressBarPreview() {
-    StudHubTheme() {
+    StudHubTheme {
         LoadingCircle()
     }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun AvatarPreview() {
+    Avatar(picture = null)
 }
 
 
