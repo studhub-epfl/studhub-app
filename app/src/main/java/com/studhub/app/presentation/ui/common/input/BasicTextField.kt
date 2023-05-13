@@ -28,9 +28,3 @@ fun BasicTextField(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun BasicTextFieldPreview() {
-    BasicTextField("Item description")
-}
-
