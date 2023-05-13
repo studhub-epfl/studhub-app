@@ -31,9 +31,3 @@ fun <T> Avatar(picture: T) {
             .clip(CircleShape)
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun AvatarPreview() {
-    Avatar(picture = null)
-}

@@ -8,7 +8,8 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TextChip(
     onClick: () -> Unit = {},
-    label: String, trailingIcon: @Composable (() -> Unit)? = null
+    label: String,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     ElevatedAssistChip(
         onClick = { onClick() },
