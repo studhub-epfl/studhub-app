@@ -15,7 +15,7 @@ class BasicFilledButtonTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun ComponentBasicFilledButtonExistsWithCorrectGivenNameWhenCreated() {
+    fun componentBasicFilledButtonExistsWithCorrectGivenNameWhenCreated() {
         composeTestRule.setContent {
             BasicFilledButton(onClick = { }, label = "Test")
         }

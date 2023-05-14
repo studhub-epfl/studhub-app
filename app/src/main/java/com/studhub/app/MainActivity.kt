@@ -17,24 +17,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.core.Globals
 import com.studhub.app.core.utils.Utils
-import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.presentation.auth.AuthViewModel
 import com.studhub.app.presentation.nav.NavBar
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavHostController
 
-    private val viewModel by viewModels<AuthViewModel>()
+    private val authViewModel by viewModels<AuthViewModel>()
 
-    @Inject
-    lateinit var networkManager: NetworkStatus
+    private val viewModel by viewModels<MainViewModel>()
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,12 +61,12 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun AuthState() {
-        val isUserSignedOut = !viewModel.getAuthState().collectAsState().value
+        val isUserSignedOut = !authViewModel.getAuthState().collectAsState().value
         if (isUserSignedOut) {
             Globals.showBottomBar = false
             navController.navigate("Auth")
         } else {
-            if (viewModel.isEmailVerified) {
+            if (authViewModel.isEmailVerified) {
                 Globals.showBottomBar = true
                 navController.navigate("Home")
             } else {
@@ -82,10 +78,12 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun ConnectivityState() {
-        val networkStatus = networkManager.connectivityStatus().collectAsState(initial = true).value
+        val networkStatus = viewModel.getNetworkState().collectAsState().value
 
         if (!networkStatus) {
             Utils.displayMessage(applicationContext, stringResource(R.string.error_network_off))
+        } else {
+            viewModel.flushCachedMessages()
         }
     }
 

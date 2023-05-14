@@ -9,5 +9,4 @@
     <string name="title_activity_create_listing">CreateListingActivity</string>
     <string name="title_activity_browse">BrowseActivity</string>
     <string name="title_activity_detailed_listing_view">DetailedListingView</string>
-
 </resources>

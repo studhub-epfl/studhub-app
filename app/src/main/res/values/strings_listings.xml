@@ -7,4 +7,6 @@
     <string name="listings_add_form_category">Choose a category</string>
     <string name="listings_add_form_send">Create</string>
     <string name="listings_browsing_title">Browse all listings</string>
+    <string name="listing_add_form_validation_neg_price">Please enter a non-negative price</string>
+    <string name="listing_add_form_validation_numeric_price">Please enter a valid price</string>
 </resources>
