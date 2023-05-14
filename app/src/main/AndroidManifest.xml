@@ -94,6 +94,11 @@
             android:label="Chat Wrapper"
             android:theme="@style/Theme.Studhub" />
         <activity
+            android:name=".wrapper.DetailedListingActivity"
+            android:exported="false"
+            android:label="Detailed Wrapper"
+            android:theme="@style/Theme.Studhub" />
+        <activity
             android:name=".wrapper.ConversationActivity"
             android:exported="false"
             android:label="Conversation Wrapper"

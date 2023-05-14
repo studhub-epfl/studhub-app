@@ -25,15 +25,14 @@ class DetailedListingViewModel @Inject constructor(
     private val addFavoriteListing: AddFavoriteListing,
     private val removeFavoriteListing: RemoveFavoriteListing,
     private val startConversationWith: StartConversationWith
-) : ViewModel() {
-    var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
+) : ViewModel(), IDetailedListingViewModel {
+    override var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
         private set
-    var isFavorite = mutableStateOf(false)
-
-    var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
+    override var isFavorite = mutableStateOf(false)
+    override var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
         private set
 
-    fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
+    override fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
         viewModelScope.launch {
             startConversationWith(seller).collect {
                 startConversationWithResponse = it
@@ -45,7 +44,7 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    fun fetchListing(id: String) {
+    override fun fetchListing(id: String) {
         viewModelScope.launch {
             getListing(id).collect {
                 currentListing = it
@@ -56,7 +55,7 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    private fun getIsFavorite() {
+    override  fun getIsFavorite() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
@@ -75,7 +74,7 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    fun onFavoriteClicked() {
+    override fun onFavoriteClicked() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data

@@ -12,9 +12,6 @@ import com.studhub.app.presentation.ratings.IUserRatingViewModel
 import com.studhub.app.wrapper.RatingActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
-import junit.framework.TestCase.fail
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -197,11 +194,14 @@ class UserRatingScreenTest {
         when (response) {
             is ApiResponse.Success -> {
             }
+
             is ApiResponse.Failure -> {
             }
+
             is ApiResponse.Loading -> {
 
             }
+
             else -> {
             }
         }

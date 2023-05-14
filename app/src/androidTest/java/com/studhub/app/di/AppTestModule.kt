@@ -23,6 +23,8 @@ import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.SignOut
 import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
+import com.studhub.app.presentation.listing.details.DetailedListingViewModel
+import com.studhub.app.presentation.listing.details.IDetailedListingViewModel
 import com.studhub.app.presentation.ratings.IUserRatingViewModel
 import dagger.Module
 import dagger.Provides
@@ -186,6 +188,10 @@ class AppTestModule {
 
     @Provides
     fun provideUserDao(localDatabase: LocalAppDatabase) = localDatabase.userDao()
+
+    @Singleton
+    @Provides
+    fun provideDetailedListingViewModel(): IDetailedListingViewModel = mock(IDetailedListingViewModel::class.java)
 
 
 }

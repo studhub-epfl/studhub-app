@@ -107,7 +107,7 @@ dependencies {
     // implementation "androidx.navigation:navigation-compose:2.6.0-alpha07"
     implementation 'androidx.navigation:navigation-testing:2.5.3'
     implementation 'androidx.compose.material:material:1.4.3'
-    androidTestImplementation "io.mockk:mockk:1.12.0"
+    androidTestImplementation 'io.mockk:mockk-android:1.12.0'
     androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -115,8 +115,14 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
     androidTestImplementation 'org.mockito:mockito-android:3.12.4'
-    androidTestImplementation "org.mockito:mockito-core:3.12.4"
+    androidTestImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+
+    ///whenever
+    androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
+    androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+
+
 
     //Navigation Compose
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose_version"
