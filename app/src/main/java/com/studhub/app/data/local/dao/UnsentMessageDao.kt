@@ -8,6 +8,9 @@ interface UnsentMessageDao {
     @Query("SELECT * FROM unsent_message WHERE conversationId = :conversationId ORDER BY createdAt ASC")
     suspend fun getUnsentMessages(conversationId: String): List<UnsentMessage>
 
+    @Query("SELECT * FROM unsent_message WHERE senderId = :senderId ORDER BY createdAt ASC")
+    suspend fun getUnsentMessagesOfUser(senderId: String): List<UnsentMessage>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertUnsentMessage(unsentMessage: UnsentMessage)
 
