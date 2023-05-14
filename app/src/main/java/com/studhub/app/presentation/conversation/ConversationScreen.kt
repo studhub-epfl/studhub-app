@@ -25,7 +25,6 @@ fun ConversationScreen(
 
     Column {
         BigLabel(label = stringResource(R.string.conversation_title))
-        
         when (val conversations = viewModel.conversations) {
             is ApiResponse.Loading -> LoadingCircle()
             is ApiResponse.Failure -> {}
