@@ -22,7 +22,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         Category(id = "9", name = "other", description = "other")
     )
 //like a tree structure
-    private val subCategories: List<Category> = listOf(
+    private val subCategoriess: List<Category> = listOf(
         Category(id = "1", name = "Electronics", description = "phones/cameras/.. ", parentCategoryId = null, subCategories =
             listOf(Category(id = "2", name = "phone", description = "", parentCategoryId = "1"),
                    Category(id = "3", name = "camera", description = "", parentCategoryId = "1" ))
@@ -57,13 +57,20 @@ class CategoryRepositoryImpl : CategoryRepository {
         listOf(Category(id = "24", name = "painting", description = "", parentCategoryId = "23"),
             Category(id = "25", name = "tapi", description = "", parentCategoryId = "23"))
         ),
-        Category(id = "/", name = "Other", description = "other")
+        Category(id = "26", name = "Other", description = "other")
     )
 
     override suspend fun getCategories(): Flow<ApiResponse<List<Category>>> {
 
         return flow {
             emit(ApiResponse.Success(ArrayList(categories)))
+        }
+    }
+
+    override suspend fun getSubCategories(): Flow<ApiResponse<List<Category>>> {
+
+        return flow {
+            emit(ApiResponse.Success(ArrayList(subCategoriess)))
         }
     }
 
@@ -80,7 +87,7 @@ class CategoryRepositoryImpl : CategoryRepository {
 
 
     override suspend fun getSubCategory(categoryId: String): Flow<ApiResponse<Category>> {
-        val matchingCategory = findCategory(categoryId, categories)
+        val matchingCategory = findCategory(categoryId, subCategoriess)
 
         return flow {
             if (matchingCategory == null)
@@ -94,7 +101,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         for (category in categories) {
             if (category.id == categoryId) {
                 return category
-            } else if (category.parentCategoryId != null) {
+            } else if (category.subCategories.isNotEmpty()) {
                 val matchingSubCategory = findCategory(categoryId, category.subCategories)
                 if (matchingSubCategory != null) {
                     return matchingSubCategory
