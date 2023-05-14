@@ -13,7 +13,8 @@ class RatingActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         setContent {
-            UserRatingScreen("-NQSUz5EY7-EfBG7PCIu")
+//            UserRatingScreen("-NQSUz5EY7-EfBG7PCIu")
+            UserRatingScreen(targetUserId = "")
         }
     }
 

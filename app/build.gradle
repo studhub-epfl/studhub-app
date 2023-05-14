@@ -116,6 +116,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
     androidTestImplementation 'org.mockito:mockito-android:3.12.4'
     androidTestImplementation "org.mockito:mockito-core:3.12.4"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 
     //Navigation Compose
     implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose_version"

@@ -187,7 +187,7 @@ fun ListingForm(
     }
 
     // Check if the category is selected and the price is non-negative
-    val isFormValid = category.value.name != "Choose a category" && priceValidationResult == PriceValidationResult.VALID
+    val isFormValid =  priceValidationResult == PriceValidationResult.VALID
     Button(
         onClick = {
             if (isFormValid) {

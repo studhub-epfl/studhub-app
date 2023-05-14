@@ -25,8 +25,13 @@ fun CategoryAndSellerInfo(
             Text(
                 text = "Category: " + category.name,
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
             )
+//            Text(
+//                text = "Seller: " + seller.userName,
+//                style = MaterialTheme.typography.titleSmall,
+//                color = MaterialTheme.colorScheme.secondary,
+//            )
         }
     }
 }

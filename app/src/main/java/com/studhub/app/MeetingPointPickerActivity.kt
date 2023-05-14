@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +51,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
 
     val idlingResourceSearchLocation = CountingIdlingResource("Search")
     val idlingResourceMapClick = CountingIdlingResource("MapClick")
-    val idlingResourceConfirmButton= CountingIdlingResource("ConfirmButton")
+    val idlingResourceConfirmButton = CountingIdlingResource("ConfirmButton")
 
     companion object {
         private const val TAG = "MeetingPointPicker"
@@ -220,7 +219,6 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
     }
 
     private fun launchPlacesAutocompleteRequest(query: String, adapter: ArrayAdapter<String>) {
-        Log.d("PRED", "method started")
         val placesClient = Places.createClient(this)
 
         val request = FindAutocompletePredictionsRequest.builder()
@@ -228,19 +226,14 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             .build()
 
         placesClient.findAutocompletePredictions(request).addOnSuccessListener { response ->
-            Log.d("PRED", "Predictions count: ${response.autocompletePredictions.size}")
-
             adapter.clear()
             response.autocompletePredictions.forEach {
                 adapter.add(it.getPrimaryText(null).toString())
             }
             adapter.notifyDataSetChanged()
             searchView.showDropDown()
-        }.addOnFailureListener { exception ->
-            Log.d("PRED", "Exception $exception")
-            Log.e(TAG, "Place not found", exception)
+        }.addOnFailureListener {
         }.addOnCompleteListener {
-            Log.d("PRED", "On complete")
             if (!it.isSuccessful) {
                 it.exception?.printStackTrace()
             }
@@ -272,9 +265,9 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                 }
             } catch (e: TimeoutCancellationException) {
                 // Handle the situation when the request takes too long
-                Log.e(TAG, "Geocoding request took too long", e)
+//                Log.e(TAG, "Geocoding request took too long", e)
             } catch (e: Exception) {
-                Log.e(TAG, "Geocoding request failed", e)
+//                Log.e(TAG, "Geocoding request failed", e)
             } finally {
                 idlingResourceSearchLocation.decrement()
             }
@@ -315,7 +308,6 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             == PackageManager.PERMISSION_GRANTED
         ) {
             googleMap.isMyLocationEnabled = true
-//            googleMap.uiSettings.isMyLocationButtonEnabled = true
         }
 
         val initialLatLng = LatLng(0.0, 0.0)
