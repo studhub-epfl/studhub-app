@@ -123,7 +123,6 @@ class MessageRepositoryImpl @Inject constructor(
             // on success, remove all flushed messages from the cache
             unbufferAllMessages(user.id)
             emit(ApiResponse.Success(true))
-            unbufferAllMessages(user.id)
         } else {
             val errorMessage = query.exception?.message.orEmpty()
             Log.w("MESSAGE_REPO", errorMessage)
