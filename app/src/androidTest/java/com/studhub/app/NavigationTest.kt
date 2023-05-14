@@ -128,6 +128,36 @@ class NavigationTest {
     }
 
     @Test
+    fun clickProfile_navigateToConversations() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_conversations)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.conversation_title)).assertIsDisplayed()
+    }
+
+    @Test
+    fun clickProfile_navigateToConversations() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_conversations)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.conversation_title)).assertIsDisplayed()
+    }
+
+    @Test
+    fun clickProfile_navigateToConversations() {
+        composeTestRule
+            .onNodeWithText(str(R.string.home_button_conversations)).assertExists()
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText(str(R.string.conversation_title)).assertIsDisplayed()
+    }
+
+    @Test
     fun clickCart_navigatesToAboutScreen() {
         composeTestRule
             .onNodeWithText(str(R.string.home_button_about)).assertExists()
