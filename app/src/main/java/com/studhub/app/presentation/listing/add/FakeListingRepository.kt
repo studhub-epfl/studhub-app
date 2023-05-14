@@ -8,6 +8,7 @@ import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.util.*
 import kotlin.random.Random
 
 /***
@@ -52,9 +53,6 @@ class FakeListingRepository : ListingRepository {
         TODO("Not yet implemented")
     }
 
-
-
-
     override suspend fun updateListing(
         listingId: String,
         updatedListing: Listing
@@ -63,6 +61,14 @@ class FakeListingRepository : ListingRepository {
     }
 
     override suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateListingToBidding(
+        listing: Listing,
+        startingPrice: Float,
+        deadline: Date
+    ): Flow<ApiResponse<Listing>> {
         TODO("Not yet implemented")
     }
 }

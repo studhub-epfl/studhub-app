@@ -138,6 +138,10 @@ class AppTestModule {
         UpdateListing(listingRepository)
 
     @Provides
+    fun provideUpdateListingToBidding(listingRepository: ListingRepository): UpdateListingToBidding =
+        UpdateListingToBidding(listingRepository)
+
+    @Provides
     fun provideGetListingsBySearch(
         repository: ListingRepository,
         authRepository: AuthRepository,
