@@ -8,6 +8,4 @@ interface CategoryRepository {
     suspend fun getCategories(): Flow<ApiResponse<List<Category>>>
     suspend fun getCategory(categoryId: String): Flow<ApiResponse<Category>>
 
-    suspend fun getSubCategory(categoryId: String): Flow<ApiResponse<Category>>
-    suspend fun getSubCategories(): Flow<ApiResponse<List<Category>>>
 }

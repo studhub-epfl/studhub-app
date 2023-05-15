@@ -7,6 +7,5 @@ data class Category(
      val id: String = "",
      val name: String = "",
      val description: String = "",
-     val parentCategoryId: String? = null,
-     val subCategories: List<Category> = emptyList()
+     val parentCategoryId: String? = null
 )
