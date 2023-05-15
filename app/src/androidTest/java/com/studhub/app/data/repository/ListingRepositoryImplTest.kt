@@ -3,7 +3,6 @@ package com.studhub.app.data.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.*
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -14,6 +13,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -26,7 +26,6 @@ class ListingRepositoryImplTest {
 
     @Inject
     lateinit var listingRepo: ListingRepository
-
 
     @Inject
     lateinit var getListingsByRange: GetListingsByRange
@@ -49,8 +48,8 @@ class ListingRepositoryImplTest {
     @Inject
     lateinit var updateListing: UpdateListing
 
-
-
+    @Inject
+    lateinit var updateListingToBidding: UpdateListingToBidding
 
     @Before
     fun init() {
@@ -86,7 +85,6 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
         }
     }
 
@@ -113,6 +111,25 @@ class ListingRepositoryImplTest {
                 when (it) {
                     is ApiResponse.Failure -> fail()
                     else -> assert(true)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun updateListingToBiddingShouldNotFail() {
+        val realListing = Listing(id = "-NVLrtm2gxN7_HzIiSZu")
+        val deadline = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000) // tomorrow
+        val startingPrice = 150.0F
+        runBlocking {
+            updateListingToBidding.invoke(realListing, startingPrice, deadline).collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(
+                        it.data.biddingDeadline == deadline &&
+                                it.data.price == startingPrice
+                    )
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
                 }
             }
         }
@@ -186,8 +203,6 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
-
         }
         runBlocking {
             listingRepo.getListingsBySearch("a key", mapOf()).collect {
@@ -257,8 +272,6 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
-
         }
         runBlocking {
             listingRepo.getListingsBySearch("Product 3", mapOf()).collect {
@@ -274,7 +287,7 @@ class ListingRepositoryImplTest {
     }
 
     @Test
-    fun getListingsBySearchshouldNotFailonPriceRange() {
+    fun getListingsBySearchShouldNotFailOnPriceRange() {
         lateinit var listing: Listing
         lateinit var listing2: Listing
         lateinit var listing3: Listing
@@ -330,15 +343,16 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
-
         }
         runBlocking {
             listingRepo.getListingsBySearch("1200-2000", mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
-                        it.data.contains(listing4) && it.data.contains(listing2) && it.data.contains(listing3)
-                                && !(it.data.contains(listing)))
+                        it.data.contains(listing4) && it.data.contains(listing2) && it.data.contains(
+                            listing3
+                        )
+                                && !(it.data.contains(listing))
+                    )
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
                 }
@@ -403,22 +417,19 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
-
         }
         runBlocking {
-            getListingsByRange.invoke("1002","1700").collect {
+            getListingsByRange.invoke("1002", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
-                        it.data.contains(listing2)  && it.data.contains(listing3)
-                                && !(it.data.contains(listing)) && !(it.data.contains(listing4)) )
+                        it.data.contains(listing2) && it.data.contains(listing3)
+                                && !(it.data.contains(listing)) && !(it.data.contains(listing4))
+                    )
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
                 }
             }
         }
-
-
     }
 
     @Test
@@ -452,12 +463,9 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
-
-
         }
         runBlocking {
-            getListingsByRange.invoke("r","1700").collect {
+            getListingsByRange.invoke("r", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -465,8 +473,6 @@ class ListingRepositoryImplTest {
                 }
             }
         }
-
-
     }
 
     @Test
@@ -500,13 +506,10 @@ class ListingRepositoryImplTest {
                     is ApiResponse.Loading -> {}
                 }
             }
-
-
-
         }
         runBlocking {
 
-            getListingsByRange.invoke("r","1700").collect {
+            getListingsByRange.invoke("r", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -514,8 +517,6 @@ class ListingRepositoryImplTest {
                 }
             }
         }
-
-
     }
 
 }

@@ -2,11 +2,14 @@ package com.studhub.app.data.repository
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.util.*
 import javax.inject.Singleton
+import kotlin.collections.HashMap
 
 @Singleton
 class MockListingRepositoryImpl: ListingRepository {
@@ -74,6 +77,23 @@ class MockListingRepositoryImpl: ListingRepository {
             emit(ApiResponse.Loading)
             listingDB.remove(listingId)
             emit(ApiResponse.Success(true))
+        }
+    }
+
+    override suspend fun updateListingToBidding(
+        listing: Listing,
+        startingPrice: Float,
+        deadline: Date
+    ): Flow<ApiResponse<Listing>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            val biddingListing = listing.copy(
+                price = startingPrice,
+                type = ListingType.BIDDING,
+                biddingDeadline = deadline
+            )
+            listingDB[listing.id] = biddingListing
+            emit(ApiResponse.Success(listingDB.getValue(listing.id)))
         }
     }
 }

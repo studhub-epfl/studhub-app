@@ -6,10 +6,12 @@ import com.studhub.app.data.local.LocalDataSource
 import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -246,6 +248,34 @@ class ListingRepositoryImpl @Inject constructor(
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
 
+    }
+
+    override suspend fun updateListingToBidding(
+        listing: Listing,
+        startingPrice: Float,
+        deadline: Date
+    ): Flow<ApiResponse<Listing>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(ApiResponse.NO_INTERNET_CONNECTION)
+            return@flow
+        }
+        val biddingListing = listing.copy(
+            price = startingPrice,
+            type = ListingType.BIDDING,
+            biddingDeadline = deadline
+        )
+        val query = db.child(listing.id).setValue(biddingListing)
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(biddingListing))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
     }
 
 }
