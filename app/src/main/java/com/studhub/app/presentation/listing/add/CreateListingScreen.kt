@@ -111,6 +111,7 @@ fun CreateListingScreen(
                             pictures,
                             navigateToListing
                         )
+
                     },
                     openCategorySheet = openCategorySheet
                 )

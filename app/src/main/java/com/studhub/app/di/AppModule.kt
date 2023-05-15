@@ -86,7 +86,11 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideCategoryRepository(): CategoryRepository = CategoryRepositoryImpl()
+    fun provideCategoryRepository(
+        remoteDb: FirebaseDatabase,
+        localDb: LocalDataSource,
+        networkStatus: NetworkStatus
+    ): CategoryRepository = CategoryRepositoryImpl(remoteDb, localDb, networkStatus)
 
     @Singleton
     @Provides

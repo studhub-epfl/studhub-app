@@ -85,7 +85,8 @@ fun AppNavigation(
                 onBrowseClick = { navController.navigate("Browse") },
                 onAboutClick = { navController.navigate("About") },
                 onCartClick = { navController.navigate("Cart") },
-                onProfileClick = { navController.navigate("Profile") }
+                onProfileClick = { navController.navigate("Profile")
+                }
             )
         }
         composable("AddListing") {
