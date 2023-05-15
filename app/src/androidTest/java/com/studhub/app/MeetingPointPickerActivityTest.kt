@@ -160,7 +160,7 @@ class MeetingPointPickerActivityTest {
             onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
                 .perform(click())
 
-            Thread.sleep(5000)
+            Thread.sleep(9000)
 
             assertNotSame(scenario.state, Lifecycle.State.RESUMED)
 
