@@ -118,7 +118,7 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:5.2.0"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 
-    ///whenever
+    ///whenever function
     androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
     androidTestImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
 
