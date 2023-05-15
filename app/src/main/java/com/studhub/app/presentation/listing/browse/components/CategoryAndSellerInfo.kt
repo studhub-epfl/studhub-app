@@ -25,7 +25,7 @@ fun CategoryAndSellerInfo(
             Text(
                 text = "Category: " + category.name,
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
             )
         }
     }

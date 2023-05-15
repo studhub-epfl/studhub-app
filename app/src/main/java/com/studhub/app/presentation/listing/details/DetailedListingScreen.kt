@@ -2,7 +2,14 @@ package com.studhub.app.presentation.listing.details
 
 import android.content.Intent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -14,10 +21,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
@@ -37,7 +46,7 @@ import com.studhub.app.presentation.ui.common.text.BigLabel
 
 @Composable
 fun DetailedListingScreen(
-    viewModel: DetailedListingViewModel = hiltViewModel(),
+    viewModel: IDetailedListingViewModel = hiltViewModel<DetailedListingViewModel>(),
     navigateToConversation: (conversationId: String) -> Unit,
     navigateToRateUser: (userId: String) -> Unit,
     id: String?
@@ -111,12 +120,19 @@ fun Details(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // "Contact seller" button
-                BasicFilledButton(onClick = { onContactSellerClick() }, label = "Contact seller")
-                // Rate user
+
+                Surface(modifier = Modifier.testTag("ContactSellerButton")) {
+                    BasicFilledButton(onClick = { onContactSellerClick() }, label = "Contact seller")
+                }
+
+
+                Surface(modifier = Modifier.testTag ("RateUserButton" )) {
                 BasicFilledButton(onClick = { onRateUserClick() }, label = "Rate user")
+                }
                 // "Favorite" button
+                    Surface(modifier = Modifier.testTag("ContactSellerButton" )) {
                 FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
+                }
             }
 
             Spacer("large")

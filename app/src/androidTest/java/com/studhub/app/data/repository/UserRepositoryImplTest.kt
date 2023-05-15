@@ -6,17 +6,21 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.local.LocalDataSource
 import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -180,5 +184,200 @@ class UserRepositoryImplTest {
             }
         }
     }
+
+    @Test
+    fun updateRating() = runBlocking {
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus)
+        val user = User(
+            userName = "testUser",
+            firstName = "Test",
+            lastName = "User",
+            email = "test.user@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        val rating = Rating(
+            userId = user.id,
+            id = Random.nextInt().toString()
+        )
+
+        userRepo.addRating(user.id, rating).collect {
+            when (it) {
+                is ApiResponse.Success -> {}
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+
+        val updatedRating = Rating(
+            id = rating.id,
+            userId = user.id,
+        )
+
+        userRepo.updateRating(user.id, rating.id, updatedRating).collect {
+            when (it) {
+                is ApiResponse.Success -> assert(it.data == updatedRating)
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+    @Test
+    fun deleteRating() = runBlocking {
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus)
+        val user = User(
+            userName = "testUser",
+            firstName = "Test",
+            lastName = "User",
+            email = "test.user@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        val rating = Rating(
+            userId = user.id,
+            id = Random.nextInt().toString()
+        )
+
+        userRepo.addRating(user.id, rating).collect {
+            when (it) {
+                is ApiResponse.Success -> {
+                }
+
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+
+        userRepo.deleteRating(user.id, rating.id).collect {
+            when (it) {
+                is ApiResponse.Success -> assert(it.data == true)
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+    @Test
+    fun getUserRatings() = runBlocking {
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus)
+        val userId = UUID.randomUUID().toString()
+        val user = User(
+            id = userId,
+            userName = "testUser",
+            firstName = "Test",
+            lastName = "User",
+            email = "test.user@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        val ratingId = UUID.randomUUID().toString()
+        val timestampd= Random.nextLong()
+        val rating = Rating(
+            userId = userId,
+            id = ratingId,
+            timestamp = timestampd
+
+        )
+
+        userRepo.addRating(user.id, rating).collect {
+            when (it) {
+                is ApiResponse.Success -> {}
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+
+        delay(1000)
+
+        userRepo.getUserRatings(user.id).collectLatest  {
+            when (it) {
+                is ApiResponse.Success -> {
+                    val ratingExists = it.data.any { it.userId == rating.userId && it.timestamp == timestampd }
+                    assert(ratingExists)
+                }
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+
+    }
+
+    @Test
+    fun blockUser() = runBlocking {
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus)
+        val user1 = User(
+            id = UUID.randomUUID().toString(),
+            userName = "testUser1",
+            firstName = "Test1",
+            lastName = "User1",
+            email = "test.user1@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        val user2 = User(
+            id = UUID.randomUUID().toString(),
+            userName = "testUser2",
+            firstName = "Test2",
+            lastName = "User2",
+            email = "test.user2@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        userRepo.blockUser(user1.id, user2.id).collect {
+            when (it) {
+                is ApiResponse.Success -> assert(it.data.blockedUsers.contains(user2.id))
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+    @Test
+    fun unblockUser() = runBlocking {
+        val userRepo = UserRepositoryImpl(remoteDb, localDb, networkStatus)
+        val user1 = User(
+            id = UUID.randomUUID().toString(),
+            userName = "testUser1",
+            firstName = "Test1",
+            lastName = "User1",
+            email = "test.user1@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        val user2 = User(
+            id = UUID.randomUUID().toString(),
+            userName = "testUser2",
+            firstName = "Test2",
+            lastName = "User2",
+            email = "test.user2@epfl.ch",
+            phoneNumber = "0799531499",
+            profilePicture = "https://studhub.com/profile-pictures/${Random.nextLong()}.jpg"
+        )
+
+        userRepo.blockUser(user1.id, user2.id).collect {
+            when (it) {
+                is ApiResponse.Success -> {}
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+
+        userRepo.unblockUser(user1.id, user2.id).collect {
+            when (it) {
+                is ApiResponse.Success -> assert(!it.data.blockedUsers.contains(user2.id))
+                is ApiResponse.Failure -> fail(it.message)
+                is ApiResponse.Loading -> {}
+            }
+        }
+    }
+
+
 
 }

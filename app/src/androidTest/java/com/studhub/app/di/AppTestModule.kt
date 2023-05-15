@@ -23,11 +23,15 @@ import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.SignOut
 import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
+import com.studhub.app.presentation.listing.details.DetailedListingViewModel
+import com.studhub.app.presentation.listing.details.IDetailedListingViewModel
+import com.studhub.app.presentation.ratings.IUserRatingViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import org.mockito.Mockito.mock
 import javax.inject.Singleton
 
 @Module
@@ -180,4 +184,17 @@ class AppTestModule {
         conversationRepository: ConversationRepository,
         authRepository: AuthRepository
     ): StartConversationWith = StartConversationWith(conversationRepository, authRepository)
+
+    @Singleton
+    @Provides
+    fun provideUserRatingViewModel(): IUserRatingViewModel = mock(IUserRatingViewModel::class.java)
+
+    @Provides
+    fun provideUserDao(localDatabase: LocalAppDatabase) = localDatabase.userDao()
+
+    @Singleton
+    @Provides
+    fun provideDetailedListingViewModel(): IDetailedListingViewModel = mock(IDetailedListingViewModel::class.java)
+
+
 }
