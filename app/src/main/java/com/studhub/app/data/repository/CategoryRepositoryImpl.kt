@@ -38,7 +38,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         Category(id = "23", name = "Services", description = "online services/apps/supports/..", parentCategoryId = null),
         Category(id = "24", name = "painting", description = "", parentCategoryId = "23"),
         Category(id = "25", name = "tapi", description = "", parentCategoryId = "23"),
-        Category(id = "26", name = "Other", description = "other")
+        Category(id = "26", name = "Other", description = "other", parentCategoryId = null)
     )
 
     override suspend fun getCategories(): Flow<ApiResponse<List<Category>>> {
