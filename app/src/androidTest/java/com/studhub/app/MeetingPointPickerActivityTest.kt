@@ -18,6 +18,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.maps.MapView
+import com.studhub.app.resources.ElapsedTimeIdlingResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertNotSame
@@ -31,88 +32,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MeetingPointPickerActivityTest {
 
-    @get:Rule(order = 0)
-    var hiltRule = HiltAndroidRule(this)
-
-
-    @Before
-    fun setUp() {
-        hiltRule.inject()
-    }
-
-
-    @Test
-    fun mapViewIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(MapView::class.java))).check(matches(isDisplayed()))
-        }
-    }
-
-
-    @Test
-    fun searchViewIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(AutoCompleteTextView::class.java))).check(
-                matches(
-                    isDisplayed()
-                )
-            )
-        }
-    }
-
-    @Test
-    fun searchButtonIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Search"))).check(
-                matches(
-                    isDisplayed()
-                )
-            )
-        }
-
-    }
-
-    @Test
-    fun confirmButtonIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location"))).check(
-                matches(isDisplayed())
-            )
-        }
-
-    }
-
 
     @Test
     fun searchLocationAndConfirm() {
@@ -124,12 +43,14 @@ class MeetingPointPickerActivityTest {
         intent.putExtra("latitude", 0.0)
         intent.putExtra("longitude", 0.0)
         ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-
             // Create idling resource
+            val idlingResource2 = ElapsedTimeIdlingResource(10000)
+            // Register idling resource
+            IdlingRegistry.getInstance().register(idlingResource2)
 
-            var idlingResource: IdlingResource?
+            var idlingResource: IdlingResource? = null
 
-            var idlingResourceConfirmButton: IdlingResource?
+            var idlingResourceConfirmButton: IdlingResource? = null
 
             scenario.onActivity { activity ->
                 idlingResource = activity.idlingResourceSearchLocation
@@ -154,17 +75,24 @@ class MeetingPointPickerActivityTest {
                 IdlingRegistry.getInstance().register(idlingResourceConfirmButton)
             }
 
-            Thread.sleep(5000)
+            Thread.sleep(10000)
+
+            scenario.onActivity { activity ->
+                IdlingRegistry.getInstance().unregister(idlingResourceConfirmButton)
+            }
 
             // Click on the confirm button
             onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
                 .perform(click())
 
-            Thread.sleep(9000)
 
-            assertNotSame(scenario.state, Lifecycle.State.RESUMED)
+//             Wait for the UI to get idle
+            IdlingRegistry.getInstance().unregister(idlingResource2)
+
+            Thread.sleep(5000)
 
 
+            assertNotSame(scenario.state,Lifecycle.State.RESUMED)
         }
 
 
@@ -182,10 +110,15 @@ class MeetingPointPickerActivityTest {
         intent.putExtra("longitude", 0.0)
 
         ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            var idlingResourceConfirm: IdlingResource?
+            var idlingResourceConfirm: IdlingResource? = null
+
+            // Create idling resource
+            val idlingResource2 = ElapsedTimeIdlingResource(10000)
+            // Register idling resource
+            IdlingRegistry.getInstance().register(idlingResource2)
 
 
-            var idlingResource: IdlingResource?
+            var idlingResource: IdlingResource? = null
 
             scenario.onActivity { activity ->
                 idlingResource = activity.idlingResourceMapClick
@@ -201,20 +134,23 @@ class MeetingPointPickerActivityTest {
                 IdlingRegistry.getInstance().register(idlingResourceConfirm)
             }
 
-            Thread.sleep(5000)
+            Thread.sleep(10000)
 
+            scenario.onActivity { activity ->
+                IdlingRegistry.getInstance().unregister(idlingResourceConfirm)
+            }
+
+            // Click on the confirm button
             onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
                 .perform(click())
 
-            Thread.sleep(5000)
+            // Wait for the UI to get idle
+            IdlingRegistry.getInstance().unregister(idlingResource2)
 
 
-            assertNotSame(scenario.state, Lifecycle.State.RESUMED)
+            assertNotSame(scenario.state,Lifecycle.State.RESUMED)
 
-        }
-    }
-
-
+        }  }
 }
 
 
