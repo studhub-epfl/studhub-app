@@ -2,8 +2,8 @@ package com.studhub.app.domain.usecase
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
-import com.studhub.app.data.repository.MockUserRepositoryImpl
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.*
@@ -14,6 +14,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Test
+import java.util.*
 import kotlin.random.Random
 
 class ListingUseCaseTest {
@@ -93,6 +94,23 @@ class ListingUseCaseTest {
                 delay(1000)
                 listingDB.remove(listingId)
                 emit(ApiResponse.Success(true))
+            }
+        }
+
+        override suspend fun updateListingToBidding(
+            listing: Listing,
+            startingPrice: Float,
+            deadline: Date
+        ): Flow<ApiResponse<Listing>> {
+            return flow {
+                emit(ApiResponse.Loading)
+                val biddingListing = listing.copy(
+                    price = startingPrice,
+                    type = ListingType.BIDDING,
+                    biddingDeadline = deadline
+                )
+                listingDB[listing.id] = biddingListing
+                emit(ApiResponse.Success(listingDB.getValue(listing.id)))
             }
         }
     }
@@ -204,6 +222,58 @@ class ListingUseCaseTest {
         }
 
     @Test
+    fun updateListingToBiddingUseCaseCorrectlyUpdatesEntry() =
+        runBlocking {
+            val updateListingToBidding = UpdateListingToBidding(repository)
+
+            val productId = Random.nextLong().toString()
+            val listing =  Listing(id = productId)
+            listingDB[productId] = listing
+            val deadline = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000) // tomorrow
+            val startingPrice = 150.0F
+
+            updateListingToBidding(listing, startingPrice, deadline).collect { response ->
+                when (response) {
+                    is ApiResponse.Success -> {
+                        val result: Listing = response.data
+                        val expectedResult: Listing = listing.copy(
+                            price = startingPrice,
+                            type = ListingType.BIDDING,
+                            biddingDeadline = deadline
+                        )
+                        val product1FromDB: Listing = listingDB.getValue(productId)
+
+                        assertEquals(
+                            "returned listing should match the updated one",
+                            result,
+                            expectedResult
+                        )
+
+                        assertEquals(
+                            "price should be updated",
+                            startingPrice,
+                            product1FromDB.price
+                        )
+
+                        assertEquals(
+                            "type should be updated",
+                            ListingType.BIDDING,
+                            product1FromDB.type
+                        )
+
+                        assertEquals(
+                            "bidding deadline should be updated",
+                            deadline,
+                            product1FromDB.biddingDeadline
+                        )
+                    }
+                    is ApiResponse.Failure -> fail("Request failure")
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+
+    @Test
     fun removeListingUseCaseCorrectlyRemovesEntry() =
         runBlocking {
             val removeListing = RemoveListing(repository)
@@ -252,29 +322,29 @@ class ListingUseCaseTest {
     //TODO: Change third parameter
     @Test
     fun lessThanMinCharSearchShouldFail(): Unit =
-        runBlocking {
-            val getListingsBySearch =
-                GetListingsBySearch(repository, MockAuthRepositoryImpl(), MockUserRepositoryImpl)
-            getListingsBySearch("lu").collect {
-                when (it) {
-                    is ApiResponse.Failure -> assert(true)
-                    else -> fail()
-                }
-            }
-        }
+    runBlocking {
+    val getListingsBySearch =
+    GetListingsBySearch(repository, MockAuthRepositoryImpl(), MockUserRepositoryImpl)
+    getListingsBySearch("lu").collect {
+    when (it) {
+    is ApiResponse.Failure -> assert(true)
+    else -> fail()
+    }
+    }
+    }
 
     @Test
     fun rightCharSearchShouldPass(): Unit =
-        runBlocking {
-            val getListingsBySearch =
-                GetListingsBySearch(repository, MockAuthRepositoryImpl(), MockUserRepositoryImpl)
-            getListingsBySearch(Random.nextLong(from = 100, until = 10000000).toString()).collect {
-                when (it) {
-                    is ApiResponse.Success -> assert(true)
-                    is ApiResponse.Loading -> {}
-                    is ApiResponse.Failure -> fail()
-                }
-            }
-        }**/
+    runBlocking {
+    val getListingsBySearch =
+    GetListingsBySearch(repository, MockAuthRepositoryImpl(), MockUserRepositoryImpl)
+    getListingsBySearch(Random.nextLong(from = 100, until = 10000000).toString()).collect {
+    when (it) {
+    is ApiResponse.Success -> assert(true)
+    is ApiResponse.Loading -> {}
+    is ApiResponse.Failure -> fail()
+    }
+    }
+    }**/
 
 }
