@@ -5,8 +5,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 class NetworkStatusImplTest : NetworkStatus {
+    private var connectionStatus = true
+
+    fun turnOffConnection() {
+        connectionStatus = false
+    }
+
+    fun turnOnConnection() {
+        connectionStatus = true
+    }
+
     override val isConnected: Boolean
-        get() = true
+        get() = connectionStatus
 
     override fun connectivityStatus(): Flow<Boolean> {
         return flowOf(true)

@@ -29,10 +29,3 @@ fun BasicTextField(
     )
 }
 
-@ExcludeFromGeneratedTestCoverage
-@Preview(showBackground = true)
-@Composable
-fun BasicTextFieldPreview() {
-    BasicTextField("Item description")
-}
-

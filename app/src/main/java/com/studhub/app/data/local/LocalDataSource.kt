@@ -1,6 +1,7 @@
 package com.studhub.app.data.local
 
 import com.studhub.app.data.local.database.LocalAppDatabase
+import com.studhub.app.data.local.entity.UnsentMessage
 import com.studhub.app.data.local.entity.UserFavoriteListings
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
@@ -14,6 +15,7 @@ class LocalDataSource @Inject constructor(
     private val userDao = localDatabase.userDao()
     private val conversationDao = localDatabase.conversationDao()
     private val messageDao = localDatabase.messageDao()
+    private val unsentMessageDao = localDatabase.unsentMessageDao()
     private val listingDao = localDatabase.listingDao()
     private val userFavListingsDao = localDatabase.userFavListingsDao()
 
@@ -47,6 +49,47 @@ class LocalDataSource @Inject constructor(
 
     suspend fun saveMessage(message: Message) {
         messageDao.insertMessage(message)
+    }
+
+    suspend fun saveUnsentMessage(message: Message) {
+        val unsentMessage = UnsentMessage(
+            id = 0,
+            senderId = message.senderId,
+            conversationId = message.conversationId,
+            content = message.content,
+            image = message.image,
+            createdAt = message.createdAt
+        )
+
+        unsentMessageDao.insertUnsentMessage(unsentMessage)
+    }
+
+    suspend fun removeUnsentMessagesOfUser(userId: String) {
+        unsentMessageDao.deleteUnsentMessages(userId)
+    }
+
+    suspend fun getUnsentMessagesOfConversation(conversationId: String): List<Message> {
+        return unsentMessageDao.getUnsentMessages(conversationId).map {
+            Message(
+                senderId = it.senderId,
+                conversationId = it.conversationId,
+                content = it.content,
+                image = it.image,
+                createdAt = it.createdAt
+            )
+        }
+    }
+
+    suspend fun getUnsentMessagesOfUser(userId: String): List<Message> {
+        return unsentMessageDao.getUnsentMessagesOfUser(userId).map {
+            Message(
+                senderId = it.senderId,
+                conversationId = it.conversationId,
+                content = it.content,
+                image = it.image,
+                createdAt = it.createdAt
+            )
+        }
     }
 
     suspend fun getFavListings(userId: String): List<Listing> {
