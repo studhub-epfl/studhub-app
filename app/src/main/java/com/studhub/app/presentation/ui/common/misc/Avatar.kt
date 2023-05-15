@@ -32,10 +32,3 @@ fun <T> Avatar(picture: T) {
             .clip(CircleShape)
     )
 }
-
-@ExcludeFromGeneratedTestCoverage
-@Preview(showBackground = true)
-@Composable
-fun AvatarPreview() {
-    Avatar(picture = null)
-}

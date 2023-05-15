@@ -198,32 +198,6 @@ class ConversationRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun updateLastMessageWith(
-        conversation: Conversation,
-        message: Message
-    ): Flow<ApiResponse<Conversation>> = flow {
-        emit(ApiResponse.Loading)
-
-        if (!networkStatus.isConnected) {
-            emit(ApiResponse.NO_INTERNET_CONNECTION)
-            return@flow
-        }
-
-        val conversationToPush =
-            conversation.copy(updatedAt = Date(), lastMessageContent = message.content)
-
-        val query = db.child(conversation.id).setValue(conversationToPush)
-
-        query.await()
-
-        if (query.isSuccessful) {
-            emit(ApiResponse.Success(conversationToPush))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-        }
-    }
-
     /**
      * Switch user1 and user2 in the [conversation] so that user1 is the given [currentUser]
      */

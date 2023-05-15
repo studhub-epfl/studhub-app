@@ -1,56 +1,57 @@
 package com.studhub.app.presentation.ui.common.text
 
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import junit.framework.TestCase.assertTrue
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
-@ExperimentalComposeUiApi
+@RunWith(AndroidJUnit4::class)
 class TextChipTest {
+
+    val name = "This is my super duper awesome name!"
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
-    fun textChip_isDisplayed() {
-        val label = "Test Label"
-
+    fun componentTextChipIsCreatedWithCorrectName() {
         composeTestRule.setContent {
-            TextChip(label = label)
+            TextChip(label = name)
         }
-
-        composeTestRule.onNodeWithText(label).assertExists()
+        composeTestRule.onNodeWithText(name).assertIsDisplayed()
     }
 
     @Test
-    fun textChip_onClick_isCalled() {
+    fun componentTextChipOnClickIsCorrectlyTriggered() {
         var clicked = false
-        val label = "Test Label"
-
         composeTestRule.setContent {
-            TextChip(label = label, onClick = { clicked = true })
+            TextChip(label = name, onClick = {clicked = true})
         }
-
-        composeTestRule.onNodeWithText(label).performClick()
-
-        assertTrue(clicked)
+        composeTestRule.onNodeWithText(name).performClick()
+        assert(clicked)
     }
 
     @Test
-    fun textChip_showsTrailingIcon_whenProvided() {
-        val label = "Test Label"
-
+    fun componentTextChipTrailingIconIsDisplayed() {
         composeTestRule.setContent {
-            TextChip(label = label, trailingIcon = { Icon(Icons.Filled.Add, contentDescription = "add icon") })
+            TextChip(
+                label = "",
+                trailingIcon = {
+                    Icon(
+                        Icons.Filled.Clear,
+                        contentDescription = "Test",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            )
         }
-
-        composeTestRule.onNodeWithContentDescription("add icon").assertExists()
+        composeTestRule.onNodeWithContentDescription("Test").assertIsDisplayed()
     }
 }

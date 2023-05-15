@@ -182,10 +182,9 @@ class AppModule {
     @Provides
     fun provideSendMessage(
         messageRepository: MessageRepository,
-        conversationRepository: ConversationRepository,
         authRepository: AuthRepository
     ): SendMessage =
-        SendMessage(messageRepository, conversationRepository, authRepository)
+        SendMessage(messageRepository, authRepository)
 
     @Provides
     fun provideStartConversationWith(
