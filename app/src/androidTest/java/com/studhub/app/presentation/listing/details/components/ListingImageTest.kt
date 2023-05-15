@@ -20,7 +20,7 @@ class ListingImageTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun listingImage_isDisplayed() {
+    fun listingImageIsDisplayed() {
         // The content description for the test
         val testContentDescription = "Test Content Description"
 
@@ -34,7 +34,7 @@ class ListingImageTest {
     }
 
     @Test
-    fun listingImage_fillsMaxWidth() {
+    fun listingImageFillsMaxWidth() {
         // The content description for the test
         val testContentDescription = "Test Content Description"
 
@@ -51,7 +51,7 @@ class ListingImageTest {
     }
 
     @Test
-    fun listingImage_hasCorrectHeight() {
+    fun listingImageHasCorrectHeight() {
         // The content description for the test
         val testContentDescription = "Test Content Description"
 
