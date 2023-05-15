@@ -25,7 +25,15 @@ data class Listing(
     var meetingPoint: MeetingPoint? = MeetingPoint(0.0,0.0),
     var pictures: List<String> = emptyList(),
     @Ignore
-    var picturesUri: List<Uri>? = null
+    var picturesUri: List<Uri>? = null,
+    var type: ListingType = ListingType.FIXED,
+    var currentBidderId: String? = null,
+    var biddingDeadline: Date = Date()
 ) {
     constructor() : this("")
+}
+
+enum class ListingType {
+    FIXED,
+    BIDDING
 }
