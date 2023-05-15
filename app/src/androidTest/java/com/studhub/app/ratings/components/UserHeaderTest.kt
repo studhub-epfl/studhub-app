@@ -28,7 +28,7 @@ class UserHeaderTest {
     }
 
     @Test
-    fun whenApiResponseIsSuccess_displayUserName() {
+    fun whenApiResponseIsSuccessDisplayUserName() {
         composeTestRule.setContent {
             UserHeader(targetUser = mutableStateOf(targetUser), thumbsUpCount = 5, thumbsDownCount = 3)
         }
@@ -37,7 +37,7 @@ class UserHeaderTest {
     }
 
     @Test
-    fun whenApiResponseIsSuccess_displayThumbsUpCount() {
+    fun whenApiResponseIsSuccessDisplayThumbsUpCount() {
         composeTestRule.setContent {
             UserHeader(targetUser = mutableStateOf(targetUser), thumbsUpCount = 5, thumbsDownCount = 3)
         }
@@ -46,7 +46,7 @@ class UserHeaderTest {
     }
 
     @Test
-    fun whenApiResponseIsSuccess_displayThumbsDownCount() {
+    fun whenApiResponseIsSuccessDisplayThumbsDownCount() {
         composeTestRule.setContent {
             UserHeader(targetUser = mutableStateOf(targetUser), thumbsUpCount = 5, thumbsDownCount = 3)
         }
@@ -55,7 +55,7 @@ class UserHeaderTest {
     }
 
     @Test
-    fun whenApiResponseIsError_displayErrorText() {
+    fun whenApiResponseIsErrorDisplayErrorText() {
         val errorResponse: ApiResponse<User> = ApiResponse.Failure("Error message")
         composeTestRule.setContent {
             UserHeader(targetUser = mutableStateOf(errorResponse), thumbsUpCount = 5, thumbsDownCount = 3)
@@ -65,7 +65,7 @@ class UserHeaderTest {
     }
 
     @Test
-    fun whenApiResponseIsLoading_displayCircularProgressIndicator() {
+    fun whenApiResponseIsLoadingDisplayCircularProgressIndicator() {
         val loadingResponse: ApiResponse<User> = ApiResponse.Loading
         composeTestRule.setContent {
             UserHeader(targetUser = mutableStateOf(loadingResponse), thumbsUpCount = 5, thumbsDownCount = 3)
