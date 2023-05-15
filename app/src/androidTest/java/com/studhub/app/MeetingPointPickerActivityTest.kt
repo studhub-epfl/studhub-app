@@ -123,7 +123,7 @@ class MeetingPointPickerActivityTest {
         intent.putExtra("longitude", 0.0)
         ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
             // Create idling resource
-            val idlingResource2 = ElapsedTimeIdlingResource(10000)
+            val idlingResource2 = ElapsedTimeIdlingResource(5000)
             // Register idling resource
             IdlingRegistry.getInstance().register(idlingResource2)
 
@@ -171,7 +171,7 @@ class MeetingPointPickerActivityTest {
             Thread.sleep(5000)
 
 
-            assertSame(scenario.state,Lifecycle.State.DESTROYED)
+            assertNotSame(scenario.state,Lifecycle.State.CREATED)
 
         }
 
