@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
@@ -38,6 +39,7 @@ fun ListingThumbnailScreen(
     }
 }
 
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun ListingThumbnailPreview() {

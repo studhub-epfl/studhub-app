@@ -1,7 +1,6 @@
 package com.studhub.app.presentation.listing.add.components
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
@@ -48,8 +48,8 @@ fun CategorySheet(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             sheetState = sheetState
         ) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                BigLabel("Pick a category ${sheetState.isVisible}")
+            Row(Modifier.fillMaxWidth().testTag("CategorySheetRow"), horizontalArrangement = Arrangement.Center) {
+                BigLabel("Pick a category ${sheetState.isVisible}", modifier = Modifier.testTag("CategorySheetBigLabel"))
             }
             Spacer(modifier = Modifier.height(8.dp))
             CategoryItems(categories, chosen, isOpen)
@@ -59,36 +59,43 @@ fun CategorySheet(
 
 @Composable
 fun CategoryItem(name: String, onClick: () -> Unit = { }) {
-    ListItem(
+   ListItem(
         colors = ListItemDefaults.colors(
             containerColor = Color.Transparent,
             headlineColor = MaterialTheme.colorScheme.onSecondaryContainer,
             leadingIconColor = MaterialTheme.colorScheme.onSecondaryContainer
         ),
-        headlineContent = { Text(name) },
+        headlineContent = { Text(name, modifier = Modifier.testTag("CategoryItemText-$name")) },
         leadingContent = {
             Icon(
                 Icons.Filled.Add,
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable { onClick() }
+        modifier = Modifier.clickable { onClick() }.testTag("CategoryItem-$name")
     )
 }
-
 @Composable
 fun CategoryItems(
     categories: List<Category>,
     chosen: SnapshotStateList<Category>,
     isOpen: MutableState<Boolean>,
 ) {
+    val chosenItems = remember { mutableStateListOf<Category>() }
+
+    LaunchedEffect(chosen) {
+        chosenItems.clear()
+        chosenItems.addAll(chosen)
+    }
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 12.dp)
+            .testTag("CategoryItemsColumn")
     ) {
         categories.forEach { cat ->
-            if (!chosen.contains(cat)) {
+            if (!chosenItems.contains(cat)) {
                 CategoryItem(
                     name = cat.name,
                     onClick = {

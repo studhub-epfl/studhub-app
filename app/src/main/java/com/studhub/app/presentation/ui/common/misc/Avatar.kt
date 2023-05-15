@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.studhub.app.R
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 
 
 /**
@@ -32,6 +33,7 @@ fun <T> Avatar(picture: T) {
     )
 }
 
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun AvatarPreview() {
