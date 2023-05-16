@@ -1,21 +1,21 @@
 container:
-  image: cirrusci/android-sdk:33
+  image: cirrusci/android-sdk:30
   cpu: 4
   memory: 16G
   kvm: true
 
 env:
-  CC_TEST_REPORTER_ID: ENCRYPTED[!71f330c95a420b7f0b995d025195eb5dfbca8a36d62bcbcd01555f2aae8085862ecafe33b7f10369f722eb60119f5bc4!]
+  CC_TEST_REPORTER_ID: ENCRYPTED[!54f7b8f65c44f69e037c57fabcd1ce35fc40ca4b906b4f7ec86ce97027304b04dc30a59405dd2f494c7f235d4f8c6ce3!]
   MAPS_API_KEY: ENCRYPTED[!72b644ee1719a79c8a5534975980e85647b26a8b43a578c7c492cdd529674c6d3d491277af964a5d75cbc57fdcad8bea!]
 
 check_android_task:
   name: Run Android tests
   install_emulator_script:
-    sdkmanager --install "system-images;android-33;google_apis;x86_64"
+    sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
     echo no | avdmanager create avd --force
       --name emulator
-      --package "system-images;android-33;google_apis;x86_64"
+      --package "system-images;android-30;google_apis;x86"
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
       -avd emulator
@@ -45,8 +45,8 @@ check_android_task:
     ./gradlew check connectedCheck
   report_codeclimate_script: |
     export JACOCO_SOURCE_PATH=app/src/main/java/
-    ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
-    ./cc-test-reporter upload-coverage
+    ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco --debug
+    ./cc-test-reporter upload-coverage --debug
   lint_script:
     ./gradlew lintDebug
   always:
