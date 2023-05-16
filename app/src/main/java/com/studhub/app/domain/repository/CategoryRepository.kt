@@ -9,6 +9,5 @@ interface CategoryRepository {
     suspend fun getCategories(): Flow<ApiResponse<List<Category>>>
     suspend fun getCategory(categoryId: String): Flow<ApiResponse<Category>>
 
-    suspend fun createCategory(category: Category): Flow<ApiResponse<Category>>
 
 }

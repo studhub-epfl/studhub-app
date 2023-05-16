@@ -25,7 +25,6 @@ fun HomeScreen(
     onProfileClick: () -> Unit
 ) {
     val user = viewModel.currentUser.collectAsState()
-    val cat = viewModel.createCategory("SubCategory1","none", parentId = "1")
     val scrollState = rememberScrollState()
     Globals.showBottomBar = true
 
