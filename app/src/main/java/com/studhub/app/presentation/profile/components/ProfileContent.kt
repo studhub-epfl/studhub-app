@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.studhub.app.R
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
+import com.studhub.app.presentation.ui.common.misc.Avatar
 import com.studhub.app.presentation.ui.common.text.BigLabel
 
 @Composable
@@ -35,12 +36,12 @@ fun ProfileContent(
         ) {
             Spacer(modifier = Modifier.height(48.dp))
 
+            Avatar(picture = profile.profilePicture.ifEmpty { null })
+
             BigLabel(label = profile.userName)
 
             BasicFilledButton(
-                onClick = {
-                    navigateToProfileFavorites()
-                },
+                onClick = { navigateToProfileFavorites() },
                 label = stringResource(R.string.profile_btn_display_favs)
             )
         }

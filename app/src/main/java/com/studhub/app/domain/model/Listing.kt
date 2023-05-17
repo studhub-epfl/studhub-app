@@ -1,10 +1,39 @@
 package com.studhub.app.domain.model
 
+import android.net.Uri
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
+import java.util.*
+
+@Entity(tableName = "listing")
 data class Listing(
-    val id: String = "",
-    val name: String = "",
-    val description: String = "",
-    val seller: User = User(),
-    val price: Float = 0F,
-    val categories: List<Category> = emptyList(),
-)
+    @PrimaryKey
+    @ColumnInfo(name = "listing_id")
+    var id: String = "",
+    var name: String = "",
+    var description: String = "",
+    var sellerId: String = "",
+    var createdAt: Date = Date(),
+    @Ignore
+    var seller: User = User(),
+    var price: Float = 0F,
+    @Ignore
+    var categories: List<Category> = emptyList(),
+    @Ignore
+    var meetingPoint: MeetingPoint? = MeetingPoint(0.0,0.0),
+    var pictures: List<String> = emptyList(),
+    @Ignore
+    var picturesUri: List<Uri>? = null,
+    var type: ListingType = ListingType.FIXED,
+    var currentBidderId: String? = null,
+    var biddingDeadline: Date = Date()
+) {
+    constructor() : this("")
+}
+
+enum class ListingType {
+    FIXED,
+    BIDDING
+}

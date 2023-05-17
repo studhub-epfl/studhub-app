@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,16 +21,11 @@ fun BasicTextField(
         singleLine = true,
         value = rememberedValue.value,
         onValueChange = { rememberedValue.value = it },
-        label = { Text(label)},
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onBackground
+        label = { Text(label) },
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground
         )
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BasicTextFieldPreview() {
-    BasicTextField("Item description")
 }
 

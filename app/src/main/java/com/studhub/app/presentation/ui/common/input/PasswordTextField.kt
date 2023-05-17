@@ -11,7 +11,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextField(
     label: String = "Password",
@@ -56,8 +55,9 @@ fun PasswordTextField(
                 )
             }
         },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = MaterialTheme.colorScheme.onBackground
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground
         )
     )
 }

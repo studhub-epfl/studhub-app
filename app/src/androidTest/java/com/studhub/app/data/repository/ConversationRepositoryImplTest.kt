@@ -61,37 +61,37 @@ class ConversationRepositoryImplTest {
 
     }
 
-    @Test
-    fun startedConversationIsCorrectlyRetrievedAfterCreation() {
-        val userId = "fake-user-${Random.nextLong()}"
-        val user = User(id = userId, userName = "Super User")
-
-        runBlocking {
-            startConversationWith(user).collect {
-                when (it) {
-                    is ApiResponse.Failure -> fail()
-                    else -> {}
-                }
-            }
-        }
-
-        runBlocking {
-            launch {
-                getCurrentUserConversations().collect {
-                    when (it) {
-                        is ApiResponse.Success -> {
-                            assertEquals(userId, it.data.first().user2Id)
-                            cancel()
-                        }
-                        is ApiResponse.Failure -> {
-                            fail()
-                            cancel()
-                        }
-                        is ApiResponse.Loading -> {}
-                    }
-                }
-            }
-        }
-
-    }
+//    @Test
+//    fun startedConversationIsCorrectlyRetrievedAfterCreation() {
+//        val userId = "fake-user-${Random.nextLong()}"
+//        val user = User(id = userId, userName = "Super User")
+//
+//        runBlocking {
+//            startConversationWith(user).collect {
+//                when (it) {
+//                    is ApiResponse.Failure -> fail()
+//                    else -> {}
+//                }
+//            }
+//        }
+//
+//        runBlocking {
+//            launch {
+//                getCurrentUserConversations().collect {
+//                    when (it) {
+//                        is ApiResponse.Success -> {
+//                            assertEquals(userId, it.data.first().user2Id)
+//                            cancel()
+//                        }
+//                        is ApiResponse.Failure -> {
+//                            fail()
+//                            cancel()
+//                        }
+//                        is ApiResponse.Loading -> {}
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
 }

@@ -12,9 +12,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.core.Globals
+import com.studhub.app.core.utils.Utils
 import com.studhub.app.presentation.auth.AuthViewModel
 import com.studhub.app.presentation.nav.NavBar
 import com.studhub.app.presentation.ui.theme.StudHubTheme
@@ -24,10 +26,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavHostController
 
-    private val viewModel by viewModels<AuthViewModel>()
+    private val authViewModel by viewModels<AuthViewModel>()
+
+    private val viewModel by viewModels<MainViewModel>()
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                             AppNavigation(navController = navController)
                         }
                         AuthState()
+                        ConnectivityState()
                     })
             }
         }
@@ -57,12 +61,12 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun AuthState() {
-        val isUserSignedOut = !viewModel.getAuthState().collectAsState().value
+        val isUserSignedOut = !authViewModel.getAuthState().collectAsState().value
         if (isUserSignedOut) {
             Globals.showBottomBar = false
             navController.navigate("Auth")
         } else {
-            if (viewModel.isEmailVerified) {
+            if (authViewModel.isEmailVerified) {
                 Globals.showBottomBar = true
                 navController.navigate("Home")
             } else {
@@ -72,12 +76,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkAuthState() {
-        if (viewModel.isUserAuthenticated) {
-            handleLoginComplete()
+    @Composable
+    private fun ConnectivityState() {
+        val networkStatus = viewModel.getNetworkState().collectAsState().value
+
+        if (!networkStatus) {
+            Utils.displayMessage(applicationContext, stringResource(R.string.error_network_off))
+        } else {
+            viewModel.flushCachedMessages()
         }
     }
-
-    private fun handleLoginComplete() = navController.navigate("Home")
 
 }

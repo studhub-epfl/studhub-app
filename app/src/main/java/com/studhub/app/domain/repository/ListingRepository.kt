@@ -3,6 +3,7 @@ package com.studhub.app.domain.repository
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 interface ListingRepository {
     /**
@@ -59,4 +60,13 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the [Boolean] value of the resulting operation
      */
     suspend fun removeListing(listingId: String): Flow<ApiResponse<Boolean>>
+
+    /**
+     * update a [Listing] to be of bidding type
+     * @param [listing] the listing to be updated
+     * @param [startingPrice] the starting price for the bidding type
+     * @param [deadline] the deadline for the fixing the bidding price
+     * @return A [Flow] of [ApiResponse] with the last one containing the updated [Listing] pushed to the database on success
+     */
+    suspend fun updateListingToBidding(listing: Listing, startingPrice: Float, deadline: Date): Flow<ApiResponse<Listing>>
 }

@@ -28,7 +28,6 @@ fun BrowseContent(listings: List<Listing>, navController: NavController) {
                 Spacer(modifier = Modifier.height(6.dp))
                 ListingThumbnailScreen(
                     viewModel = ListingThumbnailViewModel(listing = listing),
-                    navController = navController,
                     onClick = {
                         navController.navigate("DetailedListing/${listing.id}")
                     }

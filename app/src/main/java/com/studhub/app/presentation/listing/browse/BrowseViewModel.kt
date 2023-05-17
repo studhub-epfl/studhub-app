@@ -60,37 +60,5 @@ class BrowseViewModel @Inject constructor(
             }
         }
     }
-
-    fun generateSampleListings() {
-        val listings = listOf(
-            Listing(
-                id = "33",
-                name = "Algebra for the dummies",
-                seller = User(firstName = "Jacky", lastName = "Chan"),
-                categories = listOf(Category(name = "Books")),
-                description = "Really great book to learn Algebra for entry level readers.",
-                price = 34.50F
-            ),
-            Listing(
-                id = "32",
-                name = "Brand new Nike Air One",
-                seller = User(firstName = "Kristina", lastName = "Gordova"),
-                categories = listOf(Category(name = "Clothing")),
-                description = "Brand new shoes, full white and ready for any custom work if needed.",
-                price = 194.25F
-            ),
-            Listing(
-                id = "31",
-                name = "Super VTT 2000 with custom paint",
-                seller = User(firstName = "Marc", lastName = "Marquez"),
-                categories = listOf(Category(name = "Mobility")),
-                description = "Robust bike for downhill riding and will " +
-                        "look absolutely unique with this custom paint work",
-                price = 1500F
-            )
-        )
-
-        _listingsState.value = listings
-    }
 }
 

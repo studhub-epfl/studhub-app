@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
@@ -24,7 +25,6 @@ import com.studhub.app.presentation.ui.theme.StudHubTheme
 fun ListingThumbnailScreen(
     viewModel: ListingThumbnailViewModel,
     onClick: () -> Unit,
-    navController: NavController,
 ) {
     Card(
         onClick = onClick,
@@ -39,6 +39,7 @@ fun ListingThumbnailScreen(
     }
 }
 
+@ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
 fun ListingThumbnailPreview() {
@@ -48,10 +49,9 @@ fun ListingThumbnailPreview() {
         categories = listOf(Category(name = "Mobility")),
         price = 1560.45F
     )
-    lateinit var navController: NavHostController
-    navController = rememberNavController()
+    val navController: NavHostController = rememberNavController()
     val viewModel = ListingThumbnailViewModel(listing)
     StudHubTheme() {
-        ListingThumbnailScreen(viewModel = viewModel, onClick = {}, navController = navController)
+        ListingThumbnailScreen(viewModel = viewModel, onClick = {})
     }
 }

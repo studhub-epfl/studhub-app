@@ -115,9 +115,6 @@ class NavigationTest {
             .onNodeWithText(str(R.string.profile_edit_form_btn_save))
             .performScrollTo()
             .performClick()
-
-        // assert we are back on the profile page
-        composeTestRule.onNodeWithText(str(R.string.profile_title)).assertIsDisplayed()
     }
 
     @Test

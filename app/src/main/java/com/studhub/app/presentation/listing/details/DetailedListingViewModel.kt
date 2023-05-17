@@ -9,30 +9,30 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.domain.usecase.conversation.SendMessage
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.GetListing
-import com.studhub.app.presentation.listing.add.FakeListingRepository
+import com.studhub.app.domain.usecase.user.AddFavoriteListing
+import com.studhub.app.domain.usecase.user.GetFavoriteListings
+import com.studhub.app.domain.usecase.user.RemoveFavoriteListing
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailedListingViewModel @Inject constructor(
     private val getListing: GetListing,
+    private val getFavoriteListings: GetFavoriteListings,
+    private val addFavoriteListing: AddFavoriteListing,
+    private val removeFavoriteListing: RemoveFavoriteListing,
     private val startConversationWith: StartConversationWith
-) : ViewModel() {
-    var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
+) : ViewModel(), IDetailedListingViewModel {
+    override var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
+        private set
+    override var isFavorite = mutableStateOf(false)
+    override var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
         private set
 
-    var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
-        private set
-
-    fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
+    override fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
         viewModelScope.launch {
             startConversationWith(seller).collect {
                 startConversationWithResponse = it
@@ -44,11 +44,57 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    fun fetchListing(id: String) {
+    override fun fetchListing(id: String) {
         viewModelScope.launch {
             getListing(id).collect {
                 currentListing = it
+                if (it is ApiResponse.Success) {
+                    getIsFavorite()
+                }
             }
+        }
+    }
+
+    override  fun getIsFavorite() {
+        when (currentListing) {
+            is ApiResponse.Success -> {
+                val listing = (currentListing as ApiResponse.Success<Listing>).data
+                viewModelScope.launch {
+                    getFavoriteListings().collect {
+                        when (it) {
+                            is ApiResponse.Success -> {
+                                isFavorite.value = (it.data.contains(listing))
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    override fun onFavoriteClicked() {
+        when (currentListing) {
+            is ApiResponse.Success -> {
+                val listing = (currentListing as ApiResponse.Success<Listing>).data
+                viewModelScope.launch {
+                    if (!isFavorite.value) {
+                        addFavoriteListing(listing).collect {
+                            if (it is ApiResponse.Success) {
+                                isFavorite.value = true
+                            }
+                        }
+                    } else {
+                        removeFavoriteListing(listing).collect {
+                            if (it is ApiResponse.Success) {
+                                isFavorite.value = false
+                            }
+                        }
+                    }
+                }
+            }
+            else -> {}
         }
     }
 }
