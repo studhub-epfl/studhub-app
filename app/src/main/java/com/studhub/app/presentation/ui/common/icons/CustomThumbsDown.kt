@@ -8,5 +8,5 @@ import com.studhub.app.R
 
 @Composable
 fun CustomThumbsDown(): Painter {
-    return painterResource(R.drawable.thumbdown)
+    return painterResource(R.drawable.ic_launcher_foreground_red)
 }

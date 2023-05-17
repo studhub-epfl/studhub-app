@@ -8,5 +8,5 @@ import com.studhub.app.R
 
 @Composable
 fun CustomThumbsUp(): Painter {
-    return painterResource(R.drawable.like)
+    return painterResource(R.drawable.ic_launcher_foreground)
 }
