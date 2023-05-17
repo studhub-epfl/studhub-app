@@ -183,42 +183,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/Manifest*.*',
             '**/*Test*.*',
             'android/**/*.*',
-            '**/com/android/**',
-            '**/androidx/**',
-            '**/org/jetbrains/**',
-            '**/kotlin/**',
-            '**/META-INF/**',
-            // Wrapper activities
-            '**/wrapper/**',
-            // HILT
-            '**/di/**.*',
-            '**/*Hilt*.*',
-            'hilt_aggregated_deps/**',
-            '**/*_Factory.class',
-            '**/*MembersInjector*.*',
-            '**/*_MembersInjector.class',
-            '**/*Injector*.*',
-            '**/*Module*.*',
-            '**/*Component*.*',
-            '**/*Dagger*.*',
-            '**/*$Lambda*.*',
-            '**/*$Companion*.*',
-            '**/*$*_Factory*.*',
-            '**/*_Factory*.*',
-            '**/*_Provide*Factory*.*',
-            '**Dagger**',
-            '**Hilt**',
-            //
-            '**/*MapperImpl*.*',
-            '**/*$ViewInjector*.*',
-            '**/*$ViewBinder*.*',
-            '**/*BR*.*',
-            '**/*$Lambda$*.*',
-            '**/*Companion*.*',
-            '**/*_Provide*Factory*.*',
-            '**/*Extensions*.*',
-
-            '**/*dao*.*',
     ]
     def debugTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
