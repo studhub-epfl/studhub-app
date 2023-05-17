@@ -39,31 +39,29 @@ android {
             testCoverageEnabled true
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    allprojects {
-        tasks.withType(JavaCompile){
-            options.compilerArgs <<"-Xlint:deprecation"
-        }
-    }
+
     buildFeatures {
         viewBinding true
         compose true
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.0'
     }
+
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
-        exclude("META-INF/LICENSE.md")
-        exclude("META-INF/LICENSE-notice.md")
     }
 
     android {
