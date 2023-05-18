@@ -9,7 +9,8 @@ import androidx.compose.ui.res.stringResource
 import com.studhub.app.R
 
 @Composable
-fun AddListingButton(onClick: () -> Unit) {
+fun AddListingButton(onClick: () -> Unit,
+) {
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
