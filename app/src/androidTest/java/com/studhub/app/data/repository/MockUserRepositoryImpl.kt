@@ -5,10 +5,9 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.UserRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.UUID
+import java.util.*
 import javax.inject.Singleton
 
 @Singleton
@@ -157,16 +156,37 @@ class MockUserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
-        val userRatings = ratings.getOrPut(userId) { mutableMapOf() }
-        val ratingId = UUID.randomUUID().toString()
-        val ratingToAdd = rating.copy(id = ratingId)
-        userRatings[ratingId] = ratingToAdd
-
-        emit(ApiResponse.Success(ratingToAdd))
+    override suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            if (userDB.containsKey(userId)) {
+                val user = userDB[userId]!!
+                val blockedUsers = mutableListOf<User>()
+                user.blockedUsers.forEach {
+                    blockedUsers.add(userDB[it.key]!!)
+                }
+                emit(ApiResponse.Success(blockedUsers))
+            } else {
+                emit(ApiResponse.Failure("No entry for this key"))
+            }
+        }
     }
 
-    override suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>> = flow {
+    override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> =
+        flow {
+            val userRatings = ratings.getOrPut(userId) { mutableMapOf() }
+            val ratingId = UUID.randomUUID().toString()
+            val ratingToAdd = rating.copy(id = ratingId)
+            userRatings[ratingId] = ratingToAdd
+
+            emit(ApiResponse.Success(ratingToAdd))
+        }
+
+    override suspend fun updateRating(
+        userId: String,
+        ratingId: String,
+        rating: Rating
+    ): Flow<ApiResponse<Rating>> = flow {
         val userRatings = ratings[userId]
         if (userRatings != null && userRatings.containsKey(ratingId)) {
             userRatings[ratingId] = rating
@@ -176,7 +196,10 @@ class MockUserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>> = flow {
+    override suspend fun deleteRating(
+        userId: String,
+        ratingId: String
+    ): Flow<ApiResponse<Boolean>> = flow {
         val userRatings = ratings[userId]
         if (userRatings != null && userRatings.containsKey(ratingId)) {
             userRatings.remove(ratingId)

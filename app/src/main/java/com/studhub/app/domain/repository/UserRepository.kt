@@ -28,4 +28,5 @@ interface UserRepository {
     suspend fun updateRating(userId: String, ratingId: String, rating: Rating): Flow<ApiResponse<Rating>>
     suspend fun deleteRating(userId: String, ratingId: String): Flow<ApiResponse<Boolean>>
     suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>>
+    suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>>
 }

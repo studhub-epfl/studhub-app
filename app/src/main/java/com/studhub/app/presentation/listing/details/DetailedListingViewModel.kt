@@ -11,9 +11,7 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.GetListing
-import com.studhub.app.domain.usecase.user.AddFavoriteListing
-import com.studhub.app.domain.usecase.user.GetFavoriteListings
-import com.studhub.app.domain.usecase.user.RemoveFavoriteListing
+import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,12 +22,18 @@ class DetailedListingViewModel @Inject constructor(
     private val getFavoriteListings: GetFavoriteListings,
     private val addFavoriteListing: AddFavoriteListing,
     private val removeFavoriteListing: RemoveFavoriteListing,
-    private val startConversationWith: StartConversationWith
+    private val startConversationWith: StartConversationWith,
+    private val addBlockedUser: AddBlockedUser,
+    private val unblockUser: UnblockUser,
+    private val getBlockedUsers: GetBlockedUsers
 ) : ViewModel(), IDetailedListingViewModel {
     override var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
         private set
     override var isFavorite = mutableStateOf(false)
-    override var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
+    override var isBlocked = mutableStateOf(false)
+    override var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(
+        ApiResponse.Loading
+    )
         private set
 
     override fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
@@ -50,12 +54,13 @@ class DetailedListingViewModel @Inject constructor(
                 currentListing = it
                 if (it is ApiResponse.Success) {
                     getIsFavorite()
+                    getIsBlocked()
                 }
             }
         }
     }
 
-    override  fun getIsFavorite() {
+    override fun getIsFavorite() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
@@ -64,6 +69,25 @@ class DetailedListingViewModel @Inject constructor(
                         when (it) {
                             is ApiResponse.Success -> {
                                 isFavorite.value = (it.data.contains(listing))
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    override fun getIsBlocked() {
+        when (currentListing) {
+            is ApiResponse.Success -> {
+                val listing = (currentListing as ApiResponse.Success<Listing>).data
+                viewModelScope.launch {
+                    getBlockedUsers().collect {
+                        when (it) {
+                            is ApiResponse.Success -> {
+                                isBlocked.value = (it.data.contains(listing.seller))
                             }
                             else -> {}
                         }
@@ -89,6 +113,30 @@ class DetailedListingViewModel @Inject constructor(
                         removeFavoriteListing(listing).collect {
                             if (it is ApiResponse.Success) {
                                 isFavorite.value = false
+                            }
+                        }
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    override fun onBlockedClicked() {
+        when (currentListing) {
+            is ApiResponse.Success -> {
+                val listing = (currentListing as ApiResponse.Success<Listing>).data
+                viewModelScope.launch {
+                    if (!isBlocked.value) {
+                        addBlockedUser(listing.seller.id).collect {
+                            if (it is ApiResponse.Success) {
+                                isBlocked.value = true
+                            }
+                        }
+                    } else {
+                        unblockUser(listing.seller.id).collect {
+                            if (it is ApiResponse.Success) {
+                                isBlocked.value = false
                             }
                         }
                     }
