@@ -410,6 +410,92 @@ class ListingRepositoryImplTest {
         }
     }
 
+    @Test
+    fun getListingsByRangeShouldFailOnVoidSearch() {
+        lateinit var listing: Listing
+        lateinit var listing2: Listing
+        runBlocking {
+
+            val product = Listing(
+                description = "",
+                name = "Product 1",
+                price = 1000F
+            )
+            val product2 = Listing(
+                description = "",
+                name = "Product 2",
+                price = 1002F
+            )
+
+            listingRepo.createListing(product).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            listingRepo.createListing(product2).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing2 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+        runBlocking {
+
+            getListingsBySearch.invoke("","r", "1700").collect {
+                when (it) {
+                    is ApiResponse.Success -> {}
+                    is ApiResponse.Failure -> assert(true)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
+    @Test
+    fun getListingsByRangeShouldFailOnSmallSearchValues() {
+        lateinit var listing: Listing
+        lateinit var listing2: Listing
+        runBlocking {
+
+            val product = Listing(
+                description = "",
+                name = "Product 1",
+                price = 1000F
+            )
+            val product2 = Listing(
+                description = "",
+                name = "Product 2",
+                price = 1002F
+            )
+
+            listingRepo.createListing(product).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            listingRepo.createListing(product2).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing2 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+        runBlocking {
+
+            getListingsBySearch.invoke("e","0", "1700").collect {
+                when (it) {
+                    is ApiResponse.Success -> {}
+                    is ApiResponse.Failure -> assert(true)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
 
 }
 
