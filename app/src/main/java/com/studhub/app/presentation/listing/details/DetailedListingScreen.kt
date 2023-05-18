@@ -7,13 +7,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +25,9 @@ import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
+import com.studhub.app.presentation.listing.details.components.BiddingControls
 import com.studhub.app.presentation.listing.details.components.FavoriteButton
 import com.studhub.app.presentation.listing.details.components.ListingDescription
 import com.studhub.app.presentation.listing.details.components.ListingPrice
@@ -98,6 +100,7 @@ fun Details(
     onRateUserClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val price = remember { mutableStateOf(listing.price.toString()) }
 
     Column(
         modifier = Modifier
@@ -144,7 +147,12 @@ fun Details(
 
         ListingPrice(price = listing.price)
 
-        Spacer(modifier = Modifier.height(80.dp))
+        if (listing.type == ListingType.BIDDING) {
+            Spacer("large")
+            BiddingControls(price = price)
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
         val meetingPoint = listing.meetingPoint
         if (meetingPoint != null) {
             Button(
@@ -161,7 +169,7 @@ fun Details(
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
 @Composable
-fun DetailsPreview() {
+fun DetailsListingScreenPreview() {
     val listing = Listing(
         name = "Large white wooden desk",
         description = "This is the perfect desk for a home workplace",
@@ -171,6 +179,33 @@ fun DetailsPreview() {
             firstName = "Josh",
             lastName = "Marley",
         ),
+        price = 545.45F
+    )
+    StudHubTheme {
+        Details(
+            listing = listing,
+            onContactSellerClick = { },
+            onFavoriteClicked = { },
+            isFavorite = true,
+            onMeetingPointClick = {},
+            onRateUserClick = {})
+    }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun DetailsListingScreenBidPreview() {
+    val listing = Listing(
+        name = "Large white wooden desk",
+        description = "This is the perfect desk for a home workplace",
+        categories = listOf(Category(name = "Furniture")),
+        seller = User(
+            userName = "SuperChad",
+            firstName = "Josh",
+            lastName = "Marley",
+        ),
+        type = ListingType.BIDDING,
         price = 545.45F
     )
     StudHubTheme {
