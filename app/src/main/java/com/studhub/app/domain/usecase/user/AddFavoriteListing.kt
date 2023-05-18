@@ -1,6 +1,7 @@
 package com.studhub.app.domain.usecase.user
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
@@ -23,10 +24,10 @@ class AddFavoriteListing @Inject constructor(
      *
      * @param [favListingId] the ID of the listing to add to the favorite listing
      */
-    suspend operator fun invoke(favListingId: String): Flow<ApiResponse<User>> {
+    suspend operator fun invoke(favListing: Listing): Flow<ApiResponse<User>> {
         return userRepository.addFavoriteListing(
             authRepository.currentUserUid,
-            favListingId
+            favListing
         )
     }
 }

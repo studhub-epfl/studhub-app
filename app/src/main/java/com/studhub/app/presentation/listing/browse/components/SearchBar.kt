@@ -99,12 +99,12 @@ fun SearchBar(
                     }
                 },
                 singleLine = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = MaterialTheme.colorScheme.onSurface,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                     focusedBorderColor = MaterialTheme.colorScheme.onSurface,
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     cursorColor = MaterialTheme.colorScheme.onSurface,
-                    containerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

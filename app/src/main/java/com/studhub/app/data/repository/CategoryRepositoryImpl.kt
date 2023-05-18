@@ -1,41 +1,94 @@
 package com.studhub.app.data.repository
 
+import com.google.firebase.database.FirebaseDatabase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.network.NetworkStatus
+import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Category
+import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.CategoryRepository
+import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CategoryRepositoryImpl : CategoryRepository {
+class CategoryRepositoryImpl @Inject constructor(
+    private val remoteDb: FirebaseDatabase,
+    private val localDb: LocalDataSource,
+    private val networkStatus: NetworkStatus
+) : CategoryRepository {
 
-    private val categories: List<Category> = listOf(
-        Category(id = "1", name = "electronics", description = "phones/cameras/.. "),
-        Category(id = "2", name = "school items", description ="books/pencils/bags/.."),
-        Category(id = "3", name = "accessories", description = "keys/necklaces/.."),
-        Category(id = "4", name = "instruments", description = "ear phones/guitar/.."),
-        Category(id = "5", name = "mobility", description = "bikes/scooter/.."),
-        Category(id = "6", name = "clothes", description = "pants/shirts/.."),
-        Category(id = "7", name = "art-decorations", description = "paintings/tapis/.."),
-        Category(id = "8", name = "services", description = "online services/apps/supports/.."),
-        Category(id = "9", name = "other", description = "other")
-    )
+    private val db = remoteDb.getReference("categories")
+    private var provisionalListing = mutableListOf<Listing>()
+    private val storageHelper = StorageHelper()
 
-    override suspend fun getCategories(): Flow<ApiResponse<List<Category>>> {
 
-        return flow {
-            emit(ApiResponse.Success(ArrayList(categories)))
+    override suspend fun getCategories(): Flow<ApiResponse<List<Category>>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(ApiResponse.NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
+        val query = db.get()
+
+        query.await()
+
+        if (query.isSuccessful) {
+            val categories = mutableListOf<Category>()
+
+            for (listingSnapshot in query.result.children) {
+                val retrievedCategory: Category? = listingSnapshot.getValue(Category::class.java)
+                if (retrievedCategory != null) {
+                    categories.add(retrievedCategory)
+                }
+            }
+
+            emit(ApiResponse.Success(categories))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
 
-    override suspend fun getCategory(categoryId: String): Flow<ApiResponse<Category>> {
-        val matchingCats: List<Category> = categories.filter { it.id == categoryId }
-        return flow {
-            if (matchingCats.isEmpty())
-                emit(ApiResponse.Failure("No category matching given id"))
-            else
-                emit(ApiResponse.Success(matchingCats[0]))
+
+    override suspend fun getCategory(categoryId: String): Flow<ApiResponse<Category>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(ApiResponse.NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
+        val query = db.child(categoryId).get()
+
+        query.await()
+
+        if (query.isSuccessful) {
+            val retrievedCategory: Category? = query.result.getValue(Category::class.java)
+            if (retrievedCategory == null) {
+                emit(ApiResponse.Failure("Category does not exist"))
+            } else {
+                emit(ApiResponse.Success(retrievedCategory))
+            }
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
 }
+
+
+
+
+
+
+
+
+
+

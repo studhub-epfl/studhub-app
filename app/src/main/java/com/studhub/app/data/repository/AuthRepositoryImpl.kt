@@ -1,16 +1,14 @@
 package com.studhub.app.data.repository
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.BeginSignInResult
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.firebase.auth.AuthCredential
+import com.google.android.gms.common.api.Api
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
-import com.studhub.app.core.Constants.SIGN_IN_REQUEST
-import com.studhub.app.core.Constants.SIGN_UP_REQUEST
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.core.utils.ApiResponse.Companion.NO_INTERNET_CONNECTION
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
@@ -19,13 +17,14 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val db: FirebaseDatabase
+    private val db: FirebaseDatabase,
+    private val localDb: LocalDataSource,
+    private val networkStatus: NetworkStatus
 ) : AuthRepository {
     private val internalDb = db.getReference("users")
 
@@ -44,6 +43,11 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
 
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
         if (!(email.endsWith("epfl.ch") || email.endsWith("unil.ch"))) {
             emit(ApiResponse.Failure("You must use an epfl.ch or unil.ch email address in order to register."))
             return@flow
@@ -52,6 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             auth.createUserWithEmailAndPassword(email, password).await()
             addUserToFirebase()
+
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {
             emit(ApiResponse.Failure(e.message.orEmpty().ifEmpty { "User sign-up failed" }))
@@ -60,6 +65,11 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun sendEmailVerification(): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
 
         try {
             if (auth.currentUser == null) {
@@ -83,6 +93,11 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
 
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
         try {
             auth.signInWithEmailAndPassword(email, password).await()
             emit(ApiResponse.Success(true))
@@ -93,6 +108,11 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun sendPasswordResetEmail(email: String): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
 
         try {
             auth.sendPasswordResetEmail(email).await()
@@ -109,6 +129,7 @@ class AuthRepositoryImpl @Inject constructor(
         emit(ApiResponse.Loading)
 
         try {
+            removeLoggedInUserFromCache()
             auth.signOut()
             emit(ApiResponse.Success(true))
         } catch (e: Exception) {
@@ -118,6 +139,11 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun reloadUser(): Flow<ApiResponse<Boolean>> = flow {
         emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(NO_INTERNET_CONNECTION)
+            return@flow
+        }
 
         try {
             auth.currentUser?.reload()?.await()
@@ -144,6 +170,10 @@ class AuthRepositoryImpl @Inject constructor(
             val user: User = toUser()
             internalDb.child(uid).setValue(user)
         }
+    }
+
+    private suspend fun removeLoggedInUserFromCache() {
+        localDb.removeUser(currentUserUid)
     }
 
 }

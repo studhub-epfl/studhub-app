@@ -28,6 +28,13 @@ import com.studhub.app.R
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import java.io.File
 
+/**
+ * An image picker which allows the user to either take a picture or select one on their phone
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param onNewPicture A handler function to be called when a new picture has been selected by the user
+ * @param displayPickedImage Should the picked image be display by the composable. Defaults to false
+ */
 @Composable
 fun ImagePicker(
     modifier: Modifier = Modifier,

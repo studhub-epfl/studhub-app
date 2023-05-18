@@ -3,11 +3,12 @@ package com.studhub.app.data.repository
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.local.LocalDataSource
+import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Message
 import com.studhub.app.domain.model.User
@@ -17,19 +18,30 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.util.*
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ConversationRepositoryImpl : ConversationRepository {
+class ConversationRepositoryImpl @Inject constructor(
+    private val remoteDb: FirebaseDatabase,
+    private val localDb: LocalDataSource,
+    private val networkStatus: NetworkStatus
+) : ConversationRepository {
 
-    private val db = Firebase.database.getReference("conversations")
-    private val userDb = Firebase.database.getReference("users")
+    private val db = remoteDb.getReference("conversations")
+    private val userDb = remoteDb.getReference("users")
 
     override suspend fun createConversation(conversation: Conversation): Flow<ApiResponse<Conversation>> =
         flow {
             emit(ApiResponse.Loading)
+
+            if (!networkStatus.isConnected) {
+                emit(ApiResponse.NO_INTERNET_CONNECTION)
+                return@flow
+            }
 
             // first check that the user is not trying to contact themself
             if (conversation.user1Id == conversation.user2Id) {
@@ -109,6 +121,19 @@ class ConversationRepositoryImpl : ConversationRepository {
         flow {
             emit(ApiResponse.Loading)
 
+            if (!networkStatus.isConnected) {
+                emit(
+                    ApiResponse.Success(
+                        // reorder just in case 2 users used the same phone and sent each other some messages
+                        maybeSwitchUsers(
+                            getCachedConversation(conversationId),
+                            user
+                        )
+                    )
+                )
+                return@flow
+            }
+
             val query = db.child(conversationId).get()
 
             query.await()
@@ -131,10 +156,16 @@ class ConversationRepositoryImpl : ConversationRepository {
         callbackFlow {
             trySend(ApiResponse.Loading)
 
+            if (!networkStatus.isConnected) {
+                // reorder just in case 2 users used the same phone and sent each other some messages
+                val conversations =
+                    getCachedConversations(user.id).map { maybeSwitchUsers(it, user) }
+                trySend(ApiResponse.Success(conversations))
+            }
+
             val listener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val conversations = mutableListOf<Conversation>()
-
 
                     dataSnapshot.children.forEach { snapshot ->
                         val conversation = snapshot.getValue(Conversation::class.java)
@@ -143,7 +174,9 @@ class ConversationRepositoryImpl : ConversationRepository {
                                             conversation.user2Id == user.id)
                         ) {
                             // ensure logged-in user is User1
-                            conversations.add(maybeSwitchUsers(conversation, user))
+                            val conv: Conversation = maybeSwitchUsers(conversation, user)
+                            cacheConversation(conv)
+                            conversations.add(conv)
                         }
                     }
 
@@ -165,27 +198,6 @@ class ConversationRepositoryImpl : ConversationRepository {
             }
         }
 
-    override suspend fun updateLastMessageWith(
-        conversation: Conversation,
-        message: Message
-    ): Flow<ApiResponse<Conversation>> = flow {
-        emit(ApiResponse.Loading)
-
-        val conversationToPush =
-            conversation.copy(updatedAt = Date(), lastMessageContent = message.content)
-
-        val query = db.child(conversation.id).setValue(conversationToPush)
-
-        query.await()
-
-        if (query.isSuccessful) {
-            emit(ApiResponse.Success(conversationToPush))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-        }
-    }
-
     /**
      * Switch user1 and user2 in the [conversation] so that user1 is the given [currentUser]
      */
@@ -201,5 +213,19 @@ class ConversationRepositoryImpl : ConversationRepository {
                 user1 = conversation.user2,
                 user2 = conversation.user1
             )
+
+    private fun cacheConversation(conversation: Conversation) {
+        runBlocking {
+            localDb.saveConversation(conversation)
+        }
+    }
+
+    private suspend fun getCachedConversations(userId: String): List<Conversation> {
+        return localDb.getConversations(userId)
+    }
+
+    private suspend fun getCachedConversation(conversationId: String): Conversation {
+        return localDb.getConversation(conversationId)
+    }
 }
 

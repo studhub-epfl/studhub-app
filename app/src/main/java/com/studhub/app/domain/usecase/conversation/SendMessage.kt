@@ -18,7 +18,6 @@ import javax.inject.Inject
  */
 class SendMessage @Inject constructor(
     private val messageRepository: MessageRepository,
-    private val conversationRepository: ConversationRepository,
     private val authRepository: AuthRepository
 ) {
 
@@ -32,22 +31,6 @@ class SendMessage @Inject constructor(
         val msg =
             message.copy(senderId = authRepository.currentUserUid, conversationId = conversation.id)
 
-        return flow {
-            messageRepository.createMessage(msg).collect { msgQuery ->
-                when (msgQuery) {
-                    is ApiResponse.Success -> {
-                        conversationRepository.updateLastMessageWith(conversation, msgQuery.data)
-                            .collect { convoQuery ->
-                                when (convoQuery) {
-                                    is ApiResponse.Failure -> emit(ApiResponse.Failure(convoQuery.message))
-                                    is ApiResponse.Loading -> emit(ApiResponse.Loading)
-                                    is ApiResponse.Success -> emit(msgQuery)
-                                }
-                            }
-                    }
-                    else -> emit(msgQuery)
-                }
-            }
-        }
+        return messageRepository.createMessage(msg)
     }
 }

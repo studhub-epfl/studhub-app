@@ -35,15 +35,4 @@ interface ConversationRepository {
      */
     suspend fun getUserConversations(user: User): Flow<ApiResponse<List<Conversation>>>
 
-    /**
-     * Updates the last message sent to the [conversation] with the content of the given [message]
-     * @param [conversation] the conversation to update
-     * @param [message] the new last message of the [conversation]
-     * @return A [Flow] of [ApiResponse] with the last one containing the [Conversation] updated in the repository on success
-     */
-    suspend fun updateLastMessageWith(
-        conversation: Conversation,
-        message: Message
-    ): Flow<ApiResponse<Conversation>>
-
 }

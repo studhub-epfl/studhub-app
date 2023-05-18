@@ -1,11 +1,15 @@
 package com.studhub.app.domain.usecase
 
+import com.google.android.gms.auth.api.identity.BeginSignInResult
+import com.google.firebase.auth.AuthCredential
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.Rating
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.UserRepository
 import com.studhub.app.domain.usecase.user.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -105,14 +109,14 @@ class UserUseCaseTest {
 
         override suspend fun addFavoriteListing(
             userId: String,
-            favListingId: String
+            favListing: Listing
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 if (userDB.containsKey(userId)) {
                     val user = userDB.getValue(userId)
                     val updatedFavoriteListings =
-                        user.favoriteListings.toMutableMap().apply { put(favListingId, true) }
+                        user.favoriteListings.toMutableMap().apply { put(favListing.id, true) }
                     val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                     userDB[userId] = updatedUser
                     emit(ApiResponse.Success(updatedUser))
@@ -124,14 +128,14 @@ class UserUseCaseTest {
 
         override suspend fun removeFavoriteListing(
             userId: String,
-            favListingId: String
+            favListing: Listing
         ): Flow<ApiResponse<User>> {
             return flow {
                 emit(ApiResponse.Loading)
                 if (userDB.containsKey(userId)) {
                     val user = userDB[userId]!!
                     val updatedFavoriteListings =
-                        user.favoriteListings.toMutableMap().apply { remove(favListingId) }
+                        user.favoriteListings.toMutableMap().apply { remove(favListing.id) }
                     val updatedUser = user.copy(favoriteListings = updatedFavoriteListings)
                     userDB[userId] = updatedUser
 
@@ -212,6 +216,29 @@ class UserUseCaseTest {
                 }
             }
         }
+
+        override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun updateRating(
+            userId: String,
+            ratingId: String,
+            rating: Rating
+        ): Flow<ApiResponse<Rating>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun deleteRating(
+            userId: String,
+            ratingId: String
+        ): Flow<ApiResponse<Boolean>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun getUserRatings(userId: String): Flow<ApiResponse<List<Rating>>> {
+            TODO("Not yet implemented")
+        }
     }
 
     @After
@@ -286,7 +313,7 @@ class UserUseCaseTest {
         val listingId = Random.nextLong().toString()
         userDB[userId] = User(id = userId, userName = "Test User", favoriteListings = emptyMap())
 
-        addFavoriteListing(listingId).collect { response ->
+        addFavoriteListing(Listing(id = listingId)).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val user = response.data
@@ -332,7 +359,7 @@ class UserUseCaseTest {
             favoriteListings = mapOf(listingId1 to true, listingId2 to true)
         )
 
-        removeFavoriteListing(listingId1).collect { response ->
+        removeFavoriteListing(Listing(id = listingId1)).collect { response ->
             when (response) {
                 is ApiResponse.Success -> {
                     val result = response.data
@@ -401,7 +428,6 @@ class UserUseCaseTest {
             }
         }
     }
-
 
     @Test
     fun getUserUseCaseReturnsFailureForInvalidUserId() = runBlocking {

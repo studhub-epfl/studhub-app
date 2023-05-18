@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.listing.CreateListing
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,16 +45,18 @@ class CreateListingViewModel @Inject constructor(
     fun createListing(
         title: String,
         description: String,
-        category: Category,
+        categories: List<Category>,
         price: Float,
+        meetingPoint: MeetingPoint?,
         pictures: MutableList<Uri>,
         callback: (id: String) -> Unit
     ) {
         val listing = Listing(
             name = title,
             description = description,
-            categories = listOf(category),
+            categories = categories,
             price = price,
+            meetingPoint = meetingPoint,
             picturesUri = pictures
         )
 

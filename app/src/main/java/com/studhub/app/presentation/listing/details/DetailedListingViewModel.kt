@@ -33,9 +33,16 @@ class DetailedListingViewModel @Inject constructor(
     var isBlocked = mutableStateOf(false)
 
     var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
+    
+    private val startConversationWith: StartConversationWith
+) : ViewModel(), IDetailedListingViewModel {
+    override var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
+        private set
+    override var isFavorite = mutableStateOf(false)
+    override var startConversationWithResponse by mutableStateOf<ApiResponse<Conversation>>(ApiResponse.Loading)
         private set
 
-    fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
+    override fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
         viewModelScope.launch {
             startConversationWith(seller).collect {
                 startConversationWithResponse = it
@@ -47,7 +54,7 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    fun fetchListing(id: String) {
+    override fun fetchListing(id: String) {
         viewModelScope.launch {
             getListing(id).collect {
                 currentListing = it
@@ -59,7 +66,7 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    private fun getIsFavorite() {
+    override fun getIsFavorite() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
@@ -78,7 +85,7 @@ class DetailedListingViewModel @Inject constructor(
         }
     }
 
-    private fun getIsBlocked() {
+    override fun getIsBlocked() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
@@ -96,20 +103,20 @@ class DetailedListingViewModel @Inject constructor(
             else -> {}
         }
     }
-
-    fun onFavoriteClicked() {
+    
+    override fun onFavoriteClicked() {
         when (currentListing) {
             is ApiResponse.Success -> {
                 val listing = (currentListing as ApiResponse.Success<Listing>).data
                 viewModelScope.launch {
                     if (!isFavorite.value) {
-                        addFavoriteListing(listing.id).collect {
+                        addFavoriteListing(listing).collect {
                             if (it is ApiResponse.Success) {
                                 isFavorite.value = true
                             }
                         }
                     } else {
-                        removeFavoriteListing(listing.id).collect {
+                        removeFavoriteListing(listing).collect {
                             if (it is ApiResponse.Success) {
                                 isFavorite.value = false
                             }

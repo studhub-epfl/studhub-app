@@ -2,6 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
     <application
         android:name=".StudHubApp"
         android:allowBackup="true"
@@ -51,9 +64,11 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".MeetingPointPickerActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps" />
+            android:label="MeetingPointPickerActivity"
+            android:theme="@style/Theme.Studhub" />
+
 
 
         <activity
@@ -61,6 +76,13 @@
             android:exported="false"
             android:label="HomeComponent Wrapper"
             android:theme="@style/Theme.Studhub" />
+        <activity
+            android:name=".wrapper.RatingActivity"
+            android:exported="true"
+            android:label="HomeComponent Wrapper"
+            android:theme="@style/Theme.Studhub"
+            />
+
         <activity
             android:name=".wrapper.NavigationActivity"
             android:exported="false"
@@ -70,6 +92,11 @@
             android:name=".wrapper.ChatActivity"
             android:exported="false"
             android:label="Chat Wrapper"
+            android:theme="@style/Theme.Studhub" />
+        <activity
+            android:name=".wrapper.DetailedListingActivity"
+            android:exported="false"
+            android:label="Detailed Wrapper"
             android:theme="@style/Theme.Studhub" />
         <activity
             android:name=".wrapper.ConversationActivity"
