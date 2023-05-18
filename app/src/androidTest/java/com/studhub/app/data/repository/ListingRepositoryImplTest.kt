@@ -369,7 +369,8 @@ class ListingRepositoryImplTest {
             }
         }
     }
-*/
+    */
+
     @Test
     fun getListingsBySearchShouldFailOnNonNumericalInputs() {
         lateinit var listing: Listing
@@ -407,6 +408,80 @@ class ListingRepositoryImplTest {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
+
+    @Test
+    fun getListingsBySearchShouldLeaveOutUnrangedProductsWithDescription() {
+        lateinit var listing: Listing
+        lateinit var listing2: Listing
+        lateinit var listing3: Listing
+        lateinit var listing4: Listing
+
+        runBlocking {
+
+
+            val product = Listing(
+                description = "description1",
+                name = "Product 1",
+                price = 1000F
+            )
+            val product2 = Listing(
+                description = "description1",
+                name = "Product 2",
+                price = 1002F
+            )
+            val product3 = Listing(
+                description = "description1",
+                name = "Product 3",
+                price = 1700F
+            )
+            val product4 = Listing(
+                description = "description1",
+                name = "Product 4",
+                price = 1702F
+            )
+
+            createListing.invoke(product).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            createListing.invoke(product2).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing2 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            createListing.invoke(product3).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing3 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            createListing.invoke(product4).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing4 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+        runBlocking {
+            getListingsBySearch.invoke("description1","1002", "1700").collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(
+                        it.data.contains(listing2) && it.data.contains(listing3)
+                                && !(it.data.contains(listing)) && !(it.data.contains(listing4))
+                    )
+                    is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
                 }
             }
