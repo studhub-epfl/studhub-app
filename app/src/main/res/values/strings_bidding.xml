@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auction_mode_text">Auction (Chosen price will be starting point)</string>
+    <string name="auction_deadline_select">Select auction deadline</string>
+</resources>

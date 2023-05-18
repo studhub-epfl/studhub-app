@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.presentation.listing.browse.components.CategoryAndSellerInfo
 import com.studhub.app.presentation.listing.browse.components.PriceChip
 import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
@@ -21,7 +22,7 @@ fun ListingContent(listing: Listing, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(90.dp)
             .clickable { onClick() }
     ) {
         ThumbnailImage()
@@ -37,12 +38,17 @@ fun ListingContent(listing: Listing, onClick: () -> Unit) {
                 style = MaterialTheme.typography.labelLarge
             )
             // Price chip
-            PriceChip(
-                price = listing.price,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 5.dp, bottom = 4.dp)
-            )
+            Column (modifier = Modifier.align(Alignment.BottomStart)){
+                if (listing.type == ListingType.BIDDING) {
+                    Text (
+                        modifier = Modifier.padding(3.dp),
+                        text = "Auction\r\nCurrent bid:",
+                        color = MaterialTheme.colorScheme.secondary)
+                }
+                PriceChip(
+                    price = listing.price
+                )
+            }
             // Category name and seller
             CategoryAndSellerInfo(
                 category = if (listing.categories.isEmpty()) Category() else listing.categories[0],

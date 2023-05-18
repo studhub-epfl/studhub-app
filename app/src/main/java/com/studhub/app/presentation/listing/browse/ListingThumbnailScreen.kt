@@ -1,5 +1,7 @@
 package com.studhub.app.presentation.listing.browse
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -16,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.ui.browse.ListingContent
 import com.studhub.app.presentation.ui.theme.StudHubTheme
@@ -29,7 +32,6 @@ fun ListingThumbnailScreen(
     Card(
         onClick = onClick,
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer
@@ -49,9 +51,21 @@ fun ListingThumbnailPreview() {
         categories = listOf(Category(name = "Mobility")),
         price = 1560.45F
     )
-    val navController: NavHostController = rememberNavController()
+
+    val listing2 = Listing(
+        name = "Limited edition manga",
+        seller = User(firstName = "Jimmy", lastName = "Poppin"),
+        categories = listOf(Category(name = "Books")),
+        type = ListingType.BIDDING,
+        price = 80F
+    )
+
     val viewModel = ListingThumbnailViewModel(listing)
+    val viewModel2 = ListingThumbnailViewModel(listing2)
     StudHubTheme() {
-        ListingThumbnailScreen(viewModel = viewModel, onClick = {})
+        Column {
+            ListingThumbnailScreen(viewModel = viewModel, onClick = {})
+            ListingThumbnailScreen(viewModel = viewModel2, onClick = {})
+        }
     }
 }
