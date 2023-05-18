@@ -39,7 +39,7 @@ fun BiddingDatePicker(date: DatePickerState) {
         val state = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
         DatePicker(
             state = state,
-            title = {Text(text = "Select auction deadline")} ,
+            title = {Text(text = stringResource(R.string.auction_deadline_select))} ,
             modifier = Modifier.padding(16.dp))
     }
 }
