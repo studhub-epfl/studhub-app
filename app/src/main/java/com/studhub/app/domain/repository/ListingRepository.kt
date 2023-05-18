@@ -69,4 +69,19 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the updated [Listing] pushed to the database on success
      */
     suspend fun updateListingToBidding(listing: Listing, startingPrice: Float, deadline: Date): Flow<ApiResponse<Listing>>
+
+    /**
+     * Subscribes the user to the given listing.
+     * @param userId The ID of the user.
+     * @param listingId The ID of the listing.
+     */
+    suspend fun subscribeToListing(userId: String, listingId: String): Flow<ApiResponse<Boolean>>
+
+    /**
+     * Unsubscribes the user from the given listing.
+     * @param userId The ID of the user.
+     * @param listingId The ID of the listing.
+     */
+    suspend fun unsubscribeFromListing(userId: String, listingId: String): Flow<ApiResponse<Boolean>>
+
 }

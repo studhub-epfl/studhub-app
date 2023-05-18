@@ -278,4 +278,47 @@ class ListingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun subscribeToListing(listingId: String, userId: String): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(ApiResponse.NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
+        // add the user id to the list of subscribers of the listing
+        val query = db.child(listingId).child("subscribers").child(userId).setValue(true)
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(true))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun unsubscribeFromListing(listingId: String, userId: String): Flow<ApiResponse<Boolean>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(ApiResponse.NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
+        // remove the user id from the list of subscribers of the listing
+        val query = db.child(listingId).child("subscribers").child(userId).removeValue()
+
+        query.await()
+
+        if (query.isSuccessful) {
+            emit(ApiResponse.Success(true))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+
 }
