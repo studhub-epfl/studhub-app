@@ -28,9 +28,9 @@ class GetListingsBySearch @Inject constructor(
      * @param [keyword] the value to compare to the listings
      */
     suspend operator fun invoke(keyword: String,
-                                minPrice: String,
-                                maxPrice: String):
-                                Flow<ApiResponse<List<Listing>>> {
+                                    minPrice: String,
+                                    maxPrice: String):
+                                    Flow<ApiResponse<List<Listing>>> {
         if (keyword.isEmpty()) {
             return repository.getListings()
         }
