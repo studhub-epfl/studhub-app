@@ -51,7 +51,7 @@ class ListingUseCaseTest {
         }
 
         override suspend fun getListingsBySearch(
-            keyword: String,
+            keyword: String,keyword1: String,keyword2: String,
             blockedUsers: Map<String, Boolean>
         ): Flow<ApiResponse<List<Listing>>> {
             return flow {
@@ -64,12 +64,7 @@ class ListingUseCaseTest {
             }
         }
 
-        override suspend fun getListingsByRange(
-            keyword: String,
-            keyword2: String
-        ): Flow<ApiResponse<List<Listing>>> {
-            TODO("Not yet implemented")
-        }
+
 
 
         override suspend fun updateListing(

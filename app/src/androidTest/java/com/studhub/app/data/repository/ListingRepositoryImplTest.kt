@@ -28,9 +28,6 @@ class ListingRepositoryImplTest {
     lateinit var listingRepo: ListingRepository
 
     @Inject
-    lateinit var getListingsByRange: GetListingsByRange
-
-    @Inject
     lateinit var getListingsBySearch: GetListingsBySearch
 
     @Inject
@@ -161,18 +158,22 @@ class ListingRepositoryImplTest {
             val product = Listing(
                 description = Random.nextLong().toString(),
                 name = "Product ${Random.nextLong()}",
+                price = 2F
             )
             val product2 = Listing(
                 description = Random.nextLong().toString(),
                 name = "Product ${Random.nextLong()}",
+                price = 3F
             )
             val product3 = Listing(
                 description = "a key",
                 name = "Product ${Random.nextLong()}",
+                price = 4F
             )
             val product4 = Listing(
                 description = "a key",
                 name = "Product ${Random.nextLong()}",
+                price = 5F
             )
 
             createListing.invoke(product).collect {
@@ -205,7 +206,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            listingRepo.getListingsBySearch("a key", mapOf()).collect {
+            getListingsBySearch.invoke("a key","0","10").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3) && it.data.contains(
@@ -230,18 +231,22 @@ class ListingRepositoryImplTest {
             val product = Listing(
                 description = Random.nextLong().toString(),
                 name = "Product 1",
+                price = 2F
             )
             val product2 = Listing(
                 description = Random.nextLong().toString(),
                 name = "Product 2",
+                price = 3F
             )
             val product3 = Listing(
                 description = Random.nextLong().toString(),
                 name = "Product 3",
+                price = 4F
             )
             val product4 = Listing(
                 description = Random.nextLong().toString(),
                 name = "Product 4",
+                price = 5F
             )
 
             createListing.invoke(product).collect {
@@ -274,7 +279,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            listingRepo.getListingsBySearch("Product 3", mapOf()).collect {
+            getListingsBySearch.invoke("Product 3", "0", "10").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3)
@@ -286,105 +291,39 @@ class ListingRepositoryImplTest {
         }
     }
 
+
+
     @Test
-    fun getListingsBySearchShouldNotFailOnPriceRange() {
+    fun getListingsBySearchShouldLeaveOutUnrangedProductsWithDifferentDescription() {
         lateinit var listing: Listing
         lateinit var listing2: Listing
         lateinit var listing3: Listing
         lateinit var listing4: Listing
+        var description1L = Random.nextLong()
+        var description2L = Random.nextLong()
+        if (description1L == description2L){
+            description1L++
+        }
         runBlocking {
 
+
             val product = Listing(
-                description = Random.nextLong().toString(),
+                description = description1L.toString(),
                 name = "Product 1",
                 price = 1000F
             )
             val product2 = Listing(
-                description = Random.nextLong().toString(),
-                name = "Product 2",
-                price = 1200F
-            )
-            val product3 = Listing(
-                description = Random.nextLong().toString(),
-                name = "Product 3",
-                price = 1700F
-            )
-            val product4 = Listing(
-                description = Random.nextLong().toString(),
-                name = "Product 4",
-                price = 2000F
-            )
-
-            createListing.invoke(product).collect {
-                when (it) {
-                    is ApiResponse.Success -> listing = it.data
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-            createListing.invoke(product2).collect {
-                when (it) {
-                    is ApiResponse.Success -> listing2 = it.data
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-            createListing.invoke(product3).collect {
-                when (it) {
-                    is ApiResponse.Success -> listing3 = it.data
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-            createListing.invoke(product4).collect {
-                when (it) {
-                    is ApiResponse.Success -> listing4 = it.data
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-        }
-        runBlocking {
-            listingRepo.getListingsBySearch("1200-2000", mapOf()).collect {
-                when (it) {
-                    is ApiResponse.Success -> assert(
-                        it.data.contains(listing4) && it.data.contains(listing2) && it.data.contains(
-                            listing3
-                        )
-                                && !(it.data.contains(listing))
-                    )
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-        }
-    }
-
-    @Test
-    fun getListingsByRangeShouldLeaveOutUnrangedProducts() {
-        lateinit var listing: Listing
-        lateinit var listing2: Listing
-        lateinit var listing3: Listing
-        lateinit var listing4: Listing
-        runBlocking {
-
-            val product = Listing(
-                description = Random.nextLong().toString(),
-                name = "Product 1",
-                price = 1000F
-            )
-            val product2 = Listing(
-                description = Random.nextLong().toString(),
+                description = description1L.toString(),
                 name = "Product 2",
                 price = 1002F
             )
             val product3 = Listing(
-                description = Random.nextLong().toString(),
+                description = description2L.toString(),
                 name = "Product 3",
                 price = 1700F
             )
             val product4 = Listing(
-                description = Random.nextLong().toString(),
+                description = description2L.toString(),
                 name = "Product 4",
                 price = 1702F
             )
@@ -419,11 +358,11 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsByRange.invoke("1002", "1700").collect {
+            getListingsBySearch.invoke(description1L.toString(),"1002", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
-                        it.data.contains(listing2) && it.data.contains(listing3)
-                                && !(it.data.contains(listing)) && !(it.data.contains(listing4))
+                        it.data.contains(listing2)
+                                && !(it.data.contains(listing)) && !(it.data.contains(listing4)) && !(it.data.contains(listing3))
                     )
                     is ApiResponse.Failure -> fail(it.message)
                     is ApiResponse.Loading -> {}
@@ -433,7 +372,7 @@ class ListingRepositoryImplTest {
     }
 
     @Test
-    fun getListingsByRangeShouldFailOnNonNumericalInputs() {
+    fun getListingsBySearchShouldFailOnNonNumericalInputs() {
         lateinit var listing: Listing
         lateinit var listing2: Listing
         runBlocking {
@@ -465,7 +404,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsByRange.invoke("r", "1700").collect {
+            getListingsBySearch.invoke("randomDescription","r", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -475,49 +414,6 @@ class ListingRepositoryImplTest {
         }
     }
 
-    @Test
-    fun getListingsByRangeShouldFailOnVoidQuery() {
-        lateinit var listing: Listing
-        lateinit var listing2: Listing
-        runBlocking {
-
-            val product = Listing(
-                description = Random.nextLong().toString(),
-                name = "Product 1",
-                price = 1000F
-            )
-            val product2 = Listing(
-                description = Random.nextLong().toString(),
-                name = "Product 2",
-                price = 1002F
-            )
-
-            listingRepo.createListing(product).collect {
-                when (it) {
-                    is ApiResponse.Success -> listing = it.data
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-            listingRepo.createListing(product2).collect {
-                when (it) {
-                    is ApiResponse.Success -> listing2 = it.data
-                    is ApiResponse.Failure -> fail(it.message)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-        }
-        runBlocking {
-
-            getListingsByRange.invoke("r", "1700").collect {
-                when (it) {
-                    is ApiResponse.Success -> {}
-                    is ApiResponse.Failure -> assert(true)
-                    is ApiResponse.Loading -> {}
-                }
-            }
-        }
-    }
 
 }
 

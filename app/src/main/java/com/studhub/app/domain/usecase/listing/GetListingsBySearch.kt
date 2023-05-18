@@ -27,7 +27,9 @@ class GetListingsBySearch @Inject constructor(
      *
      * @param [keyword] the value to compare to the listings
      */
-    suspend operator fun invoke(keyword: String): Flow<ApiResponse<List<Listing>>> {
+    suspend operator fun invoke(keyword: String,
+                                keyword1: String,
+                                keyword2: String): Flow<ApiResponse<List<Listing>>> {
         if (keyword.isEmpty()) {
             return repository.getListings()
         }
@@ -36,11 +38,15 @@ class GetListingsBySearch @Inject constructor(
             return flowOf(ApiResponse.Failure("Too few characters"))
         }
 
+        if (keyword1.toFloatOrNull() == null || keyword2.toFloatOrNull() == null) {
+            return flowOf(ApiResponse.Failure("Input is not a number"))
+        }
+
         return flow {
             userRepository.getUser(authRepository.currentUserUid).collect { userQuery ->
                 when (userQuery) {
                     is ApiResponse.Success -> {
-                        repository.getListingsBySearch(keyword, userQuery.data.blockedUsers)
+                        repository.getListingsBySearch(keyword, keyword1, keyword2, userQuery.data.blockedUsers)
                             .collect { listingQuery ->
                                 when (listingQuery) {
                                     is ApiResponse.Failure -> emit(ApiResponse.Failure(listingQuery.message))
