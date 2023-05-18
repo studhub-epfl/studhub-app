@@ -299,31 +299,27 @@ class ListingRepositoryImplTest {
         lateinit var listing2: Listing
         lateinit var listing3: Listing
         lateinit var listing4: Listing
-        var description1L = Random.nextLong()
-        var description2L = Random.nextLong()
-        if (description1L == description2L){
-            description1L++
-        }
+
         runBlocking {
 
 
             val product = Listing(
-                description = description1L.toString(),
+                description = "description1",
                 name = "Product 1",
                 price = 1000F
             )
             val product2 = Listing(
-                description = description1L.toString(),
+                description = "description1",
                 name = "Product 2",
                 price = 1002F
             )
             val product3 = Listing(
-                description = description2L.toString(),
+                description = "description2",
                 name = "Product 3",
                 price = 1700F
             )
             val product4 = Listing(
-                description = description2L.toString(),
+                description = "description2",
                 name = "Product 4",
                 price = 1702F
             )
@@ -358,7 +354,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke(description1L.toString(),"1002", "1700").collect {
+            getListingsBySearch.invoke("description1","1002", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing2)
