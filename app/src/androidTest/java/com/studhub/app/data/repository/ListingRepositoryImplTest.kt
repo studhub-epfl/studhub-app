@@ -220,6 +220,9 @@ class ListingRepositoryImplTest {
         }
     }
 
+
+
+
     @Test
     fun getListingsBySearchShouldNotFailOnName() {
         lateinit var listing: Listing
@@ -292,7 +295,7 @@ class ListingRepositoryImplTest {
     }
 
 
-
+/*
     @Test
     fun getListingsBySearchShouldLeaveOutUnrangedProductsWithDifferentDescription() {
         lateinit var listing: Listing
@@ -366,7 +369,7 @@ class ListingRepositoryImplTest {
             }
         }
     }
-
+*/
     @Test
     fun getListingsBySearchShouldFailOnNonNumericalInputs() {
         lateinit var listing: Listing

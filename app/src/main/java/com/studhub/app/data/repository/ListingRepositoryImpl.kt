@@ -134,14 +134,17 @@ class ListingRepositoryImpl @Inject constructor(
         if (query.isSuccessful) {
             val listings = mutableListOf<Listing>()
 
-            query.result.children.forEach { snapshot ->
-                val listing = snapshot.getValue(Listing::class.java)
-                if (listing != null && (blockedUsers[listing.seller.id] != true) &&
+            /*
+            listing != null && (blockedUsers[listing.seller.id] != true) &&
                     (listing.name.contains(keyword, true) || listing.description.contains(
                         keyword,
                         true
                     )
                             || listing.price.toString().contains(keyword, true))
+             */
+            query.result.children.forEach { snapshot ->
+                val listing = snapshot.getValue(Listing::class.java)
+                if (listing != null
                     && listing.price >= minPrice.toFloat()
                     && listing.price <= maxPrice.toFloat()
                 ) {
