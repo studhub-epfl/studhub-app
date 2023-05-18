@@ -8,7 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
@@ -42,7 +44,7 @@ fun ListingContent(listing: Listing, onClick: () -> Unit) {
                 if (listing.type == ListingType.BIDDING) {
                     Text (
                         modifier = Modifier.padding(3.dp),
-                        text = "Auction\r\nCurrent bid:",
+                        text = stringResource(R.string.bidding_type_indicator),
                         color = MaterialTheme.colorScheme.secondary)
                 }
                 PriceChip(

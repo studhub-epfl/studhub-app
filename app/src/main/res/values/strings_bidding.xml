@@ -2,4 +2,7 @@
 <resources>
     <string name="auction_mode_text">Auction (Chosen price will be starting point)</string>
     <string name="auction_deadline_select">Select auction deadline</string>
+    <string name="bidding_button">Bid</string>
+    <string name="bidding_price_label">Place your bid</string>
+    <string name="bidding_type_indicator">Auction\n\rCurrent bid:</string>
 </resources>
