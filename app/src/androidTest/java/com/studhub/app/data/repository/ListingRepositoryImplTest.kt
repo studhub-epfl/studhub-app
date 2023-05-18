@@ -370,7 +370,7 @@ class ListingRepositoryImplTest {
         }
     }
     */
-
+/*
     @Test
     fun getListingsBySearchShouldFailOnNonNumericalInputs() {
         lateinit var listing: Listing
@@ -413,7 +413,7 @@ class ListingRepositoryImplTest {
             }
         }
     }
-
+*/
     @Test
     fun getListingsBySearchShouldLeaveOutUnrangedProductsWithDescription() {
         lateinit var listing: Listing
@@ -574,6 +574,7 @@ class ListingRepositoryImplTest {
             }
         }
     }
+
 
 }
 
