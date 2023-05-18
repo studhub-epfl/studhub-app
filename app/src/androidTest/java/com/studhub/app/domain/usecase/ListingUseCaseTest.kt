@@ -51,7 +51,9 @@ class ListingUseCaseTest {
         }
 
         override suspend fun getListingsBySearch(
-            keyword: String,keyword1: String,keyword2: String,
+            keyword: String,
+            minPrice: String,
+            maxPrice: String,
             blockedUsers: Map<String, Boolean>
         ): Flow<ApiResponse<List<Listing>>> {
             return flow {

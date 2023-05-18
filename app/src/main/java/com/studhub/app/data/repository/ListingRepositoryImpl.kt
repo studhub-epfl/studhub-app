@@ -116,8 +116,8 @@ class ListingRepositoryImpl @Inject constructor(
 
     override suspend fun getListingsBySearch(
         keyword: String,
-        keyword1: String,
-        keyword2: String,
+        minPrice: String,
+        maxPrice: String,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
@@ -142,8 +142,8 @@ class ListingRepositoryImpl @Inject constructor(
                         true
                     )
                             || listing.price.toString().contains(keyword, true))
-                    && listing.price >= keyword1.toFloat()
-                    && listing.price <= keyword2.toFloat()
+                    && listing.price >= minPrice.toFloat()
+                    && listing.price <= maxPrice.toFloat()
                 ) {
                     listings.add(listing)
 
