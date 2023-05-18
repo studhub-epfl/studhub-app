@@ -149,16 +149,7 @@ class ListingRepositoryImpl @Inject constructor(
 
                 }
 
-                //TODO - later
-                // Sam implemented his price filtering that way but it's not a robust implementation
-                // Instead, extend the ListingRepository with a method getListingsByPriceRange()
-                if (listing != null && keyword.contains('-')) {
-                    if (listing.price >= keyword.substringBefore('-').toFloat()
-                        && listing.price <= keyword.substringAfter('-').toFloat()
-                    ) {
-                        listings.add(listing)
-                    }
-                }
+
             }
             provisionalListing = listings
             emit(ApiResponse.Success(provisionalListing))
