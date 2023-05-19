@@ -11,7 +11,7 @@ import javax.inject.Inject
 /**
  * Use case for retrieving all listings from the logged-in user, from a given [repository]
  *
- * @param [repository] the which the use case will act on
+ * @param [repository] the repository which the use case will act on
  */
 class GetOwnListings @Inject constructor(
     private val repository: ListingRepository,
