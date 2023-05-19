@@ -11,12 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.studhub.app.R
+import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen(
     title: String,
     onGoBackClick: (() -> Unit)?,
+    isLoading: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -28,7 +30,7 @@ fun Screen(
                     title = { Text(text = title) },
                     navigationIcon = {
                         IconButton(
-                            onClick = onGoBackClick
+                            onClick = onGoBackClick,
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.ArrowBack,
@@ -37,17 +39,20 @@ fun Screen(
                         }
                     }
                 )
-            else TopAppBar( title = { Text(text = title) } )
+            else TopAppBar(title = { Text(text = title) })
         },
         content = {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .verticalScroll(scrollState)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                content = content
-            )
+            if (isLoading)
+                LoadingCircle()
+            else
+                Column(
+                    modifier = Modifier
+                        .padding(it)
+                        .verticalScroll(scrollState)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = content
+                )
         }
     )
 }

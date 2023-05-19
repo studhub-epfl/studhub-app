@@ -14,11 +14,13 @@ import com.studhub.app.presentation.ui.common.misc.Spacer
 fun ProfileOwnListingsContent(
     listings: List<Listing>,
     navigateToProfile: () -> Unit,
-    navigateToListing: (id: String) -> Unit
+    navigateToListing: (id: String) -> Unit,
+    isLoading: Boolean
 ) {
     Screen(
         title = stringResource(id = R.string.profile_own_listings_title),
-        onGoBackClick = navigateToProfile
+        onGoBackClick = navigateToProfile,
+        isLoading = isLoading
     ) {
         if (listings.isEmpty()) {
             Text(text = stringResource(id = R.string.profile_own_listings_no_listings))

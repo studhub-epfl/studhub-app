@@ -17,14 +17,12 @@ fun ProfileOwnListingsScreen(
         viewModel.getOwnListings()
     }
 
-    when (val ownListings = viewModel.ownListings) {
-        is ApiResponse.Loading -> LoadingCircle()
-        is ApiResponse.Failure -> {}
-        is ApiResponse.Success ->
-            ProfileOwnListingsContent(
-                listings = ownListings.data,
-                navigateToProfile = navigateToProfile,
-                navigateToListing = navigateToListing
-            )
-    }
+    val isLoading = viewModel.ownListings !is ApiResponse.Success
+
+    ProfileOwnListingsContent(
+        listings = if (isLoading) emptyList() else (viewModel.ownListings as ApiResponse.Success).data,
+        navigateToProfile = navigateToProfile,
+        navigateToListing = navigateToListing,
+        isLoading = isLoading
+    )
 }
