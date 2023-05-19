@@ -29,7 +29,7 @@ fun BrowseContent(listings: List<Listing>, navController: NavController) {
                 ListingThumbnailScreen(
                     viewModel = ListingThumbnailViewModel(listing = listing),
                     onClick = {
-                        navController.navigate("DetailedListing/${listing.id}")
+                        navController.navigate("Listing/${listing.id}")
                     }
                 )
 
