@@ -15,7 +15,8 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     navigateToAuthScreen: () -> Unit,
     navigateToEditProfileScreen: () -> Unit,
-    navigateToProfileFavorites: () -> Unit
+    navigateToProfileFavorites: () -> Unit,
+    navigateToOwnListings: () -> Unit
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -37,7 +38,8 @@ fun ProfileScreen(
                     ProfileContent(
                         padding = padding,
                         profile = currentUser.data,
-                        navigateToProfileFavorites = navigateToProfileFavorites
+                        navigateToProfileFavorites = navigateToProfileFavorites,
+                        navigateToOwnListings = navigateToOwnListings
                     )
                 },
                 scaffoldState = scaffoldState

@@ -43,7 +43,6 @@ fun AppNavigation(
             )
         }
 
-
         composable(route = "Auth/SignUp") {
             Globals.showBottomBar = false
             SignUpScreen(navigateBack = { navController.navigate("Auth") })
@@ -64,7 +63,8 @@ fun AppNavigation(
             ProfileScreen(
                 navigateToAuthScreen = { navController.navigate("Auth") },
                 navigateToEditProfileScreen = { navController.navigate("Profile/Edit") },
-                navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") }
+                navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") },
+                navigateToOwnListings = { navController.navigate("Profile/Own-Listings") }
             )
         }
 
