@@ -2,13 +2,9 @@ package com.studhub.app.presentation.listing.add
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -34,14 +30,13 @@ import com.studhub.app.core.utils.PriceValidationResult
 import com.studhub.app.core.utils.validatePrice
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.MeetingPoint
+import com.studhub.app.presentation.listing.add.components.BiddingSpecifics
 import com.studhub.app.presentation.listing.add.components.CategorySheet
-import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
 import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
-import com.studhub.app.presentation.ui.common.text.BigLabel
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.TextChip
 
@@ -56,11 +51,11 @@ fun CreateListingScreen(
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
     val price = rememberSaveable { mutableStateOf("") }
-    val category = remember { mutableStateOf(Category(name = "Choose a category")) }
     val meetingPoint = remember { mutableStateOf<MeetingPoint?>(null) }
     val pictures = rememberSaveable { mutableListOf<Uri>() }
     val chosenCategories = remember { mutableStateListOf<Category>() }
     val openCategorySheet = rememberSaveable { mutableStateOf(false) }
+    val date = rememberDatePickerState()
 
 
     val scrollState = rememberScrollState()
@@ -98,7 +93,6 @@ fun CreateListingScreen(
                     title = title,
                     description = description,
                     price = price,
-                    category = category,
                     meetingPoint = meetingPoint,
                     pictures = pictures,
                     onSubmit = {
@@ -112,7 +106,8 @@ fun CreateListingScreen(
                             navigateToListing
                         )
                     },
-                    openCategorySheet = openCategorySheet
+                    openCategorySheet = openCategorySheet,
+                    date = date
                 )
             }
             CategorySheet(
@@ -124,19 +119,20 @@ fun CreateListingScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListingForm(
     chosen: SnapshotStateList<Category>,
     title: MutableState<String>,
     description: MutableState<String>,
     price: MutableState<String>,
-
-    category: MutableState<Category>,
     meetingPoint: MutableState<MeetingPoint?>,
     pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
-    openCategorySheet: MutableState<Boolean>
+    openCategorySheet: MutableState<Boolean>,
+    date: DatePickerState
 ) {
+    val checked = remember { mutableStateOf(false) }
     BasicTextField(
         label = stringResource(R.string.listings_add_form_title),
         rememberedValue = title
@@ -167,6 +163,11 @@ fun ListingForm(
     PriceRow(rememberedValue = price)
 
     Spacer("large")
+
+    BiddingSpecifics(checked = checked, date = date)
+
+    Spacer("large")
+
     MeetingPointInput(meetingPoint = meetingPoint)
 
     Spacer("large")
@@ -187,7 +188,7 @@ fun ListingForm(
     }
 
     // Check if the category is selected and the price is non-negative
-    val isFormValid =  priceValidationResult == PriceValidationResult.VALID
+    val isFormValid = (priceValidationResult == PriceValidationResult.VALID) && chosen.isNotEmpty()
     Button(
         onClick = {
             if (isFormValid) {
@@ -201,7 +202,6 @@ fun ListingForm(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -226,7 +226,6 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryChoice(
     chosen: SnapshotStateList<Category>,
@@ -259,7 +258,6 @@ fun CategoryChoice(
         }
     }
 }
-
 
 
 @Composable
