@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,10 +28,7 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.listing.details.components.BiddingControls
-import com.studhub.app.presentation.listing.details.components.FavoriteButton
-import com.studhub.app.presentation.listing.details.components.ListingDescription
-import com.studhub.app.presentation.listing.details.components.ListingPrice
+import com.studhub.app.presentation.listing.details.components.*
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.misc.LoadingCircle
@@ -51,7 +49,6 @@ fun DetailedListingScreen(
             viewModel.fetchListing(id)
     }
 
-
     val activityContext = LocalContext.current
 
     fun displayMeetingPoint(location: LatLng) {
@@ -69,15 +66,18 @@ fun DetailedListingScreen(
         is ApiResponse.Success -> {
             val listing = currentListing.data
             val isFavorite = viewModel.isFavorite.value
+            val isBlocked = viewModel.isBlocked.value
             Details(
                 listing = listing,
                 onFavoriteClicked = { viewModel.onFavoriteClicked() },
                 isFavorite = isFavorite,
+                isBlocked = isBlocked,
                 onContactSellerClick = {
                     viewModel.contactSeller(listing.seller) { conv ->
                         navigateToConversation(conv.id)
                     }
                 },
+                onBlockedClicked = { viewModel.onBlockedClicked() },
                 onMeetingPointClick = {
                     val meetingPoint = listing.meetingPoint
                     if (meetingPoint != null) {
@@ -96,7 +96,9 @@ fun Details(
     listing: Listing,
     onContactSellerClick: () -> Unit,
     isFavorite: Boolean,
+    isBlocked: Boolean,
     onFavoriteClicked: () -> Unit,
+    onBlockedClicked: () -> Unit,
     onRateUserClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -113,7 +115,6 @@ fun Details(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             Box(modifier = Modifier.testTag("ContactSellerButton")) {
                 BasicFilledButton(
                     onClick = { onContactSellerClick() },
@@ -121,15 +122,20 @@ fun Details(
                 )
             }
 
-
             Box(modifier = Modifier.testTag("RateUserButton")) {
                 BasicFilledButton(onClick = { onRateUserClick() }, label = "Rate user")
             }
+
             // "Favorite" button
             Box(modifier = Modifier.testTag("ContactSellerButton")) {
                 FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
             }
+
+            Box(modifier = Modifier.testTag("BlockedButton")) {
+                BlockButton(isBlocked = isBlocked, onBlockClicked = onBlockedClicked)
+            }
         }
+
 
         Spacer("large")
 
@@ -166,31 +172,6 @@ fun Details(
     }
 }
 
-@ExcludeFromGeneratedTestCoverage
-@Preview(showBackground = true)
-@Composable
-fun DetailsListingScreenPreview() {
-    val listing = Listing(
-        name = "Large white wooden desk",
-        description = "This is the perfect desk for a home workplace",
-        categories = listOf(Category(name = "Furniture")),
-        seller = User(
-            userName = "SuperChad",
-            firstName = "Josh",
-            lastName = "Marley",
-        ),
-        price = 545.45F
-    )
-    StudHubTheme {
-        Details(
-            listing = listing,
-            onContactSellerClick = { },
-            onFavoriteClicked = { },
-            isFavorite = true,
-            onMeetingPointClick = {},
-            onRateUserClick = {})
-    }
-}
 
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
@@ -208,6 +189,7 @@ fun DetailsListingScreenBidPreview() {
         type = ListingType.BIDDING,
         price = 545.45F
     )
+
     StudHubTheme {
         Details(
             listing = listing,
@@ -215,6 +197,9 @@ fun DetailsListingScreenBidPreview() {
             onFavoriteClicked = { },
             isFavorite = true,
             onMeetingPointClick = {},
-            onRateUserClick = {})
+            onRateUserClick = {},
+            onBlockedClicked = {},
+            isBlocked = true
+        )
     }
 }

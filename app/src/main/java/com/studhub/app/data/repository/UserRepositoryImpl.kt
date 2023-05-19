@@ -318,7 +318,7 @@ class UserRepositoryImpl @Inject constructor(
         if (user != null) {
             val updatedBlockedUsers =
                 user.blockedUsers.toMutableMap().apply { remove(blockedUserId) }
-            val updatedUser = user.copy(favoriteListings = updatedBlockedUsers)
+            val updatedUser = user.copy(blockedUsers = updatedBlockedUsers)
             val query = blockedUsersRef.setValue(null)
 
             query.await()
@@ -331,6 +331,44 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>> =
+        flow {
+            emit(ApiResponse.Loading)
+
+            if (!networkStatus.isConnected) {
+                emit(NO_INTERNET_CONNECTION)
+                return@flow
+            }
+
+            val userRef = db.child(userId)
+            val blockedUsersRef = userRef.child("blockedUsers")
+
+            val blockedUsersQuery = blockedUsersRef.get()
+
+            blockedUsersQuery.await()
+
+            val blockedUsersMap: Map<String, Boolean>? =
+                blockedUsersQuery.result.getValue<Map<String, Boolean>>()
+            if (blockedUsersMap != null) {
+                val blockedUsersIds = blockedUsersMap.keys.toList()
+                val blockedUsers = mutableListOf<User>()
+
+                blockedUsersIds.forEach { blockedUserId ->
+                    val userSnapshot =
+                        db.child(blockedUserId).get().await()
+
+                    if (userSnapshot.exists()) {
+                        val user = userSnapshot.getValue(User::class.java)!!
+                        blockedUsers.add(user)
+                    }
+                }
+
+                emit(ApiResponse.Success(blockedUsers))
+            } else {
+                emit(ApiResponse.Success(emptyList()))
+            }
+        }
 
     override suspend fun addRating(userId: String, rating: Rating): Flow<ApiResponse<Rating>> =
         flow {

@@ -10,10 +10,13 @@ import com.studhub.app.domain.model.User
 interface IDetailedListingViewModel {
     val currentListing: ApiResponse<Listing>
     val isFavorite: State<Boolean>
+    val isBlocked: State<Boolean>
     val startConversationWithResponse: ApiResponse<Conversation>
 
     fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit)
     fun fetchListing(id: String)
     fun onFavoriteClicked()
+    fun onBlockedClicked()
     fun getIsFavorite()
+    fun getIsBlocked()
 }
