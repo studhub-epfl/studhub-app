@@ -15,6 +15,13 @@ interface ListingRepository {
     suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>>
 
     /**
+     * Creates a draft [Listing]
+     * @param listing the draft listing we want to save
+     * @return A [Flow] of [ApiResponse] with the last one containing true on success
+     */
+    suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Boolean>>
+
+    /**
      * Get a [List] of all the [Listing] in the repository
      * @return A [Flow] of [ApiResponse] with the last one containing the list of [Listing] retrieved from the repository on success
      */
@@ -32,6 +39,12 @@ interface ListingRepository {
      * @return A [Flow] of [ApiResponse] with the last one containing the list of [Listing] retrieved from the repository on success
      */
     suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>>
+
+    /**
+     * Get the [List] of draft [Listing] saved by the given [user]
+     * @return A [Flow] of [ApiResponse] with the last one containing the list of draft [Listing] on success
+     */
+    suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>>
 
     /**
      * Get a [List] of [Listing] with all the listings on the database of Firebase with the constraint given on parameter
