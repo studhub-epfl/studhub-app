@@ -54,6 +54,8 @@ class ListingRepositoryImpl @Inject constructor(
             query.await()
 
             if (query.isSuccessful) {
+                // has no effects if the listing was not saved in drafts
+                localDb.removeDraftListing(listing.id)
                 emit(ApiResponse.Success(listingToPush))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
@@ -106,6 +108,13 @@ class ListingRepositoryImpl @Inject constructor(
 
     override suspend fun getListing(listingId: String): Flow<ApiResponse<Listing>> = flow {
         emit(ApiResponse.Loading)
+
+        // first check if the listing was saved as a draft in the cache
+        val draft: Listing? = localDb.getDraftListing(listingId)
+        if (draft != null) {
+            emit(ApiResponse.Success(draft))
+            return@flow
+        }
 
         if (!networkStatus.isConnected) {
             emit(ApiResponse.NO_INTERNET_CONNECTION)
