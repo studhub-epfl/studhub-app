@@ -1,6 +1,7 @@
 package com.studhub.app.data.repository
 
 import android.util.Log
+import com.google.android.gms.common.api.Api
 import com.google.firebase.database.FirebaseDatabase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.local.LocalDataSource
@@ -61,8 +62,16 @@ class ListingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
-        TODO("Not yet implemented")
+    override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            val savedDraft = localDb.saveDraftListing(listing)
+            emit(ApiResponse.Success(savedDraft))
+        } catch (e: Exception) {
+            Log.w("LISTING_REPO", e.message.toString())
+            emit(ApiResponse.Failure("Internal Error"))
+        }
     }
 
     override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> = flow {
@@ -150,8 +159,16 @@ class ListingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> {
-        TODO("Not yet implemented")
+    override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            val drafts = localDb.getDraftListings(user)
+            emit(ApiResponse.Success(drafts))
+        } catch (e: Exception) {
+            Log.w("LISTING_REPO", e.message.toString())
+            emit(ApiResponse.Failure("Internal Error"))
+        }
     }
 
     override suspend fun getListingsBySearch(
