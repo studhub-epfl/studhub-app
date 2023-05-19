@@ -27,7 +27,9 @@ Although my code contribution may not be substantial this time, I focused on fos
 
 ## Edouard **M** 
 
-
+During this sprint I mainly focused on cache requirements, implementing caching of conversations/messages, favorite listings and user profile. I also implemented syncing of unsent messages when back online but I unforunately could not finish my last task in time which was to offer the possibility to locally save/cache listing drafts.
+I also made it possible for users to have direct access to all the listing they published from the profile screen (display own listings button).
+Last but certainly not least, I also worked on fixing the continuous integration which was failing for strange reasons (unrelated to our test suite). Now everything works fine.
 
 
 ## Julien
