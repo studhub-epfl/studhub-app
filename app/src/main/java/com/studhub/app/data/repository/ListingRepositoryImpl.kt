@@ -133,7 +133,7 @@ class ListingRepositoryImpl @Inject constructor(
 
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
-                if (listing != null && listing.sellerId == user.id) {
+                if (listing != null && (listing.sellerId == user.id || listing.seller.id == user.id)) {
                     listings.add(listing)
                 }
             }

@@ -1,7 +1,5 @@
 package com.studhub.app.presentation.profile.components
 
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,22 +23,19 @@ fun ProfileOwnListingsContent(
         if (listings.isEmpty()) {
             Text(text = stringResource(id = R.string.profile_own_listings_no_listings))
         } else {
-            LazyColumn {
-                items(listings) { listing ->
-                    Spacer("small")
+            listings.map {
+                Spacer("small")
 
-                    ListingCard(
-                        listing,
-                        onClick = {
-                            navigateToListing(listing.id)
-                        }
-                    )
+                ListingCard(
+                    listing = it,
+                    onClick = {
+                        navigateToListing(it.id)
+                    }
+                )
 
-                    Spacer("small")
-                    Divider()
-                }
+                Spacer("small")
+                Divider()
             }
         }
     }
-
 }
