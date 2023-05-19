@@ -17,7 +17,7 @@ import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 @Composable
 fun Screen(
     title: String,
-    onGoBackClick: (() -> Unit)?,
+    onGoBackClick: (() -> Unit)? = null,
     isLoading: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
