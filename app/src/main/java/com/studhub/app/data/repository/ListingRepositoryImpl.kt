@@ -144,10 +144,14 @@ class ListingRepositoryImpl @Inject constructor(
              */
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
-                if (listing != null
+                if (listing != null && (blockedUsers[listing.seller.id] != true) &&
+                    (listing.name.contains(keyword, true) || listing.description.contains(
+                        keyword,
+                        true
+                    )
+                            || listing.price.toString().contains(keyword, true))
                     && listing.price >= minPrice.toFloat()
-                    && listing.price <= maxPrice.toFloat()
-                ) {
+                    && listing.price <= maxPrice.toFloat()) {
                     listings.add(listing)
 
                 }
@@ -239,5 +243,6 @@ class ListingRepositoryImpl @Inject constructor(
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
+
 
 }
