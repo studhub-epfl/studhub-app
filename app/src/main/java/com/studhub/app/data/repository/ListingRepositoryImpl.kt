@@ -116,6 +116,8 @@ class ListingRepositoryImpl @Inject constructor(
 
     override suspend fun getListingsBySearch(
         keyword: String,
+        minPrice: String,
+        maxPrice: String,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
@@ -132,6 +134,14 @@ class ListingRepositoryImpl @Inject constructor(
         if (query.isSuccessful) {
             val listings = mutableListOf<Listing>()
 
+            /*
+            listing != null && (blockedUsers[listing.seller.id] != true) &&
+                    (listing.name.contains(keyword, true) || listing.description.contains(
+                        keyword,
+                        true
+                    )
+                            || listing.price.toString().contains(keyword, true))
+             */
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
                 if (listing != null && (blockedUsers[listing.seller.id] != true) &&
@@ -140,66 +150,22 @@ class ListingRepositoryImpl @Inject constructor(
                         true
                     )
                             || listing.price.toString().contains(keyword, true))
-                ) {
+                    && listing.price >= minPrice.toFloat()
+                    && listing.price <= maxPrice.toFloat()) {
                     listings.add(listing)
+
                 }
 
-                //TODO - later
-                // Sam implemented his price filtering that way but it's not a robust implementation
-                // Instead, extend the ListingRepository with a method getListingsByPriceRange()
-                if (listing != null && keyword.contains('-')) {
-                    if (listing.price >= keyword.substringBefore('-').toFloat()
-                        && listing.price <= keyword.substringAfter('-').toFloat()
-                    ) {
-                        listings.add(listing)
-                    }
-                }
+
             }
-            emit(ApiResponse.Success(listings))
-        } else {
-            val errorMessage = query.exception?.message.orEmpty()
-            emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
-        }
-    }
-
-    override suspend fun getListingsByRange(
-        keyword1: String,
-        keyword2: String
-    ): Flow<ApiResponse<List<Listing>>> = flow {
-        emit(ApiResponse.Loading)
-
-        if (!networkStatus.isConnected) {
-            emit(ApiResponse.NO_INTERNET_CONNECTION)
-            return@flow
-        }
-
-        val query = db.get()
-        query.await()
-
-        if (query.isSuccessful) {
-            val listings = mutableListOf<Listing>()
-
-            query.result.children.forEach { snapshot ->
-                val listing = snapshot.getValue(Listing::class.java)
-
-                if (listing != null) {
-
-                    if (listing.price >= keyword1.toFloat() && listing.price <= keyword2.toFloat()) {
-                        listings.add(listing)
-                    }
-
-                }
-            }
-
             provisionalListing = listings
             emit(ApiResponse.Success(provisionalListing))
         } else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
-
-
     }
+
 
 
     override suspend fun updateListing(
@@ -277,5 +243,6 @@ class ListingRepositoryImpl @Inject constructor(
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
+
 
 }
