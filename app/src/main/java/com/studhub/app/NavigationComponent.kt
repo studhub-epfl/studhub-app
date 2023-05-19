@@ -21,6 +21,7 @@ import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
+import com.studhub.app.presentation.profile.ProfileOwnListingsScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 import com.studhub.app.presentation.ratings.UserRatingScreen
 
@@ -70,6 +71,14 @@ fun AppNavigation(
         composable(route = "Profile/Favorite-Listing") {
             Globals.showBottomBar = true
             ProfileFavoritesScreen(navigateToListing = { id: String -> navController.navigate("Listing/$id") })
+        }
+
+        composable(route = "Profile/Own-Listings") {
+            Globals.showBottomBar = false
+            ProfileOwnListingsScreen(
+                navigateToProfile = { navController.navigate("Profile") },
+                navigateToListing = { id: String -> navController.navigate("DetailedListing/$id") }
+            )
         }
 
         composable(route = "EditProfile") {
