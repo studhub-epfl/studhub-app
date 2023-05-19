@@ -12,7 +12,7 @@ interface DraftListingDao {
     suspend fun getDraftListings(sellerId: String): List<DraftListing>
 
     @Query("SELECT * FROM draft_listing WHERE draft_listing_id = :listingId")
-    suspend fun getDraftListing(listingId: String): DraftListing
+    suspend fun getDraftListing(listingId: String): DraftListing?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDraftListing(draftListing: DraftListing)

@@ -94,11 +94,21 @@ class DraftListingsDaoTest {
         runBlocking { cache.saveDraftListing(listing1) }
         runBlocking { savedListing3 = cache.saveDraftListing(listing3) }
 
-        var retrievedListing: Listing
+        var retrievedListing: Listing?
 
         runBlocking { retrievedListing = cache.getDraftListing(savedListing3.id) }
 
-        assertEquals("Retrieved listing is the expected one", listing3.name, retrievedListing.name)
+        assertNotNull("Retrieved listing should not be null", retrievedListing)
+        assertEquals("Retrieved listing is the expected one", listing3.name, retrievedListing?.name)
+    }
+
+    @Test
+    fun getNonExistingDraftListing() {
+        var retrievedListing: Listing?
+
+        runBlocking { retrievedListing = cache.getDraftListing(listing3.id) }
+
+        assertNull("Retrieved listing should be null", retrievedListing)
     }
 
     @Test

@@ -130,8 +130,8 @@ class LocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun getDraftListing(listingId: String): Listing {
-        val listing = draftListingDao.getDraftListing(listingId)
+    suspend fun getDraftListing(listingId: String): Listing? {
+        val listing = draftListingDao.getDraftListing(listingId) ?: return null
 
         return Listing(
             id = listing.id,
