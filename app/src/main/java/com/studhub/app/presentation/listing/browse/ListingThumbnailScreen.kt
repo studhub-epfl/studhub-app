@@ -2,43 +2,23 @@ package com.studhub.app.presentation.listing.browse
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.ui.browse.ListingContent
+import com.studhub.app.presentation.ui.browse.ListingCard
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListingThumbnailScreen(
     viewModel: ListingThumbnailViewModel,
     onClick: () -> Unit,
 ) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
-        )
-    ) {
-        ListingContent(listing = viewModel.listing, onClick = onClick)
-    }
+    ListingCard(listing = viewModel.listing, onClick = onClick)
 }
 
 @ExcludeFromGeneratedTestCoverage
@@ -51,7 +31,6 @@ fun ListingThumbnailPreview() {
         categories = listOf(Category(name = "Mobility")),
         price = 1560.45F
     )
-
     val listing2 = Listing(
         name = "Limited edition manga",
         seller = User(firstName = "Jimmy", lastName = "Poppin"),
@@ -60,12 +39,10 @@ fun ListingThumbnailPreview() {
         price = 80F
     )
 
-    val viewModel = ListingThumbnailViewModel(listing)
-    val viewModel2 = ListingThumbnailViewModel(listing2)
-    StudHubTheme() {
+    StudHubTheme {
         Column {
-            ListingThumbnailScreen(viewModel = viewModel, onClick = {})
-            ListingThumbnailScreen(viewModel = viewModel2, onClick = {})
+            ListingCard(listing = listing, onClick = {})
+            ListingCard(listing = listing2, onClick = {})
         }
     }
 }

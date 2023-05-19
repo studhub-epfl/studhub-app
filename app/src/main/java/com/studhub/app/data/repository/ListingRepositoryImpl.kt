@@ -1,5 +1,6 @@
 package com.studhub.app.data.repository
 
+import android.util.Log
 import com.google.firebase.database.FirebaseDatabase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.local.LocalDataSource
@@ -7,6 +8,7 @@ import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.storage.StorageHelper
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
+import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -111,6 +113,36 @@ class ListingRepositoryImpl @Inject constructor(
         } else {
             val errorMessage = query.exception?.message.orEmpty()
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
+        }
+    }
+
+    override suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>> = flow {
+        emit(ApiResponse.Loading)
+
+        if (!networkStatus.isConnected) {
+            emit(ApiResponse.NO_INTERNET_CONNECTION)
+            return@flow
+        }
+
+        val query = db.get()
+
+        query.await()
+
+        if (query.isSuccessful) {
+            val listings = mutableListOf<Listing>()
+
+            query.result.children.forEach { snapshot ->
+                val listing = snapshot.getValue(Listing::class.java)
+                if (listing != null && (listing.sellerId == user.id || listing.seller.id == user.id)) {
+                    listings.add(listing)
+                }
+            }
+
+            emit(ApiResponse.Success(listings))
+        } else {
+            val errorMessage = query.exception?.message.orEmpty()
+            Log.w("LISTING_REPO", errorMessage)
+            emit(ApiResponse.Failure("Database Error"))
         }
     }
 

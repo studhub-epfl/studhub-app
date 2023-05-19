@@ -3,12 +3,14 @@ package com.studhub.app.data.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.*
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.fail
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,6 +18,7 @@ import org.junit.runner.RunWith
 import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
+import kotlin.random.nextLong
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -111,6 +114,38 @@ class ListingRepositoryImplTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun createAndGetListingsOfUser() {
+        val fakeUser = User(id = "fake-user-${Random.nextLong()}")
+        val listing1 = Listing(name = "Fake Listing 1", seller = fakeUser, sellerId = fakeUser.id)
+        val listing2 = Listing(name = "Fake Listing 2", seller = fakeUser, sellerId = fakeUser.id)
+        val listing3 = Listing(name = "Fake Listing 3", seller = fakeUser, sellerId = fakeUser.id)
+
+        runBlocking {
+            listingRepo.createListing(listing1).collect()
+            listingRepo.createListing(listing2).collect()
+            listingRepo.createListing(listing3).collect()
+        }
+
+        lateinit var listings: List<Listing>
+
+        runBlocking {
+            listingRepo.getUserListings(fakeUser).collect {
+                when (it) {
+                    is ApiResponse.Failure -> fail("getUserListings should not fail")
+                    is ApiResponse.Loading -> {}
+                    is ApiResponse.Success -> listings = it.data
+                }
+            }
+        }
+
+        assertTrue("All listings are sold by the correct user", listings.all { it.sellerId == fakeUser.id || it.seller.id == fakeUser.id })
+        assertEquals("Only 3 listings should have been retrieved", 3, listings.size)
+        assertNotNull("Every created listings are present", listings.firstOrNull { it.name == listing1.name})
+        assertNotNull("Every created listings are present", listings.firstOrNull { it.name == listing2.name})
+        assertNotNull("Every created listings are present", listings.firstOrNull { it.name == listing3.name})
     }
 
     @Test

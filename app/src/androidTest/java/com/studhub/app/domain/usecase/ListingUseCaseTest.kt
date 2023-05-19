@@ -10,6 +10,7 @@ import com.studhub.app.domain.usecase.listing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.*
@@ -50,6 +51,10 @@ class ListingUseCaseTest {
             }
         }
 
+        override suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>> {
+            return flowOf(ApiResponse.Success(listOf(Listing(name = "My listing"))))
+        }
+
         override suspend fun getListingsBySearch(
             keyword: String,
             minPrice: String,
@@ -65,8 +70,6 @@ class ListingUseCaseTest {
                 }))
             }
         }
-
-
 
 
         override suspend fun updateListing(
@@ -183,6 +186,26 @@ class ListingUseCaseTest {
         }
 
     @Test
+    fun getOwnListingsUseCaseWorksCorrectly() = runBlocking {
+        val getOwnListings = GetOwnListings(repository, MockAuthRepositoryImpl())
+
+        getOwnListings().collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals("Only 1 entry", 1, it.data.size)
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "My listing",
+                        it.data.first().name
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
     fun updateListingUseCaseCorrectlyUpdatesEntry() =
         runBlocking {
             val updateListing = UpdateListing(repository)
@@ -224,7 +247,7 @@ class ListingUseCaseTest {
             val updateListingToBidding = UpdateListingToBidding(repository)
 
             val productId = Random.nextLong().toString()
-            val listing =  Listing(id = productId)
+            val listing = Listing(id = productId)
             listingDB[productId] = listing
             val deadline = Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000) // tomorrow
             val startingPrice = 150.0F

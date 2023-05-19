@@ -4,6 +4,9 @@ package com.studhub.app.presentation.ui.browse
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,9 +22,18 @@ import com.studhub.app.presentation.listing.browse.components.PriceChip
 import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListingContent(listing: Listing, onClick: () -> Unit) {
-    Row(
+fun ListingCard(listing: Listing, onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    ) {Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(90.dp)
@@ -61,4 +73,6 @@ fun ListingContent(listing: Listing, onClick: () -> Unit) {
             )
         }
     }
+    }
+
 }

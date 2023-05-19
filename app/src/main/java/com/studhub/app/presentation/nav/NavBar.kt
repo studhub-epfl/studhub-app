@@ -25,8 +25,8 @@ fun NavBar(navController: NavHostController = rememberNavController()) {
     //each route will be used for a navbar button
     val items = listOf(
         Route(stringResource(R.string.nav_home_button), "Home", Icons.Filled.Home),
-        Route(stringResource(R.string.nav_browse_button), "Browse", Icons.Filled.Search),
-        Route(stringResource(R.string.nav_sell_button), "AddListing", Icons.Filled.AddCircle),
+        Route(stringResource(R.string.nav_browse_button), "Listing", Icons.Filled.Search),
+        Route(stringResource(R.string.nav_sell_button), "Listing/Add", Icons.Filled.AddCircle),
         Route(stringResource(R.string.nav_chat_button), "Conversations", Icons.Filled.MailOutline),
         Route(stringResource(R.string.nav_profile_button), "Profile", Icons.Filled.AccountBox)
     )

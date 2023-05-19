@@ -15,7 +15,9 @@ class ProfileActivity : AppCompatActivity() {
             ProfileScreen(
                 navigateToAuthScreen = {},
                 navigateToEditProfileScreen = {},
-                navigateToProfileFavorites = {})
+                navigateToProfileFavorites = {},
+                navigateToOwnListings = {}
+            )
         }
     }
 }

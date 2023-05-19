@@ -21,6 +21,7 @@ import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.details.DetailedListingScreen
 import com.studhub.app.presentation.profile.EditProfileScreen
 import com.studhub.app.presentation.profile.ProfileFavoritesScreen
+import com.studhub.app.presentation.profile.ProfileOwnListingsScreen
 import com.studhub.app.presentation.profile.ProfileScreen
 import com.studhub.app.presentation.ratings.UserRatingScreen
 
@@ -42,7 +43,6 @@ fun AppNavigation(
             )
         }
 
-
         composable(route = "Auth/SignUp") {
             Globals.showBottomBar = false
             SignUpScreen(navigateBack = { navController.navigate("Auth") })
@@ -55,15 +55,16 @@ fun AppNavigation(
 
         composable(route = "Auth/VerifyEmail") {
             Globals.showBottomBar = false
-            VerifyEmailScreen(navigateToProfileScreen = { navController.navigate("EditProfile") })
+            VerifyEmailScreen(navigateToProfileScreen = { navController.navigate("Profile/Edit") })
         }
 
         composable(route = "Profile") {
             Globals.showBottomBar = true
             ProfileScreen(
                 navigateToAuthScreen = { navController.navigate("Auth") },
-                navigateToEditProfileScreen = { navController.navigate("EditProfile") },
-                navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") }
+                navigateToEditProfileScreen = { navController.navigate("Profile/Edit") },
+                navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") },
+                navigateToOwnListings = { navController.navigate("Profile/Own-Listings") }
             )
         }
 
@@ -72,7 +73,15 @@ fun AppNavigation(
             ProfileFavoritesScreen(navigateToListing = { id: String -> navController.navigate("Listing/$id") })
         }
 
-        composable(route = "EditProfile") {
+        composable(route = "Profile/Own-Listings") {
+            Globals.showBottomBar = false
+            ProfileOwnListingsScreen(
+                navigateToProfile = { navController.navigate("Profile") },
+                navigateToListing = { id: String -> navController.navigate("Listing/$id") }
+            )
+        }
+
+        composable(route = "Profile/Edit") {
             Globals.showBottomBar = false
             EditProfileScreen(navigateToProfile = { navController.navigate("Profile") })
         }
@@ -80,24 +89,41 @@ fun AppNavigation(
         composable("Home") {
             Globals.showBottomBar = true
             HomeScreen(
-                onAddListingClick = { navController.navigate("AddListing") },
+                onAddListingClick = { navController.navigate("Listing/Add") },
                 onConversationClick = { navController.navigate("Conversations") },
-                onBrowseClick = { navController.navigate("Browse") },
+                onBrowseClick = { navController.navigate("Listing") },
                 onAboutClick = { navController.navigate("About") },
                 onCartClick = { navController.navigate("Cart") },
                 onProfileClick = { navController.navigate("Profile")
                 }
             )
         }
-        composable("AddListing") {
-            Globals.showBottomBar = false
-            CreateListingScreen(
-                navigateToListing = { id: String -> navController.navigate("DetailedListing/$id") },
-                navigateBack = { navController.popBackStack() })
-        }
-        composable("Browse") {
+
+        composable("Listing") {
             Globals.showBottomBar = true
             BrowseScreen(navController = navController)
+        }
+
+        composable("Listing/{id}") { backStackEntry ->
+            Globals.showBottomBar = false
+            val id = backStackEntry.arguments?.getString("id")
+            if (id == null) {
+                navController.navigate("Listing")
+                return@composable
+            }
+
+            DetailedListingScreen(
+                id = id,
+                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") },
+                navigateToRateUser = { userId -> navController.navigate("RatingScreen/$userId") }
+            )
+        }
+
+        composable("Listing/Add") {
+            Globals.showBottomBar = false
+            CreateListingScreen(
+                navigateToListing = { id: String -> navController.navigate("Listing/$id") },
+                navigateBack = { navController.popBackStack() })
         }
 
         composable("About") {
@@ -118,21 +144,6 @@ fun AppNavigation(
             }
 
             ChatScreen(conversationId = id, navigateBack = { navController.popBackStack() })
-        }
-
-        composable("DetailedListing/{id}") { backStackEntry ->
-            Globals.showBottomBar = false
-            val id = backStackEntry.arguments?.getString("id")
-            if (id == null) {
-                navController.navigate("Browse")
-                return@composable
-            }
-
-            DetailedListingScreen(
-                id = id,
-                navigateToConversation = { conversationId -> navController.navigate("Conversations/$conversationId") },
-                navigateToRateUser = { userId -> navController.navigate("RatingScreen/$userId") }
-            )
         }
 
 //        composable("RatingScreen") {
