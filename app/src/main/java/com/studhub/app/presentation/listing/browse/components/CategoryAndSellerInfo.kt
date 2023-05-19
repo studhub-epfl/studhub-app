@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.User
 
@@ -19,6 +20,7 @@ fun CategoryAndSellerInfo(
 ) {
     Box(
         modifier = modifier
+            .testTag("categoryAndSellerInfoBox")
             .wrapContentSize(Alignment.BottomEnd)
     ) {
         Column {
