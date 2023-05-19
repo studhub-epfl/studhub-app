@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.usecase.listing.GetOwnListings
 import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.GetFavoriteListings
 import com.studhub.app.domain.usecase.user.SignOut
@@ -22,12 +23,16 @@ class ProfileViewModel @Inject constructor(
     private val _signOut: SignOut,
     private val getCurrentUser: GetCurrentUser,
     private val updateCurrentUserInfo: UpdateCurrentUserInfo,
-    private val getFavoriteListings: GetFavoriteListings
+    private val getFavoriteListings: GetFavoriteListings,
+    private val _getOwnListings: GetOwnListings
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
         private set
 
     var currentUser by mutableStateOf<ApiResponse<User>>(ApiResponse.Loading)
+        private set
+
+    var ownListings by mutableStateOf<ApiResponse<List<Listing>>>(ApiResponse.Loading)
         private set
 
     private val _userFavorites = MutableSharedFlow<List<Listing>>(replay = 0)
@@ -41,6 +46,13 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             getCurrentUser().collect {
                 currentUser = it
+            }
+        }
+
+    fun getOwnListings() =
+        viewModelScope.launch {
+            _getOwnListings().collect {
+                ownListings = it
             }
         }
 
