@@ -206,7 +206,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke("a key","0","10").collect {
+            listingRepo.getListingsBySearch("a key","0","10", mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3) && it.data.contains(
@@ -370,7 +370,7 @@ class ListingRepositoryImplTest {
         }
     }
     */
-/*
+
     @Test
     fun getListingsBySearchShouldFailOnNonNumericalInputs() {
         lateinit var listing: Listing
@@ -413,7 +413,7 @@ class ListingRepositoryImplTest {
             }
         }
     }
-*/
+
     @Test
     fun getListingsBySearchShouldLeaveOutUnrangedProductsWithDescription() {
         lateinit var listing: Listing

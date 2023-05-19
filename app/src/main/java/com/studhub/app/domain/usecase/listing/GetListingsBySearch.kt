@@ -40,11 +40,11 @@ class GetListingsBySearch @Inject constructor(
             return flowOf(ApiResponse.Failure("Too few characters"))
         }
         */
-/*
+
         if (minPrice.toFloatOrNull() == null || maxPrice.toFloatOrNull() == null) {
             return flowOf(ApiResponse.Failure("Input is not a number"))
         }
-*/
+
         return flow {
             userRepository.getUser(authRepository.currentUserUid).collect { userQuery ->
                 when (userQuery) {
