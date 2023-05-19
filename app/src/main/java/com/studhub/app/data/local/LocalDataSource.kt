@@ -97,10 +97,10 @@ class LocalDataSource @Inject constructor(
     }
 
     suspend fun saveDraftListing(listing: Listing): Listing {
-        val generatedId = Random.nextLong().toString()
+        val id = listing.id.ifEmpty { Random.nextLong().toString() }
         draftListingDao.insertDraftListing(
             DraftListing(
-                id = generatedId,
+                id = id,
                 sellerId = listing.sellerId,
                 name = listing.name,
                 description = listing.description,
@@ -112,7 +112,7 @@ class LocalDataSource @Inject constructor(
             )
         )
 
-        return listing.copy(id = generatedId)
+        return listing.copy(id = id)
     }
 
     suspend fun getDraftListings(user: User): List<Listing> {

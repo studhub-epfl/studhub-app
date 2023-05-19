@@ -14,7 +14,7 @@ interface DraftListingDao {
     @Query("SELECT * FROM draft_listing WHERE draft_listing_id = :listingId")
     suspend fun getDraftListing(listingId: String): DraftListing
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDraftListing(draftListing: DraftListing)
 
     @Query("DELETE FROM draft_listing WHERE draft_listing_id = :draftListingId")
