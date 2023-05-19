@@ -21,6 +21,10 @@ class MockListingRepositoryImpl : ListingRepository {
         }
     }
 
+    override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
         return flow {
             emit(ApiResponse.Success(listingDB.values.toList()))
@@ -40,6 +44,10 @@ class MockListingRepositoryImpl : ListingRepository {
         return flow {
             emit(ApiResponse.Success(listingDB.values.toList()))
         }
+    }
+
+    override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
     }
 
 

@@ -32,6 +32,10 @@ class ListingUseCaseTest {
             }
         }
 
+        override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
+            return flowOf(ApiResponse.Success(listing))
+        }
+
         override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
             return flow {
                 emit(ApiResponse.Loading)
@@ -53,6 +57,17 @@ class ListingUseCaseTest {
 
         override suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>> {
             return flowOf(ApiResponse.Success(listOf(Listing(name = "My listing"))))
+        }
+
+        override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> {
+            return flowOf(
+                ApiResponse.Success(
+                    listOf(
+                        Listing(name = "My draft listing 1"),
+                        Listing(name = "My draft listing 2")
+                    )
+                )
+            )
         }
 
         override suspend fun getListingsBySearch(
@@ -199,6 +214,49 @@ class ListingUseCaseTest {
                         "Retrieved listing name matches",
                         "My listing",
                         it.data.first().name
+                    )
+                }
+            }
+        }
+    }
+    @Test
+    fun getDraftListingsUseCaseWorksCorrectly() = runBlocking {
+        val getOwnListings = GetOwnDraftListings(repository, MockAuthRepositoryImpl())
+
+        getOwnListings().collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals("Only 2 entries", 2, it.data.size)
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "My draft listing 1",
+                        it.data.first().name
+                    )
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "My draft listing 2",
+                        it.data.last().name
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun saveDraftListingsUseCaseWorksCorrectly() = runBlocking {
+        val saveDraftListing = SaveDraftListing(repository, MockAuthRepositoryImpl())
+
+        saveDraftListing(Listing(name = "Super listing")).collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "Super listing",
+                        it.data.name
                     )
                 }
             }

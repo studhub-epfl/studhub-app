@@ -12,6 +12,7 @@ import javax.inject.Inject
  * Use case for saving a draft [Listing] in a given [repository]
  *
  * @param [repository] the repository which the use case will act on
+ * @param [authRepository] the repository which the use case will retrieve the logged in user from
  */
 class SaveDraftListing @Inject constructor(
     private val repository: ListingRepository,
@@ -24,7 +25,7 @@ class SaveDraftListing @Inject constructor(
      *
      * @param [listing] the draft [Listing] to save
      */
-    suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Boolean>> {
+    suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Listing>> {
         return repository.saveDraftListing(listing.copy(sellerId = authRepository.currentUserUid))
     }
 }

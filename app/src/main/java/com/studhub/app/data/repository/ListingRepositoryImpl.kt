@@ -61,6 +61,10 @@ class ListingRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
 
@@ -144,6 +148,10 @@ class ListingRepositoryImpl @Inject constructor(
             Log.w("LISTING_REPO", errorMessage)
             emit(ApiResponse.Failure("Database Error"))
         }
+    }
+
+    override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getListingsBySearch(

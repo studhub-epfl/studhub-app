@@ -17,9 +17,9 @@ interface ListingRepository {
     /**
      * Creates a draft [Listing]
      * @param listing the draft listing we want to save
-     * @return A [Flow] of [ApiResponse] with the last one containing true on success
+     * @return A [Flow] of [ApiResponse] with the last one containing the saved [Listing] on success
      */
-    suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Boolean>>
+    suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>>
 
     /**
      * Get a [List] of all the [Listing] in the repository
