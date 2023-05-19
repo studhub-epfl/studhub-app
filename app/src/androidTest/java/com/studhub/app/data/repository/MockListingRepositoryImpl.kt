@@ -3,16 +3,15 @@ package com.studhub.app.data.repository
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
+import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.util.*
 import javax.inject.Singleton
-import kotlin.collections.HashMap
 
 @Singleton
-class MockListingRepositoryImpl: ListingRepository {
+class MockListingRepositoryImpl : ListingRepository {
     private val listingDB = HashMap<String, Listing>()
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
@@ -40,19 +39,28 @@ class MockListingRepositoryImpl: ListingRepository {
         }
     }
 
-
-
-    override suspend fun getListingsBySearch(keyword: String,keyword1: String,
-                                             keyword2: String, blockedUsers: Map<String, Boolean>): Flow<ApiResponse<List<Listing>>> {
+    override suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>> {
         return flow {
             emit(ApiResponse.Loading)
-            emit(ApiResponse.Success(listingDB.values.filter { k-> (k.description.compareTo(keyword)==0 || k.name.compareTo(keyword) == 0)
-                    && blockedUsers[k.seller.id] != true}))
+            emit(ApiResponse.Success(listingDB.values.toList()))
         }
     }
 
 
-
+    override suspend fun getListingsBySearch(
+        keyword: String,
+        keyword1: String,
+        keyword2: String,
+        blockedUsers: Map<String, Boolean>
+    ): Flow<ApiResponse<List<Listing>>> {
+        return flow {
+            emit(ApiResponse.Loading)
+            emit(ApiResponse.Success(listingDB.values.filter { k ->
+                (k.description.compareTo(keyword) == 0 || k.name.compareTo(keyword) == 0)
+                        && blockedUsers[k.seller.id] != true
+            }))
+        }
+    }
 
 
     override suspend fun updateListing(
