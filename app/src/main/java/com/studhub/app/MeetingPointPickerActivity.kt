@@ -56,10 +56,10 @@ private var currentLatLng: LatLng? = null
 class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
 
     private lateinit var mapView: MapView
-    private var confirmButton: Button? = null
+    internal var confirmButton: Button? = null
     private lateinit var searchView: AutoCompleteTextView
     private lateinit var googleMap: GoogleMap
-    private var selectedLatLng: LatLng? = null
+    internal  var selectedLatLng: LatLng? = null
     private lateinit var searchButton: Button
     private var viewOnly = false
 

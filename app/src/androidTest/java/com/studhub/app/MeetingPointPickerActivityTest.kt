@@ -1,6 +1,5 @@
 package com.studhub.app
 
-
 import android.content.Intent
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -9,7 +8,6 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -19,222 +17,131 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.maps.MapView
 import com.studhub.app.resources.ElapsedTimeIdlingResource
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertNotSame
 import junit.framework.TestCase.assertSame
 import org.hamcrest.CoreMatchers.allOf
+import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class MeetingPointPickerActivityTest {
 
-
-    @get:Rule(order = 0)
-    var hiltRule = HiltAndroidRule(this)
-
+    private lateinit var scenario: ActivityScenario<MeetingPointPickerActivity>
 
     @Before
     fun setUp() {
-        hiltRule.inject()
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MeetingPointPickerActivity::class.java
+        )
+        intent.putExtra("viewOnly", false)
+        intent.putExtra("latitude", 0.0)
+        intent.putExtra("longitude", 0.0)
+        scenario = ActivityScenario.launch(intent)
+    }
+
+    @After
+    fun tearDown() {
+        scenario.close()
     }
 
     @Test
     fun mapViewIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(MapView::class.java))).check(matches(isDisplayed()))
-        }
+        onView(allOf(isAssignableFrom(MapView::class.java))).check(matches(isDisplayed()))
     }
-
-
 
     @Test
     fun searchViewIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(AutoCompleteTextView::class.java))).check(matches(isDisplayed()))
-        }
+        onView(allOf(isAssignableFrom(AutoCompleteTextView::class.java))).check(matches(isDisplayed()))
     }
 
     @Test
     fun searchButtonIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Search"))).check(
-                matches(
-                    isDisplayed()
-                )
-            )  }
-
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Search")))
+            .check(matches(isDisplayed()))
     }
 
     @Test
     fun confirmButtonIsDisplayed() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location"))).check(
-                matches(isDisplayed())
-            )
-        }
-
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
+            .check(matches(isDisplayed()))
     }
-
 
     @Test
     fun searchLocationAndConfirm() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            // Create idling resource
-            val idlingResource2 = ElapsedTimeIdlingResource(5000)
-            // Register idling resource
-            IdlingRegistry.getInstance().register(idlingResource2)
+        val idlingResourceSearchLocation = ElapsedTimeIdlingResource(5000)
+        val idlingResourceConfirmButton = ElapsedTimeIdlingResource(5000)
 
-            var idlingResource: IdlingResource? = null
+        IdlingRegistry.getInstance().register(idlingResourceSearchLocation)
+        IdlingRegistry.getInstance().register(idlingResourceConfirmButton)
 
-            var idlingResourceConfirmButton: IdlingResource? = null
+        onView(allOf(isAssignableFrom(AutoCompleteTextView::class.java)))
+            .perform(typeText("New York"), closeSoftKeyboard())
 
-            scenario.onActivity { activity ->
-                idlingResource = activity.idlingResourceSearchLocation
-                IdlingRegistry.getInstance().register(idlingResource)
-            }
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Search")))
+            .perform(click())
 
-            // Type in the search view
-            onView(allOf(isAssignableFrom(AutoCompleteTextView::class.java)))
-                .perform(typeText("New York"), closeSoftKeyboard())
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
+            .check(matches(isEnabled()))
 
-            // Click on the search button
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Search")))
-                .perform(click())
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
+            .perform(click())
 
-            // We can't really predict what will be displayed on the map after the search
-            // But let's assume that the confirm button will be enabled if the search is successful
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
-                .check(matches(isEnabled()))
+        IdlingRegistry.getInstance().unregister(idlingResourceSearchLocation)
+        IdlingRegistry.getInstance().unregister(idlingResourceConfirmButton)
 
-            scenario.onActivity { activity ->
-                idlingResourceConfirmButton = activity.idlingResourceConfirmButton
-                IdlingRegistry.getInstance().register(idlingResourceConfirmButton)
-            }
-
-            Thread.sleep(10000)
-
-            scenario.onActivity { activity ->
-                IdlingRegistry.getInstance().unregister(idlingResourceConfirmButton)
-            }
-
-            // Click on the confirm button
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
-                .perform(click())
-
-
-//             Wait for the UI to get idle
-            IdlingRegistry.getInstance().unregister(idlingResource2)
-
-            Thread.sleep(5000)
-
-
-            assertNotSame(scenario.state,Lifecycle.State.CREATED)
-
-        }
-
+        assertNotSame(scenario.state,Lifecycle.State.CREATED)
 
     }
 
     @Test
     fun mapClickAndConfirm() {
+        val idlingResourceMapClick = ElapsedTimeIdlingResource(5000)
+        val idlingResourceConfirmButton = ElapsedTimeIdlingResource(5000)
 
-        val intent = Intent(
+        IdlingRegistry.getInstance().register(idlingResourceMapClick)
+        IdlingRegistry.getInstance().register(idlingResourceConfirmButton)
+
+        onView(isAssignableFrom(MapView::class.java)).perform(click())
+
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
+            .check(matches(isEnabled()))
+
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
+            .perform(click())
+
+        IdlingRegistry.getInstance().unregister(idlingResourceMapClick)
+        IdlingRegistry.getInstance().unregister(idlingResourceConfirmButton)
+
+        assertNotSame(scenario.state, Lifecycle.State.CREATED)
+
+    }
+
+    @Test
+    fun viewOnlyModeOpenInGoogleMaps() {
+        val viewOnlyIntent = Intent(
             ApplicationProvider.getApplicationContext(),
             MeetingPointPickerActivity::class.java
-        )
-        intent.putExtra("viewOnly", false)
-        intent.putExtra("latitude", 0.0)
-        intent.putExtra("longitude", 0.0)
-
-        ActivityScenario.launch<MeetingPointPickerActivity>(intent).use { scenario ->
-            var idlingResourceConfirm: IdlingResource? = null
-
-            // Create idling resource
-            val idlingResource2 = ElapsedTimeIdlingResource(5000)
-            // Register idling resource
-            IdlingRegistry.getInstance().register(idlingResource2)
+        ).apply {
+            putExtra("viewOnly", true)
+            putExtra("latitude", 0.0)
+            putExtra("longitude", 0.0)
+        }
 
 
-            var idlingResource: IdlingResource? = null
+        scenario.close()
 
-            scenario.onActivity { activity ->
-                idlingResource = activity.idlingResourceMapClick
-                IdlingRegistry.getInstance().register(idlingResource)
-            }
+        scenario = ActivityScenario.launch(viewOnlyIntent)
 
-            // Assuming that a click on the map will enable the confirm button
-            // Click somewhere on the map
-            onView(isAssignableFrom(MapView::class.java)).perform(click())
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Open in Google Maps")))
+            .check(matches(isDisplayed()))
 
-            scenario.onActivity { activity ->
-                idlingResourceConfirm = activity.idlingResourceConfirmButton
-                IdlingRegistry.getInstance().register(idlingResourceConfirm)
-            }
+        onView(allOf(isAssignableFrom(Button::class.java), withText("Open in Google Maps")))
+            .perform(click())
 
-            Thread.sleep(5000)
+        assertNotSame(scenario.state, Lifecycle.State.CREATED)
 
-            scenario.onActivity { activity ->
-                IdlingRegistry.getInstance().unregister(idlingResourceConfirm)
-            }
-
-            // Click on the confirm button
-            onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
-                .perform(click())
-
-            // Wait for the UI to get idle
-            IdlingRegistry.getInstance().unregister(idlingResource2)
-
-
-            assertNotSame(scenario.state,Lifecycle.State.CREATED)
-
-        }  }
-
+    }
 }
-
-
-
-
-
