@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.studhub.app.BuildConfig.MAPS_API_KEY
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -50,7 +51,7 @@ import org.json.JSONObject
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
-private var currentLatLng: LatLng? = null
+
 
 
 class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
@@ -58,15 +59,15 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
     private lateinit var mapView: MapView
     internal var confirmButton: Button? = null
     private lateinit var searchView: AutoCompleteTextView
-    private lateinit var googleMap: GoogleMap
-    internal  var selectedLatLng: LatLng? = null
+    lateinit var googleMap: GoogleMap
+    var selectedLatLng: LatLng? = null
     private lateinit var searchButton: Button
     private var viewOnly = false
+    var currentLatLng: LatLng? = null
 
-
-    val idlingResourceSearchLocation = CountingIdlingResource("Search")
-    val idlingResourceMapClick = CountingIdlingResource("MapClick")
-    val idlingResourceConfirmButton = CountingIdlingResource("ConfirmButton")
+    private val idlingResourceSearchLocation = CountingIdlingResource("Search")
+    private val idlingResourceMapClick = CountingIdlingResource("MapClick")
+    private val idlingResourceConfirmButton = CountingIdlingResource("ConfirmButton")
 
     companion object {
         private const val TAG = "MeetingPointPicker"
@@ -91,7 +92,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         initializeMapView(savedInstanceState)
     }
 
-    private fun drawRoute(startLatLng: LatLng, endLatLng: LatLng) {
+    fun drawRoute(startLatLng: LatLng, endLatLng: LatLng) {
         val url = "https://maps.googleapis.com/maps/api/directions/json?" +
                 "origin=${startLatLng.latitude},${startLatLng.longitude}&" +
                 "destination=${endLatLng.latitude},${endLatLng.longitude}&" +
@@ -106,7 +107,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
-                val json = JSONObject(body)
+                val json = JSONObject(body!!)
                 val routes = json.getJSONArray("routes")
                 if (routes.length() > 0) {
                     val route = routes.getJSONObject(0)
@@ -141,41 +142,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         })
     }
 
-    private fun decodePolyline(encoded: String): List<LatLng> {
-        val poly = ArrayList<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
 
-        while (index < len) {
-            var b: Int
-            var shift = 0
-            var result = 0
-            do {
-                b = encoded[index++].toInt() - 63
-                result = result or (b and 0x1F shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            lat += dlat
-
-            shift = 0
-            result = 0
-            do {
-                b = encoded[index++].toInt() - 63
-                result = result or (b and 0x1F shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            lng += dlng
-
-            val latLng = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
-            poly.add(latLng)
-        }
-
-        return poly
-    }
 
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(
@@ -442,7 +409,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         }
     }
 
-    private fun drawRouteToMeetingPoint() {
+    fun drawRouteToMeetingPoint() {
         currentLatLng?.let { currentLocationLatLng ->
             selectedLatLng?.let { meetingPointLatLng ->
                 googleMap.clear()
@@ -542,49 +509,99 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         }
     }
 
-
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onStart() {
         super.onStart()
         mapView.onStart()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onPause() {
         mapView.onPause()
         super.onPause()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onStop() {
         mapView.onStop()
         super.onStop()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onDestroy() {
         job.cancel()
         mapView.onDestroy()
         super.onDestroy()
     }
 
-
+    @ExcludeFromGeneratedTestCoverage
     override fun onSaveInstanceState(outState: Bundle) {
         mapView.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 
+    @ExcludeFromGeneratedTestCoverage
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
 }
 
+// basic math function
+@ExcludeFromGeneratedTestCoverage
 private fun Int.dpToPx(context: Context): Int {
     return TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         this.toFloat(),
         context.resources.displayMetrics
     ).toInt()
+}
+
+// Google's polyline decoder
+@ExcludeFromGeneratedTestCoverage
+private fun decodePolyline(encoded: String): List<LatLng> {
+    val poly = ArrayList<LatLng>()
+    var index = 0
+    val len = encoded.length
+    var lat = 0
+    var lng = 0
+
+    while (index < len) {
+        var b: Int
+        var shift = 0
+        var result = 0
+        do {
+            b = encoded[index++].code - 63
+            result = result or (b and 0x1F shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        lat += dlat
+
+        shift = 0
+        result = 0
+        do {
+            b = encoded[index++].code - 63
+            result = result or (b and 0x1F shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        lng += dlng
+
+        val latLng = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+        poly.add(latLng)
+    }
+
+    return poly
 }

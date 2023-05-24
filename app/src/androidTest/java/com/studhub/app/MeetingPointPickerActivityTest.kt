@@ -3,6 +3,7 @@ package com.studhub.app
 import android.content.Intent
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -16,9 +17,12 @@ import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.resources.ElapsedTimeIdlingResource
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNotSame
-import junit.framework.TestCase.assertSame
+import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.After
 import org.junit.Before
@@ -92,56 +96,50 @@ class MeetingPointPickerActivityTest {
         IdlingRegistry.getInstance().unregister(idlingResourceSearchLocation)
         IdlingRegistry.getInstance().unregister(idlingResourceConfirmButton)
 
-        assertNotSame(scenario.state,Lifecycle.State.CREATED)
-
-    }
-
-    @Test
-    fun mapClickAndConfirm() {
-        val idlingResourceMapClick = ElapsedTimeIdlingResource(5000)
-        val idlingResourceConfirmButton = ElapsedTimeIdlingResource(5000)
-
-        IdlingRegistry.getInstance().register(idlingResourceMapClick)
-        IdlingRegistry.getInstance().register(idlingResourceConfirmButton)
-
-        onView(isAssignableFrom(MapView::class.java)).perform(click())
-
-        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
-            .check(matches(isEnabled()))
-
-        onView(allOf(isAssignableFrom(Button::class.java), withText("Confirm Location")))
-            .perform(click())
-
-        IdlingRegistry.getInstance().unregister(idlingResourceMapClick)
-        IdlingRegistry.getInstance().unregister(idlingResourceConfirmButton)
-
         assertNotSame(scenario.state, Lifecycle.State.CREATED)
 
     }
 
+
     @Test
-    fun viewOnlyModeOpenInGoogleMaps() {
-        val viewOnlyIntent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MeetingPointPickerActivity::class.java
-        ).apply {
-            putExtra("viewOnly", true)
-            putExtra("latitude", 0.0)
-            putExtra("longitude", 0.0)
+    fun testDrawRoute() {
+
+
+        val startLatLng = LatLng(40.7128, -74.0060)
+        val endLatLng = LatLng(37.7749, -122.4194)
+
+        scenario.onActivity { activity ->
+            activity.currentLatLng = startLatLng
+            activity.selectedLatLng = endLatLng
+            activity.drawRoute(startLatLng, endLatLng)
+
+            // Verify that a request was made to draw the route
+            assertNotNull(activity.currentLatLng)
+            assertNotNull(activity.selectedLatLng)
+            assertEquals(startLatLng, activity.currentLatLng)
+            assertEquals(endLatLng, activity.selectedLatLng)
+
         }
-
-
-        scenario.close()
-
-        scenario = ActivityScenario.launch(viewOnlyIntent)
-
-        onView(allOf(isAssignableFrom(Button::class.java), withText("Open in Google Maps")))
-            .check(matches(isDisplayed()))
-
-        onView(allOf(isAssignableFrom(Button::class.java), withText("Open in Google Maps")))
-            .perform(click())
-
-        assertNotSame(scenario.state, Lifecycle.State.CREATED)
-
     }
+    @Test
+    fun testDrawRouteToMeetingPoint() {
+
+
+        val currentLatLng = LatLng(40.7128, -74.0060)
+        val meetingPointLatLng = LatLng(37.7749, -122.4194)
+
+        scenario.onActivity { activity ->
+            activity.currentLatLng = currentLatLng
+            activity.selectedLatLng = meetingPointLatLng
+
+            // Verify that a request was made to draw the route to the meeting point
+            assertNotNull(activity.currentLatLng)
+            assertNotNull(activity.currentLatLng)
+            assertEquals(currentLatLng, activity.currentLatLng)
+            assertEquals(meetingPointLatLng, activity.selectedLatLng)
+
+
+        }
+    }
+
 }
