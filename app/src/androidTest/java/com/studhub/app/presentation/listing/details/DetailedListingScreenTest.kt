@@ -2,6 +2,7 @@ package com.studhub.app.presentation.listing.details
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -67,7 +68,10 @@ class DetailedListingScreenTest {
                 isFavorite = isFavorite.value,
                 onRateUserClick = { },
                 isBlocked = isBlocked.value,
-                onBlockedClicked = { isBlocked.value = !isBlocked.value }
+                onBlockedClicked = { isBlocked.value = !isBlocked.value },
+                onBidPlaced = {},
+                bid = rememberSaveable {mutableStateOf("")},
+                hasBid = false
             )
         }
     }
