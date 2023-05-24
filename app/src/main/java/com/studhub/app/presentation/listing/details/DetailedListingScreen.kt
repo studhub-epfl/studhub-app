@@ -155,7 +155,7 @@ fun Details(
 
         if (listing.type == ListingType.BIDDING) {
             Spacer("large")
-            BiddingControls(price = price)
+            BiddingControls(price = price, deadline = listing.biddingDeadline)
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -193,8 +193,8 @@ fun DetailsListingScreenBidPreview() {
     StudHubTheme {
         Details(
             listing = listing,
-            onContactSellerClick = { },
-            onFavoriteClicked = { },
+            onContactSellerClick = {},
+            onFavoriteClicked = {},
             isFavorite = true,
             onMeetingPointClick = {},
             onRateUserClick = {},
