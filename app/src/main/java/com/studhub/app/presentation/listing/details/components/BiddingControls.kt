@@ -26,20 +26,43 @@ import java.util.*
  * can bid on those.
  * @param price mutablestate of string to be used for the price bid field
  * @param onSubmit the submit handler
+ * @param hasBid boolean value to hide the controls and display an indicator that the current
+ * user currently holding the best bid on that listing.
  */
 @SuppressLint("SimpleDateFormat")
 @Composable
-fun BiddingControls(price: MutableState<String>, deadline: Date, onSubmit: () -> Unit = {}) {
-    val calendar =  GregorianCalendar()
+fun BiddingControls(
+    price: MutableState<String>,
+    deadline: Date,
+    onSubmit: () -> Unit = {},
+    hasBid: Boolean
+) {
+    val calendar = GregorianCalendar()
     calendar.time = deadline
     val formatter = SimpleDateFormat("dd.MM.yyyy")
-    Column (
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = String.format(stringResource(R.string.listing_deadline), formatter.format(calendar.time)))
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = String.format(
+                stringResource(R.string.listing_deadline),
+                formatter.format(calendar.time)
+            )
+        )
         Spacer("medium")
-        NumericTextField(label = stringResource(R.string.bidding_price_label), rememberedValue = price)
-        BasicFilledButton(onClick = { onSubmit() }, label = stringResource(R.string.bidding_button))
+        if (hasBid) {
+            Text(text = stringResource(R.string.current_bidder_indicator))
+        } else {
+            NumericTextField(
+                label = stringResource(R.string.bidding_price_label),
+                rememberedValue = price
+            )
+            BasicFilledButton(
+                onClick = { onSubmit() },
+                label = stringResource(R.string.bidding_button)
+            )
+        }
     }
 }
 
@@ -51,6 +74,6 @@ fun BiddingControlsPreview() {
     //using an arbitrary millisecond timestamp from the internet for this preview
     val date = Date(1684946575500L)
     StudHubTheme {
-        BiddingControls(price = price, deadline = date)
+        BiddingControls(price = price, deadline = date, hasBid = false)
     }
 }

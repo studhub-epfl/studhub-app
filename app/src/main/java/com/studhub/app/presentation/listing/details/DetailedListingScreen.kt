@@ -9,10 +9,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +22,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.core.utils.Utils
+import com.studhub.app.core.utils.Utils.Companion.displayMessage
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
@@ -44,6 +44,7 @@ fun DetailedListingScreen(
     navigateToRateUser: (userId: String) -> Unit,
     id: String?
 ) {
+    val bid = rememberSaveable { mutableStateOf("") }
     LaunchedEffect(id) {
         if (id != null)
             viewModel.fetchListing(id)
@@ -67,6 +68,8 @@ fun DetailedListingScreen(
             val listing = currentListing.data
             val isFavorite = viewModel.isFavorite.value
             val isBlocked = viewModel.isBlocked.value
+            bid.value = String.format("%.2f", listing.price)
+            val hasBid = listing.currentBidderId.equals(viewModel.userId)
             Details(
                 listing = listing,
                 onFavoriteClicked = { viewModel.onFavoriteClicked() },
@@ -84,7 +87,15 @@ fun DetailedListingScreen(
                         displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
                     }
                 },
-                onRateUserClick = { navigateToRateUser(listing.seller.id) }
+                onRateUserClick = { navigateToRateUser(listing.seller.id) },
+                onBidPlaced = {
+                    viewModel.placeBid(
+                        bid = bid.value.toFloatOrNull(),
+                        onError = { msg -> displayMessage(activityContext, msg) }
+                    )
+                },
+                bid = bid,
+                hasBid = hasBid
             )
         }
     }
@@ -99,10 +110,12 @@ fun Details(
     isBlocked: Boolean,
     onFavoriteClicked: () -> Unit,
     onBlockedClicked: () -> Unit,
-    onRateUserClick: () -> Unit
+    onRateUserClick: () -> Unit,
+    onBidPlaced: () -> Unit,
+    bid: MutableState<String>,
+    hasBid: Boolean
 ) {
     val scrollState = rememberScrollState()
-    val price = remember { mutableStateOf(listing.price.toString()) }
 
     Column(
         modifier = Modifier
@@ -155,7 +168,11 @@ fun Details(
 
         if (listing.type == ListingType.BIDDING) {
             Spacer("large")
-            BiddingControls(price = price, deadline = listing.biddingDeadline)
+            BiddingControls(
+                price = bid,
+                deadline = listing.biddingDeadline,
+                onSubmit = {onBidPlaced()},
+                hasBid = hasBid)
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -199,7 +216,10 @@ fun DetailsListingScreenBidPreview() {
             onMeetingPointClick = {},
             onRateUserClick = {},
             onBlockedClicked = {},
-            isBlocked = true
+            onBidPlaced = {},
+            isBlocked = true,
+            bid = rememberSaveable { mutableStateOf("545.45") },
+            hasBid = false
         )
     }
 }
