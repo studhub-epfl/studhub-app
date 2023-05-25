@@ -1,6 +1,7 @@
 package com.studhub.app.presentation.listing.details
 
 import androidx.compose.ui.test.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
 import com.studhub.app.core.utils.ApiResponse
@@ -20,13 +21,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.HashMap
 
 
 @HiltAndroidTest
@@ -62,7 +61,8 @@ class DetailedListingViewModelTest {
     )
 
     private val seller = User(id = "blocked1234", userName = "seller")
-    val listing = Listing(id = "test1234", name = "test", sellerId = seller.id, seller = seller, price = 20f)
+    val listing =
+        Listing(id = "test1234", name = "test", sellerId = seller.id, seller = seller, price = 20f)
 
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
@@ -80,14 +80,15 @@ class DetailedListingViewModelTest {
         runBlocking {
             viewModel.fetchListing(listing.id)
         }
+
+        runBlocking {
+            userRepo.addFavoriteListing(authRepo.currentUserUid, listing).collect()
+        }
+        runBlocking { delay(100) }
     }
 
     @Test
     fun detailedListingViewModelFetchListingGetsCorrectListing() {
-
-        runBlocking {
-            delay(100)
-        }
 
         assertEquals(
             "ViewModel's current listing should match the given listing",
@@ -100,14 +101,7 @@ class DetailedListingViewModelTest {
     fun detailedListingViewModelGetIsFavoriteIsCorrect() {
 
         runBlocking {
-            userRepo.addFavoriteListing(authRepo.currentUserUid, listing).collect()
-        }
-
-        runBlocking {
             viewModel.getIsFavorite()
-        }
-
-        runBlocking {
             delay(100)
         }
 
@@ -122,18 +116,12 @@ class DetailedListingViewModelTest {
 
         runBlocking {
             viewModel.placeBid(bid = 40f, onError = {})
-        }
-
-        runBlocking {
             delay(100)
         }
 
         var l: Listing
         runBlocking {
             l = (listingRepo.getListing(listing.id).first() as ApiResponse.Success).data
-        }
-
-        runBlocking {
             delay(100)
         }
 
@@ -148,12 +136,48 @@ class DetailedListingViewModelTest {
 
         runBlocking {
             viewModel.getIsBlocked()
-        }
-
-        runBlocking {
             delay(100)
         }
 
         assert(viewModel.isBlocked.value)
+    }
+
+    @Test
+    fun detailedListingViewModelOnFavouriteClickedChangesFavouriteStatus() {
+        runBlocking {
+            viewModel.onFavoriteClicked()
+            delay(100)
+        }
+
+        //the listing is already in favourite so we click it off
+        assert(!viewModel.isFavorite.value)
+
+        //then we click it back on
+        runBlocking {
+            viewModel.onFavoriteClicked()
+            delay(100)
+        }
+
+
+        assert(viewModel.isFavorite.value)
+    }
+
+    @Test
+    fun detailedListingViewModelOnBlockClickedBlocksTheListing() {
+        runBlocking {
+            viewModel.onBlockedClicked()
+            delay(100)
+        }
+
+        //listing blocked
+        assert(viewModel.isBlocked.value)
+
+        //now we click again to see if it unblocks
+        runBlocking {
+            viewModel.onBlockedClicked()
+            delay(100)
+        }
+
+        assert(!viewModel.isBlocked.value)
     }
 }
