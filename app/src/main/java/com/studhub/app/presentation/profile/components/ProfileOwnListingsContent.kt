@@ -14,6 +14,7 @@ fun ProfileOwnListingsContent(
     drafts: List<Listing>,
     navigateToProfile: () -> Unit,
     navigateToListing: (id: String) -> Unit,
+    navigateToDraft: (id: String) -> Unit,
     isLoading: Boolean
 ) {
     Screen(
@@ -25,7 +26,7 @@ fun ProfileOwnListingsContent(
             title = stringResource(R.string.profile_own_listings_drafts_title),
             emptyText = stringResource(R.string.profile_own_listings_no_drafts),
             listings = drafts,
-            navigateToListing = navigateToListing
+            navigateToListing = navigateToDraft
         )
 
         Spacer()

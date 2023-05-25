@@ -27,12 +27,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.R
 import com.studhub.app.core.utils.PriceValidationResult
+import com.studhub.app.core.utils.Utils.Companion.displayMessage
 import com.studhub.app.core.utils.validatePrice
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.presentation.listing.add.components.BiddingSpecifics
 import com.studhub.app.presentation.listing.add.components.CategorySheet
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.input.BasicTextField
@@ -47,8 +49,10 @@ import java.util.*
 fun CreateListingScreen(
     viewModel: CreateListingViewModel = hiltViewModel(),
     navigateToListing: (id: String) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    draftId: String? = null
 ) {
+
     val categories by viewModel.categories.collectAsState(emptyList())
     val title = rememberSaveable { mutableStateOf("") }
     val description = rememberSaveable { mutableStateOf("") }
@@ -62,8 +66,24 @@ fun CreateListingScreen(
     // there is a .selectedDateMillis which is a Long typed timestamp
     val date: DatePickerState = rememberDatePickerState()
 
+    val context = LocalContext.current
+    val msg = stringResource(R.string.listings_add_feedback_draft_saved)
 
     val scrollState = rememberScrollState()
+
+    // if there is a given draft id, fetch the corresponding draft and display its values
+    LaunchedEffect(draftId) {
+        if (!draftId.isNullOrBlank())
+            viewModel.fetchDraft(draftId) {
+                title.value = it.name
+                description.value = it.description
+                price.value = it.price.toString()
+                meetingPoint.value = it.meetingPoint
+                it.picturesUri?.let { it1 -> pictures.addAll(it1) }
+                switch.value = it.type == ListingType.BIDDING
+                date.setSelection(it.biddingDeadline.time)
+            }
+    }
 
     Scaffold(
         topBar = {
@@ -84,49 +104,62 @@ fun CreateListingScreen(
                     }
                 }
             )
-        },
-        content = {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .verticalScroll(scrollState)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ListingForm(
-                    chosenCategories,
-                    title = title,
-                    description = description,
-                    price = price,
-                    meetingPoint = meetingPoint,
-                    pictures = pictures,
-                    checked = switch,
-                    onSubmit = {
-                        viewModel.createListing(
-                            title.value,
-                            description.value,
-                            chosenCategories,
-                            price.value.toFloat(),
-                            meetingPoint.value,
-                            pictures,
-                            type = if (switch.value) ListingType.BIDDING else ListingType.FIXED,
-                            //Create a date out of the timestamp (it's UTC)
-                            deadline =
-                            if (date.selectedDateMillis != null) Date(date.selectedDateMillis!!) else Date(),
-                            navigateToListing
-                        )
-                    },
-                    openCategorySheet = openCategorySheet,
-                    date = date
-                )
-            }
-            CategorySheet(
-                isOpen = openCategorySheet,
-                categories = categories,
-                chosen = chosenCategories
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .verticalScroll(scrollState)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ListingForm(
+                chosenCategories,
+                title = title,
+                description = description,
+                price = price,
+                meetingPoint = meetingPoint,
+                pictures = pictures,
+                checked = switch,
+                onSubmit = {
+                    viewModel.createListing(
+                        title.value,
+                        description.value,
+                        chosenCategories,
+                        price.value.toFloat(),
+                        meetingPoint.value,
+                        pictures,
+                        type = if (switch.value) ListingType.BIDDING else ListingType.FIXED,
+                        //Create a date out of the timestamp (it's UTC)
+                        deadline =
+                        if (date.selectedDateMillis != null) Date(date.selectedDateMillis!!) else Date(),
+                        navigateToListing
+                    )
+                },
+                onSaveDraft = {
+                    viewModel.saveDraft(
+                        title.value,
+                        description.value,
+                        chosenCategories,
+                        price.value.ifEmpty { "0" }.toFloat(),
+                        meetingPoint.value,
+                        pictures,
+                        type = if (switch.value) ListingType.BIDDING else ListingType.FIXED,
+                        //Create a date out of the timestamp (it's UTC)
+                        deadline =
+                        if (date.selectedDateMillis != null) Date(date.selectedDateMillis!!) else Date()
+                    ) { displayMessage(context, msg) }
+                },
+                openCategorySheet = openCategorySheet,
+                date = date
             )
         }
-    )
+        CategorySheet(
+            isOpen = openCategorySheet,
+            categories = categories,
+            chosen = chosenCategories
+        )
+    }
 }
 
 /**
@@ -145,6 +178,7 @@ fun ListingForm(
     meetingPoint: MutableState<MeetingPoint?>,
     pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
+    onSaveDraft: () -> Unit,
     openCategorySheet: MutableState<Boolean>,
     checked: MutableState<Boolean>,
     date: DatePickerState
@@ -203,19 +237,28 @@ fun ListingForm(
         )
     }
 
+    Spacer()
+
+    BasicFilledButton(
+        label = stringResource(R.string.listings_add_form_save_draft),
+        onClick = {
+            onSaveDraft()
+        }
+    )
+
+    Spacer()
+
     // Check if the category is selected and the price is non-negative
     val isFormValid = (priceValidationResult == PriceValidationResult.VALID) && chosen.isNotEmpty()
-    Button(
+    BasicFilledButton(
+        label = stringResource(R.string.listings_add_form_send),
+        enabled = isFormValid,
         onClick = {
             if (isFormValid) {
                 onSubmit()
             }
-        },
-        enabled = isFormValid,
-        modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)
-    ) {
-        Text(stringResource(R.string.listings_add_form_send))
-    }
+        }
+    )
 }
 
 /**

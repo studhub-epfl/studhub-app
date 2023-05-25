@@ -10,7 +10,8 @@ import com.studhub.app.presentation.profile.components.ProfileOwnListingsContent
 fun ProfileOwnListingsScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     navigateToProfile: () -> Unit,
-    navigateToListing: (id: String) -> Unit
+    navigateToListing: (id: String) -> Unit,
+    navigateToDraft: (id: String) -> Unit
 ) {
     LaunchedEffect(Unit) {
         viewModel.getOwnListings()
@@ -25,6 +26,7 @@ fun ProfileOwnListingsScreen(
         drafts = if (isLoading) emptyList() else (viewModel.ownDraftListings as ApiResponse.Success).data,
         navigateToProfile = navigateToProfile,
         navigateToListing = navigateToListing,
+        navigateToDraft = navigateToDraft,
         isLoading = isLoading
     )
 }
