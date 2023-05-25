@@ -29,7 +29,7 @@ class ConversationViewModel @Inject constructor(
         getLoggedInUser()
     }
 
-    private fun getLoggedInUser() =
+    fun getLoggedInUser() =
         viewModelScope.launch {
             getCurrentUser().collect {
                 currentUser = it
