@@ -41,7 +41,7 @@ class ConversationViewModelTest {
 
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
-
+//Expected — Waiting for status to be reported
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
