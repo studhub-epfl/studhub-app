@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.presentation.profile.components.ProfileOwnListingsContent
-import com.studhub.app.presentation.ui.common.misc.LoadingCircle
 
 @Composable
 fun ProfileOwnListingsScreen(
