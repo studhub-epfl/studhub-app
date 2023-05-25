@@ -40,7 +40,7 @@ class ProfileViewModel @Inject constructor(
 
     private val _blockedUsers = MutableSharedFlow<List<User>>(replay = 0)
     val blockedUsers: SharedFlow<List<User>> = _blockedUsers
-
+    var isBlocked = mutableStateOf(false)
 
     init {
         getLoggedInUser()
@@ -81,8 +81,31 @@ class ProfileViewModel @Inject constructor(
     fun getBlocked() = viewModelScope.launch {
         getBlockedUsers().collect {
             when (it) {
-                is ApiResponse.Success -> _blockedUsers.emit(it.data)
-                else -> _blockedUsers.emit(emptyList())
+                is ApiResponse.Success -> {
+                    _blockedUsers.emit(it.data)
+                    isBlocked.value = (it.data.contains(/**TODO**/User()))
+                }
+                else -> {
+                    _blockedUsers.emit(emptyList())
+                }
+            }
+        }
+    }
+
+    fun onBlockedClicked() {
+        viewModelScope.launch {
+            if (!isBlocked.value) {
+                addBlockedUser(/**TODO**/"").collect {
+                    if (it is ApiResponse.Success) {
+                        isBlocked.value = true
+                    }
+                }
+            } else {
+                unblockUser(/**TODO**/"").collect {
+                    if (it is ApiResponse.Success) {
+                        isBlocked.value = false
+                    }
+                }
             }
         }
     }

@@ -50,8 +50,8 @@ fun ProfileBlockedScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     UserThumbnailScreen(
                         viewModel = UserThumbnailViewModel(user = user),
-                        isBlocked = true, //TODO
-                        onBlockClicked = {} //TODO
+                        isBlocked = viewModel.isBlocked.value,
+                        onBlockClicked = {viewModel.onBlockedClicked()}
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Divider()
