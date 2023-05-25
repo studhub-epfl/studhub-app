@@ -61,7 +61,7 @@ class DetailedListingViewModelTest {
         placeBid
     )
 
-    val seller = User(id = "blocked1234", userName = "seller")
+    private val seller = User(id = "blocked1234", userName = "seller")
     val listing = Listing(id = "test1234", name = "test", sellerId = seller.id, seller = seller, price = 20f)
 
     @get:Rule
@@ -86,7 +86,7 @@ class DetailedListingViewModelTest {
     fun detailedListingViewModelFetchListingGetsCorrectListing() {
 
         runBlocking {
-            delay(10)
+            delay(100)
         }
 
         assertEquals(
@@ -108,7 +108,7 @@ class DetailedListingViewModelTest {
         }
 
         runBlocking {
-            delay(10)
+            delay(100)
         }
 
         assert(viewModel.isFavorite.value)
@@ -137,7 +137,7 @@ class DetailedListingViewModelTest {
             delay(100)
         }
 
-        assertEquals("Price should match", l.price, 40f)
+        assertEquals("Price should match", 40f, l.price)
     }
 
     @Test
@@ -151,7 +151,7 @@ class DetailedListingViewModelTest {
         }
 
         runBlocking {
-            delay(10)
+            delay(100)
         }
 
         assert(viewModel.isBlocked.value)
