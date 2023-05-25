@@ -16,7 +16,6 @@ class MockListingRepositoryImpl : ListingRepository {
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
         return flow {
-            emit(ApiResponse.Loading)
             listingDB[listing.id] = listing
             emit(ApiResponse.Success(listing))
         }
@@ -24,14 +23,12 @@ class MockListingRepositoryImpl : ListingRepository {
 
     override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
         return flow {
-            emit(ApiResponse.Loading)
             emit(ApiResponse.Success(listingDB.values.toList()))
         }
     }
 
     override suspend fun getListing(listingId: String): Flow<ApiResponse<Listing>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (listingDB.containsKey(listingId))
                 emit(ApiResponse.Success(listingDB.getValue(listingId)))
             else
@@ -41,7 +38,6 @@ class MockListingRepositoryImpl : ListingRepository {
 
     override suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>> {
         return flow {
-            emit(ApiResponse.Loading)
             emit(ApiResponse.Success(listingDB.values.toList()))
         }
     }

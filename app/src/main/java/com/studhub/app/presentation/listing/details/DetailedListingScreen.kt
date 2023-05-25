@@ -9,10 +9,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +22,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.core.utils.Utils
+import com.studhub.app.core.utils.Utils.Companion.displayMessage
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
@@ -44,6 +44,7 @@ fun DetailedListingScreen(
     navigateToRateUser: (userId: String) -> Unit,
     id: String?
 ) {
+    val bid = rememberSaveable { mutableStateOf("") }
     LaunchedEffect(id) {
         if (id != null)
             viewModel.fetchListing(id)
@@ -67,6 +68,8 @@ fun DetailedListingScreen(
             val listing = currentListing.data
             val isFavorite = viewModel.isFavorite.value
             val isBlocked = viewModel.isBlocked.value
+            bid.value = String.format("%.2f", listing.price)
+            val hasBid = listing.currentBidderId.equals(viewModel.userId)
             Details(
                 listing = listing,
                 onFavoriteClicked = { viewModel.onFavoriteClicked() },
@@ -84,94 +87,19 @@ fun DetailedListingScreen(
                         displayMeetingPoint(LatLng(meetingPoint.latitude, meetingPoint.longitude))
                     }
                 },
-                onRateUserClick = { navigateToRateUser(listing.seller.id) }
+                onRateUserClick = { navigateToRateUser(listing.seller.id) },
+                onBidPlaced = {
+                    viewModel.placeBid(
+                        bid = bid.value.toFloatOrNull(),
+                        onError = { msg -> displayMessage(activityContext, msg) }
+                    )
+                },
+                bid = bid,
+                hasBid = hasBid
             )
         }
     }
 }
-
-@Composable
-fun Details(
-    onMeetingPointClick: () -> Unit,
-    listing: Listing,
-    onContactSellerClick: () -> Unit,
-    isFavorite: Boolean,
-    isBlocked: Boolean,
-    onFavoriteClicked: () -> Unit,
-    onBlockedClicked: () -> Unit,
-    onRateUserClick: () -> Unit
-) {
-    val scrollState = rememberScrollState()
-    val price = remember { mutableStateOf(listing.price.toString()) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(scrollState)
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Box(modifier = Modifier.testTag("ContactSellerButton")) {
-                BasicFilledButton(
-                    onClick = { onContactSellerClick() },
-                    label = "Contact seller"
-                )
-            }
-
-            Box(modifier = Modifier.testTag("RateUserButton")) {
-                BasicFilledButton(onClick = { onRateUserClick() }, label = "Rate user")
-            }
-
-            // "Favorite" button
-            Box(modifier = Modifier.testTag("ContactSellerButton")) {
-                FavoriteButton(isFavorite = isFavorite, onFavoriteClicked = onFavoriteClicked)
-            }
-
-            Box(modifier = Modifier.testTag("BlockedButton")) {
-                BlockButton(isBlocked = isBlocked, onBlockClicked = onBlockedClicked)
-            }
-        }
-
-
-        Spacer("large")
-
-        BigLabel(label = listing.name)
-
-        Spacer("large")
-
-        Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = listing.pictures)
-
-        Spacer("large")
-
-        ListingDescription(description = listing.description)
-
-        Spacer("large")
-
-        ListingPrice(price = listing.price)
-
-        if (listing.type == ListingType.BIDDING) {
-            Spacer("large")
-            BiddingControls(price = price)
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        val meetingPoint = listing.meetingPoint
-        if (meetingPoint != null) {
-            Button(
-                onClick = onMeetingPointClick,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Text("View Meeting Point")
-            }
-        }
-    }
-}
-
 
 @ExcludeFromGeneratedTestCoverage
 @Preview(showBackground = true)
@@ -193,13 +121,16 @@ fun DetailsListingScreenBidPreview() {
     StudHubTheme {
         Details(
             listing = listing,
-            onContactSellerClick = { },
-            onFavoriteClicked = { },
+            onContactSellerClick = {},
+            onFavoriteClicked = {},
             isFavorite = true,
             onMeetingPointClick = {},
             onRateUserClick = {},
             onBlockedClicked = {},
-            isBlocked = true
+            onBidPlaced = {},
+            isBlocked = true,
+            bid = rememberSaveable { mutableStateOf("545.45") },
+            hasBid = false
         )
     }
 }

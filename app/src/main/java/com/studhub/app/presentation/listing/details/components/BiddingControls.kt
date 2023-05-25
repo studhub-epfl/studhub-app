@@ -1,7 +1,9 @@
 package com.studhub.app.presentation.listing.details.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -14,21 +16,53 @@ import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.input.NumericTextField
+import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.theme.StudHubTheme
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * This renders the controls for the detailed listing screen only if it's of bidding type so the user
  * can bid on those.
  * @param price mutablestate of string to be used for the price bid field
  * @param onSubmit the submit handler
+ * @param hasBid boolean value to hide the controls and display an indicator that the current
+ * user currently holding the best bid on that listing.
  */
+@SuppressLint("SimpleDateFormat")
 @Composable
-fun BiddingControls(price: MutableState<String>, onSubmit: () -> Unit = {}) {
-    Column (
+fun BiddingControls(
+    price: MutableState<String>,
+    deadline: Date,
+    onSubmit: () -> Unit = {},
+    hasBid: Boolean
+) {
+    val calendar = GregorianCalendar()
+    calendar.time = deadline
+    val formatter = SimpleDateFormat("dd.MM.yyyy")
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        NumericTextField(label = stringResource(R.string.bidding_price_label), rememberedValue = price)
-        BasicFilledButton(onClick = { onSubmit() }, label = stringResource(R.string.bidding_button))
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = String.format(
+                stringResource(R.string.listing_deadline),
+                formatter.format(calendar.time)
+            )
+        )
+        Spacer("medium")
+        if (hasBid) {
+            Text(text = stringResource(R.string.current_bidder_indicator))
+        } else {
+            NumericTextField(
+                label = stringResource(R.string.bidding_price_label),
+                rememberedValue = price
+            )
+            BasicFilledButton(
+                onClick = { onSubmit() },
+                label = stringResource(R.string.bidding_button)
+            )
+        }
     }
 }
 
@@ -37,7 +71,9 @@ fun BiddingControls(price: MutableState<String>, onSubmit: () -> Unit = {}) {
 @Composable
 fun BiddingControlsPreview() {
     val price = remember { mutableStateOf("") }
+    //using an arbitrary millisecond timestamp from the internet for this preview
+    val date = Date(1684946575500L)
     StudHubTheme {
-        BiddingControls(price = price)
+        BiddingControls(price = price, deadline = date, hasBid = false)
     }
 }
