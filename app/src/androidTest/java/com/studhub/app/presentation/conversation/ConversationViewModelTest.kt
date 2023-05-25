@@ -1,6 +1,8 @@
 package com.studhub.app.presentation.conversation
 
+
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
 import com.studhub.app.data.repository.MockConversationRepositoryImpl
@@ -12,7 +14,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -22,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.text.SimpleDateFormat
+
 
 @HiltAndroidTest
 @RunWith(JUnit4::class)
@@ -47,6 +49,7 @@ class ConversationViewModelTest {
     fun setup() {
         hiltRule.inject()
     }
+
     @Test
     fun when_getLoggedInUser_then_currentUserIsUpdated() = runBlockingTest {
         viewModel.getLoggedInUser()
@@ -69,7 +72,4 @@ class ConversationViewModelTest {
         val expectedConversations = listOf(Conversation(createdAt = fixedDate, updatedAt = fixedDate))
         assertEquals(expectedConversations, conversations)
     }
-
-
-
 }

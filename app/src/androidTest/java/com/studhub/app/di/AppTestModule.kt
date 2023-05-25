@@ -7,7 +7,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.studhub.app.domain.usecase.listing.PlaceBid
 import com.studhub.app.data.NetworkStatusImplTest
 import com.studhub.app.data.local.LocalDataSource
 import com.studhub.app.data.local.database.LocalAppDatabase
@@ -203,10 +202,6 @@ class AppTestModule {
     @Provides
     fun provideDetailedListingViewModel(): IDetailedListingViewModel = mock(IDetailedListingViewModel::class.java)
 
-
-    @Provides
-    fun providePlaceBid(listingRepository: ListingRepository, authRepository: AuthRepository): PlaceBid =
-        PlaceBid(listingRepository, authRepository)
 
 
 }
