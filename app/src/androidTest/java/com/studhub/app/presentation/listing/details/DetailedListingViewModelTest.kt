@@ -1,7 +1,6 @@
 package com.studhub.app.presentation.listing.details
 
 import androidx.compose.ui.test.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
 import com.studhub.app.core.utils.ApiResponse
@@ -185,7 +184,7 @@ class DetailedListingViewModelTest {
     fun detailedListingViewModelContactSellerSucceeds() {
         var callback = false
         runBlocking {
-            viewModel.contactSeller(seller = seller, callback = {callback = true})
+            viewModel.contactSeller(seller = seller, callback = { callback = true })
             delay(100)
         }
         assert(callback)

@@ -95,7 +95,7 @@ class DetailedListingScreenMainComposableTest {
                 viewModel = viewModel,
                 navigateToConversation = {},
                 navigateToRateUser = {},
-                id = listingId
+                id = listing.id
             )
         }
     }
@@ -108,6 +108,11 @@ class DetailedListingScreenMainComposableTest {
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
         composeTestRule.onNodeWithTag("price").assertIsDisplayed()
         composeTestRule.onNodeWithText("View Meeting Point").assertIsDisplayed()
+    }
+
+    @Test fun detailedListingScreenMainCallAddFavouriteDisplaysCorrectElement() {
+        composeTestRule.onNodeWithContentDescription("Add to favorites").performClick()
+        composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
     }
 
 }
