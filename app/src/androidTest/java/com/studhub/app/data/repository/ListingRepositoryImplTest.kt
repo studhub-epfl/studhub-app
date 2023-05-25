@@ -195,7 +195,9 @@ class ListingRepositoryImplTest {
         }
 
         // overwrite listing 1
-        runBlocking { listingRepo.saveDraftListing(savedListing1.copy(name = "Product 1 updated")).collect() }
+        runBlocking {
+            listingRepo.saveDraftListing(savedListing1.copy(name = "Product 1 updated")).collect()
+        }
 
         runBlocking {
             listingRepo.getUserDraftListings(User(id = "me")).collect {
@@ -216,6 +218,50 @@ class ListingRepositoryImplTest {
             savedListings.first().name
         )
         assertEquals("Earliest draft should come last", listing2.name, savedListings.last().name)
+
+        // clear cache
+        localCache.clearAllTables()
+    }
+
+    @Test
+    fun saveAndGetSingleDraftListingWorksCorrectly() {
+        val listing = Listing(name = "Product 1", sellerId = "me")
+        lateinit var savedListing: Listing
+        lateinit var retrievedListing: Listing
+        var retrievedNullListing: Listing? = null
+        var retrievedNullListingSuccess = false
+
+        // save drafts
+        runBlocking {
+            listingRepo.saveDraftListing(listing).collect {
+                if (it is ApiResponse.Success)
+                    savedListing = it.data
+            }
+        }
+
+        runBlocking {
+            listingRepo.getDraftListing(savedListing.id).collect {
+                if (it is ApiResponse.Success)
+                    retrievedListing = it.data!!
+            }
+            listingRepo.getDraftListing("Non-existent-${Random.nextLong()}").collect {
+                if (it is ApiResponse.Success) {
+                    retrievedNullListing = it.data
+                    retrievedNullListingSuccess = true
+                }
+            }
+        }
+
+        assertEquals(
+            "Retrieved listing name should match the saved one's",
+            listing.name,
+            retrievedListing.name
+        )
+        assertTrue(
+            "Non existent draft retrieval should still be a success",
+            retrievedNullListingSuccess
+        )
+        assertNull("Non existent draft should be null", retrievedNullListing)
 
         // clear cache
         localCache.clearAllTables()

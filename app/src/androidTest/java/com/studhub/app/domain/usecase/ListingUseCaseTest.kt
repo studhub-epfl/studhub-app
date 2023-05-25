@@ -9,6 +9,7 @@ import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -17,6 +18,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
 import kotlin.random.Random
+import kotlin.random.nextLong
 
 class ListingUseCaseTest {
     private val listingDB = HashMap<String, Listing>()
@@ -34,6 +36,10 @@ class ListingUseCaseTest {
 
         override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
             return flowOf(ApiResponse.Success(listing))
+        }
+
+        override suspend fun getDraftListing(listingId: String): Flow<ApiResponse<Listing?>> {
+            return flowOf(ApiResponse.Success(Listing(id = listingId)))
         }
 
         override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
@@ -257,6 +263,26 @@ class ListingUseCaseTest {
                         "Retrieved listing name matches",
                         "Super listing",
                         it.data.name
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun getDraftListingsUseCaseWorksCorreclty() = runBlocking {
+        val getDraftListing = GetDraftListing(repository)
+        val id = "my-listing-${Random.nextLong()}"
+
+        getDraftListing(id).collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals(
+                        "Retrieved listing id matches",
+                        id,
+                        it.data?.id ?: ""
                     )
                 }
             }

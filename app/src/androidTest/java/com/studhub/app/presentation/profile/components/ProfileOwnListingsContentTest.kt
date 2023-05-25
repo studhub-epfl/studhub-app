@@ -30,6 +30,7 @@ class ProfileOwnListingsContentTest {
                 drafts = emptyList(),
                 navigateToProfile = {},
                 navigateToListing = {},
+                navigateToDraft = {},
                 isLoading = false
             )
         }
@@ -83,6 +84,7 @@ class ProfileOwnListingsContentTest {
                 drafts = drafts,
                 navigateToProfile = {},
                 navigateToListing = {},
+                navigateToDraft = {},
                 isLoading = false
             )
         }
@@ -140,6 +142,7 @@ class ProfileOwnListingsContentTest {
                 drafts = drafts,
                 navigateToProfile = {},
                 navigateToListing = { id -> clickedId = id },
+                navigateToDraft = { id -> clickedId = "DRAFT$id"},
                 isLoading = false
             )
         }
@@ -152,11 +155,11 @@ class ProfileOwnListingsContentTest {
         assertEquals("Should be able to click on listing", expectedListingId, clickedId)
 
         composeTestRule
-            .onNodeWithText("d$listingToClickName")
+            .onNodeWithText(listingToClickName)
             .assertIsDisplayed()
             .performClick()
 
-        assertEquals("Should be able to click on draft", "d$expectedListingId", clickedId)
+        assertEquals("Should be able to click on draft", "DRAFT$expectedListingId", clickedId)
     }
 
     @Test
@@ -170,6 +173,7 @@ class ProfileOwnListingsContentTest {
                 drafts = emptyList(),
                 navigateToProfile = { clicked = true },
                 navigateToListing = {},
+                navigateToDraft = {},
                 isLoading = false
             )
         }
