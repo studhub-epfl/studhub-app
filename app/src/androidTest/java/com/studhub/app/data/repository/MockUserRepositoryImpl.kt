@@ -12,8 +12,8 @@ import javax.inject.Singleton
 
 @Singleton
 class MockUserRepositoryImpl : UserRepository {
-    private val userDB = HashMap<String, User>()
-    private val listingDB = HashMap<String, Listing>()
+    val userDB = HashMap<String, User>()
+    val listingDB = HashMap<String, Listing>()
     private val ratings = mutableMapOf<String, MutableMap<String, Rating>>()
 
     init {
@@ -70,7 +70,6 @@ class MockUserRepositoryImpl : UserRepository {
         favListing: Listing
     ): Flow<ApiResponse<User>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB.getValue(userId)
                 val updatedFavoriteListings =
@@ -89,7 +88,6 @@ class MockUserRepositoryImpl : UserRepository {
         favListing: Listing
     ): Flow<ApiResponse<User>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val updatedFavoriteListings =
@@ -106,7 +104,6 @@ class MockUserRepositoryImpl : UserRepository {
 
     override suspend fun getFavoriteListings(userId: String): Flow<ApiResponse<List<Listing>>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val favoriteListings = mutableListOf<Listing>()
@@ -122,7 +119,6 @@ class MockUserRepositoryImpl : UserRepository {
 
     override suspend fun blockUser(userId: String, blockedUserId: String): Flow<ApiResponse<User>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB.getValue(userId)
                 val updatedBlockedUsers =
@@ -141,7 +137,6 @@ class MockUserRepositoryImpl : UserRepository {
         blockedUserId: String
     ): Flow<ApiResponse<User>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val updatedBlockedUsers =
@@ -158,7 +153,6 @@ class MockUserRepositoryImpl : UserRepository {
 
     override suspend fun getBlockedUsers(userId: String): Flow<ApiResponse<List<User>>> {
         return flow {
-            emit(ApiResponse.Loading)
             if (userDB.containsKey(userId)) {
                 val user = userDB[userId]!!
                 val blockedUsers = mutableListOf<User>()
