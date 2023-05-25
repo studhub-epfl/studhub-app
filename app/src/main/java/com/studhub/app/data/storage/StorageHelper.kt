@@ -15,7 +15,11 @@ class StorageHelper {
         val randomId = UUID.randomUUID().toString()
         val imageRef = storage.reference.child("pictures/$parentFolder/$randomId")
 
-        imageRef.putFile(uri).await()
-        return imageRef.downloadUrl.await().toString()
+        return try {
+            imageRef.putFile(uri).await()
+            imageRef.downloadUrl.await().toString()
+        } catch (_: Exception) {
+            ""
+        }
     }
 }
