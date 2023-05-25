@@ -22,6 +22,13 @@ interface ListingRepository {
     suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>>
 
     /**
+     * Retrieves a draft [Listing] from the repository
+     * @param listingId the if of the draft listing we want to retrieve
+     * @return A [Flow] of [ApiResponse] with the last one containing the saved [Listing] on success or null
+     */
+    suspend fun getDraftListing(listingId: String): Flow<ApiResponse<Listing?>>
+
+    /**
      * Get a [List] of all the [Listing] in the repository
      * @return A [Flow] of [ApiResponse] with the last one containing the list of [Listing] retrieved from the repository on success
      */

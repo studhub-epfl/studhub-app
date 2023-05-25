@@ -45,8 +45,8 @@ class ListingRepositoryImpl @Inject constructor(
             val listingToPush = listing.copy(
                 id = listingId,
                 picturesUri = null,
-                pictures = listing.picturesUri?.map {
-                    storageHelper.storePicture(it, "listings")
+                pictures = listing.picturesUri?.mapNotNull {
+                    storageHelper.storePicture(it, "listings").ifEmpty { null }
                 } ?: emptyList())
 
             val query = db.child(listingId).setValue(listingToPush)
@@ -70,6 +70,18 @@ class ListingRepositoryImpl @Inject constructor(
         try {
             val savedDraft = localDb.saveDraftListing(listing)
             emit(ApiResponse.Success(savedDraft))
+        } catch (e: Exception) {
+            Log.w("LISTING_REPO", e.message.toString())
+            emit(ApiResponse.Failure("Internal Error"))
+        }
+    }
+
+    override suspend fun getDraftListing(listingId: String): Flow<ApiResponse<Listing?>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            val draftListing = localDb.getDraftListing(listingId)
+            emit(ApiResponse.Success(draftListing))
         } catch (e: Exception) {
             Log.w("LISTING_REPO", e.message.toString())
             emit(ApiResponse.Failure("Internal Error"))
