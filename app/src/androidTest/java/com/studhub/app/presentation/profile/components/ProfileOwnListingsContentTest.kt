@@ -132,7 +132,7 @@ class ProfileOwnListingsContentTest {
         )
         val drafts = listOf(
             Listing(id = "d01234", name = "d01234"),
-            Listing(id = "d$expectedListingId", name = "d$listingToClickName"),
+            Listing(id = expectedListingId, name = "DRAFT$listingToClickName"),
             Listing(id = "d56789", name = "d56789"),
         )
 
@@ -149,13 +149,15 @@ class ProfileOwnListingsContentTest {
 
         composeTestRule
             .onNodeWithText(listingToClickName)
+            .performScrollTo()
             .assertIsDisplayed()
             .performClick()
 
         assertEquals("Should be able to click on listing", expectedListingId, clickedId)
 
         composeTestRule
-            .onNodeWithText(listingToClickName)
+            .onNodeWithText("DRAFT$listingToClickName")
+            .performScrollTo()
             .assertIsDisplayed()
             .performClick()
 
