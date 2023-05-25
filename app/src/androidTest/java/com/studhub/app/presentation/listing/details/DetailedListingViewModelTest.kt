@@ -180,4 +180,14 @@ class DetailedListingViewModelTest {
 
         assert(!viewModel.isBlocked.value)
     }
+
+    @Test
+    fun detailedListingViewModelContactSellerSucceeds() {
+        var callback = false
+        runBlocking {
+            viewModel.contactSeller(seller = seller, callback = {callback = true})
+            delay(100)
+        }
+        assert(callback)
+    }
 }
