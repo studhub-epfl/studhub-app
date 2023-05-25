@@ -18,21 +18,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
-import com.studhub.app.presentation.listing.browse.ListingThumbnailScreen
-import com.studhub.app.presentation.listing.browse.ListingThumbnailViewModel
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.presentation.user.UserThumbnailScreen
+import com.studhub.app.presentation.user.UserThumbnailViewModel
 
 
 @Composable
-fun ProfileFavoritesScreen(
-    viewModel: ProfileViewModel = hiltViewModel(),
-    navigateToListing: (id: String) -> Unit
+fun ProfileBlockedScreen(
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    val favorites = viewModel.userFavorites.collectAsState(initial = emptyList())
+    val blocked = viewModel.blockedUsers.collectAsState(initial = emptyList())
     val scrollState = rememberScrollState()
 
     LaunchedEffect(Unit) {
-        viewModel.getFavorites()
+        viewModel.getBlocked()
     }
 
     Column(
@@ -41,21 +40,17 @@ fun ProfileFavoritesScreen(
             .horizontalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BigLabel(label = stringResource(R.string.profile_favorites_title))
+        BigLabel(label = stringResource(R.string.profile_blocked_title))
 
-        if (favorites.value.isEmpty()) {
-            BigLabel(label = stringResource(R.string.profile_favorites_no_favs))
+        if (blocked.value.isEmpty()) {
+            BigLabel(label = stringResource(R.string.profile_blocked_no_blocked))
         } else {
             LazyColumn {
-                items(favorites.value) { listing ->
+                items(blocked.value) { user ->
                     Spacer(modifier = Modifier.height(6.dp))
-                    ListingThumbnailScreen(
-                        viewModel = ListingThumbnailViewModel(listing = listing),
-                        onClick = {
-                            navigateToListing(listing.id)
-                        }
+                    UserThumbnailScreen(
+                        viewModel = UserThumbnailViewModel(user = user)
                     )
-
                     Spacer(modifier = Modifier.height(6.dp))
                     Divider()
                 }

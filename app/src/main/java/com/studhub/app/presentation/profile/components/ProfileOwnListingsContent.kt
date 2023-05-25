@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.studhub.app.R
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.presentation.ui.browse.ListingCard
+import com.studhub.app.presentation.listing.browse.components.ListingCard
 import com.studhub.app.presentation.ui.common.container.Screen
 import com.studhub.app.presentation.ui.common.misc.Spacer
 

@@ -19,10 +19,7 @@ import com.studhub.app.presentation.home.HomeScreen
 import com.studhub.app.presentation.listing.add.CreateListingScreen
 import com.studhub.app.presentation.listing.browse.BrowseScreen
 import com.studhub.app.presentation.listing.details.DetailedListingScreen
-import com.studhub.app.presentation.profile.EditProfileScreen
-import com.studhub.app.presentation.profile.ProfileFavoritesScreen
-import com.studhub.app.presentation.profile.ProfileOwnListingsScreen
-import com.studhub.app.presentation.profile.ProfileScreen
+import com.studhub.app.presentation.profile.*
 import com.studhub.app.presentation.ratings.UserRatingScreen
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -64,13 +61,16 @@ fun AppNavigation(
                 navigateToAuthScreen = { navController.navigate("Auth") },
                 navigateToEditProfileScreen = { navController.navigate("Profile/Edit") },
                 navigateToProfileFavorites = { navController.navigate("Profile/Favorite-Listing") },
-                navigateToOwnListings = { navController.navigate("Profile/Own-Listings") }
+                navigateToOwnListings = { navController.navigate("Profile/Own-Listings") },
+                navigateToBlockedUsers = { navController.navigate("Profile/Blocked-Users") }
             )
         }
 
         composable(route = "Profile/Favorite-Listing") {
             Globals.showBottomBar = true
-            ProfileFavoritesScreen(navigateToListing = { id: String -> navController.navigate("Listing/$id") })
+            ProfileFavoritesScreen(navigateToListing = { id: String ->
+                navController.navigate("Listing/$id")
+            })
         }
 
         composable(route = "Profile/Own-Listings") {
@@ -79,6 +79,11 @@ fun AppNavigation(
                 navigateToProfile = { navController.navigate("Profile") },
                 navigateToListing = { id: String -> navController.navigate("Listing/$id") }
             )
+        }
+
+        composable(route = "Profile/Blocked-Users") {
+            Globals.showBottomBar = true
+            ProfileBlockedScreen()
         }
 
         composable(route = "Profile/Edit") {
@@ -94,7 +99,8 @@ fun AppNavigation(
                 onBrowseClick = { navController.navigate("Listing") },
                 onAboutClick = { navController.navigate("About") },
                 onCartClick = { navController.navigate("Cart") },
-                onProfileClick = { navController.navigate("Profile")
+                onProfileClick = {
+                    navController.navigate("Profile")
                 }
             )
         }

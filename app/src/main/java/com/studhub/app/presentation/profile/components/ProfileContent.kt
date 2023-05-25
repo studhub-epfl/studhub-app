@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.studhub.app.R
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.usecase.user.GetBlockedUsers
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.Avatar
 import com.studhub.app.presentation.ui.common.misc.Spacer
@@ -24,7 +25,8 @@ fun ProfileContent(
     padding: PaddingValues,
     profile: User,
     navigateToProfileFavorites: () -> Unit,
-    navigateToOwnListings: () -> Unit
+    navigateToOwnListings: () -> Unit,
+    navigateToBlockedUsers: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     Surface(
@@ -47,6 +49,13 @@ fun ProfileContent(
             BasicFilledButton(
                 onClick = { navigateToProfileFavorites() },
                 label = stringResource(R.string.profile_btn_display_favs)
+            )
+
+            Spacer()
+
+            BasicFilledButton(
+                onClick = { navigateToBlockedUsers() },
+                label = stringResource(R.string.profile_btn_display_blocked)
             )
 
             Spacer()
