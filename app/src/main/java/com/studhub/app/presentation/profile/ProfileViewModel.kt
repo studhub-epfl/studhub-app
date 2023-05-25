@@ -22,7 +22,9 @@ class ProfileViewModel @Inject constructor(
     private val updateCurrentUserInfo: UpdateCurrentUserInfo,
     private val getFavoriteListings: GetFavoriteListings,
     private val _getOwnListings: GetOwnListings,
-    private val getBlockedUsers: GetBlockedUsers
+    private val getBlockedUsers: GetBlockedUsers,
+    private val addBlockedUser: AddBlockedUser,
+    private val unblockUser: UnblockUser
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
         private set
@@ -38,6 +40,8 @@ class ProfileViewModel @Inject constructor(
 
     private val _blockedUsers = MutableSharedFlow<List<User>>(replay = 0)
     val blockedUsers: SharedFlow<List<User>> = _blockedUsers
+
+
     init {
         getLoggedInUser()
     }

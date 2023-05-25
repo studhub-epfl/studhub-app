@@ -11,9 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
+import com.studhub.app.presentation.listing.details.components.BlockButton
 
 @Composable
-fun UserCard(user: User) {
+fun UserCard(
+    user: User, onBlockClicked: () -> Unit,
+    isBlocked: Boolean,
+) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -40,7 +44,7 @@ fun UserCard(user: User) {
                     style = MaterialTheme.typography.labelLarge
                 )
                 Column(modifier = Modifier.align(Alignment.BottomStart)) {
-                    //TODO Add Block Button
+                    BlockButton(onBlockClicked = onBlockClicked, isBlocked = isBlocked)
                 }
             }
         }

@@ -10,9 +10,10 @@ import com.studhub.app.presentation.user.components.UserCard
 
 @Composable
 fun UserThumbnailScreen(
-    viewModel: UserThumbnailViewModel,
+    viewModel: UserThumbnailViewModel, onBlockClicked: () -> Unit,
+    isBlocked: Boolean
 ) {
-    UserCard(user = viewModel.user)
+    UserCard(user = viewModel.user, onBlockClicked = onBlockClicked, isBlocked = isBlocked)
 }
 
 @ExcludeFromGeneratedTestCoverage
@@ -24,7 +25,7 @@ fun UserThumbnailPreview() {
     )
     StudHubTheme {
         Column {
-            UserCard(user = user)
+            UserCard(user = user, onBlockClicked = {}, isBlocked = false)
         }
     }
 }
