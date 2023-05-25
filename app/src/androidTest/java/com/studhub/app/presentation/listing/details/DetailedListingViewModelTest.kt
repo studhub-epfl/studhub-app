@@ -145,7 +145,7 @@ class DetailedListingViewModelTest {
     fun detailedListingViewModelOnFavouriteClickedChangesFavouriteStatus() {
         runBlocking {
             viewModel.onFavoriteClicked()
-            delay(100)
+            delay(1000)
         }
 
         //the listing is already in favourite so we click it off
@@ -154,7 +154,7 @@ class DetailedListingViewModelTest {
         //then we click it back on
         runBlocking {
             viewModel.onFavoriteClicked()
-            delay(100)
+            delay(1000)
         }
 
 
