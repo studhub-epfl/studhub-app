@@ -199,7 +199,7 @@ class ListingRepositoryImpl @Inject constructor(
         keyword: String,
         minPrice: String,
         maxPrice: String,
-        categoryChoose: List<Category>,
+        chosenCategories: List<Category>,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
@@ -221,25 +221,24 @@ class ListingRepositoryImpl @Inject constructor(
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
                 if (listing != null
+                    && chosenCategories.isEmpty()
                     && (blockedUsers[listing.seller.id] != true)
                     && (listing.name.contains(keyword, true)
-                            || listing.description.contains(keyword, true)
-                            || listing.price.toString().contains(keyword, true))
+                            || listing.description.contains(keyword, true))
                     && listing.price >= minPrice.toFloat()
                     && listing.price <= maxPrice.toFloat()
-                    && categoryChoose.isEmpty()
-                    ) {
+                ) {
                     listings.add(listing)
                 } else if (listing != null
+                    && chosenCategories.isNotEmpty()
                     && (blockedUsers[listing.seller.id] != true)
                     && (listing.name.contains(keyword, true)
                             || listing.description.contains(keyword, true)
                             || listing.price.toString().contains(keyword, true))
                     && listing.price >= minPrice.toFloat()
                     && listing.price <= maxPrice.toFloat()
-                    && categoryChoose.isNotEmpty()
-                ){
-                    if (categoryChoose.containsAll(categoryChoose)){
+                ) {
+                    if (chosenCategories.filter { category -> listing.categories.contains(category) }.isNotEmpty()) {
                         listings.add(listing)
 
                     }
@@ -254,7 +253,6 @@ class ListingRepositoryImpl @Inject constructor(
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
-
 
 
     override suspend fun updateListing(

@@ -64,7 +64,7 @@ interface ListingRepository {
         keyword: String,
         minPrice: String,
         maxPrice: String,
-        categoryChoose: List<Category>,
+        chosenCategories: List<Category>,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>>
 

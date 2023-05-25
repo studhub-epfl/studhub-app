@@ -70,13 +70,28 @@ fun BrowseScreenListings(
     BigLabel(label = stringResource(R.string.listings_browsing_title))
     Column {
         SearchBar(search = search, onSearch = {
-            viewModel.searchListings(search.value, rangeMinVal, rangeMaxVal, chosenCategories.toList())
+            viewModel.searchListings(
+                search.value,
+                rangeMinVal,
+                rangeMaxVal,
+                chosenCategories.toList()
+            )
         })
-        RangeBar("MIN....CHF", search = rangeMin, onSearch = {
-            viewModel.searchListings(search.value, rangeMinVal, rangeMaxVal, chosenCategories.toList())
+        RangeBar(stringResource(R.string.MIN____CHF), search = rangeMin, onSearch = {
+            viewModel.searchListings(
+                search.value,
+                rangeMinVal,
+                rangeMaxVal,
+                chosenCategories.toList()
+            )
         })
-        RangeBar("MAX....CHF", search = rangeMax, onSearch = {
-            viewModel.searchListings(search.value, rangeMinVal, rangeMaxVal, chosenCategories.toList())
+        RangeBar(stringResource(R.string.MAX____CHF), search = rangeMax, onSearch = {
+            viewModel.searchListings(
+                search.value,
+                rangeMinVal,
+                rangeMaxVal,
+                chosenCategories.toList()
+            )
         })
         LoadListings(listings, navController)
     }

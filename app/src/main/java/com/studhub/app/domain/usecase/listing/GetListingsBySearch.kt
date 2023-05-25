@@ -32,11 +32,11 @@ class GetListingsBySearch @Inject constructor(
      * @param [categoryChoose] the category-based List from which listings are retrieved
      */
     suspend operator fun invoke(
-            keyword: String,
-            minPrice: String,
-            maxPrice: String,
-            categoryChoose: List<Category>
-        ):Flow<ApiResponse<List<Listing>>> {
+        keyword: String,
+        minPrice: String,
+        maxPrice: String,
+        chosenCategories: List<Category>
+    ): Flow<ApiResponse<List<Listing>>> {
         if (keyword.isEmpty()) {
             return repository.getListings()
         }
@@ -54,7 +54,13 @@ class GetListingsBySearch @Inject constructor(
             userRepository.getUser(authRepository.currentUserUid).collect { userQuery ->
                 when (userQuery) {
                     is ApiResponse.Success -> {
-                        repository.getListingsBySearch(keyword, minPrice, maxPrice, categoryChoose, userQuery.data.blockedUsers)
+                        repository.getListingsBySearch(
+                            keyword,
+                            minPrice,
+                            maxPrice,
+                            chosenCategories,
+                            userQuery.data.blockedUsers
+                        )
                             .collect { listingQuery ->
                                 when (listingQuery) {
                                     is ApiResponse.Failure -> emit(ApiResponse.Failure(listingQuery.message))

@@ -22,12 +22,14 @@ class BrowseViewModel @Inject constructor(
     val listingsState: StateFlow<List<Listing>> = _listingsState
 
 
-    fun searchListings(keyword: String,
-                      minPrice: String,
-                      maxPrice: String,
-                      categoryChoose: List<Category>) {
+    fun searchListings(
+        keyword: String,
+        minPrice: String,
+        maxPrice: String,
+        chosenCategories: List<Category>
+    ) {
         viewModelScope.launch {
-            getListingsBySearch(keyword, minPrice, maxPrice,categoryChoose).collect {
+            getListingsBySearch(keyword, minPrice, maxPrice, chosenCategories).collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
                     is ApiResponse.Failure -> {}
@@ -43,7 +45,8 @@ class BrowseViewModel @Inject constructor(
             getListings().collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
-                    is ApiResponse.Failure -> {/*should not fail*/}
+                    is ApiResponse.Failure -> {/*should not fail*/
+                    }
                     is ApiResponse.Success -> _listingsState.value = it.data
                 }
             }

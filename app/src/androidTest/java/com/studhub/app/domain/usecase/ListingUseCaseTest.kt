@@ -2,6 +2,7 @@ package com.studhub.app.domain.usecase
 
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
@@ -80,6 +81,7 @@ class ListingUseCaseTest {
             keyword: String,
             minPrice: String,
             maxPrice: String,
+            chosenCategories: List<Category>,
             blockedUsers: Map<String, Boolean>
         ): Flow<ApiResponse<List<Listing>>> {
             return flow {
