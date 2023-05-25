@@ -9,8 +9,11 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.GetListing
+import com.studhub.app.domain.usecase.listing.PlaceBid
+import com.studhub.app.domain.usecase.listing.UpdateListing
 import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,7 +28,9 @@ class DetailedListingViewModel @Inject constructor(
     private val startConversationWith: StartConversationWith,
     private val addBlockedUser: AddBlockedUser,
     private val unblockUser: UnblockUser,
-    private val getBlockedUsers: GetBlockedUsers
+    private val getBlockedUsers: GetBlockedUsers,
+    private val auth: AuthRepository,
+    private val placeBid: PlaceBid
 ) : ViewModel(), IDetailedListingViewModel {
     override var currentListing by mutableStateOf<ApiResponse<Listing>>(ApiResponse.Loading)
         private set
@@ -35,6 +40,8 @@ class DetailedListingViewModel @Inject constructor(
         ApiResponse.Loading
     )
         private set
+
+    override val userId = auth.currentUserUid
 
     override fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit) {
         viewModelScope.launch {
@@ -95,6 +102,39 @@ class DetailedListingViewModel @Inject constructor(
                 }
             }
             else -> {}
+        }
+    }
+
+    /**
+     * Upates the bid for a bidding type listing
+     *
+     * @param bidderId the id of the user placing the bid
+     * @param bid the new bid to replace old price of the listing
+     */
+    override fun placeBid(bid: Float?, onError: (msg: String) -> Unit) {
+        if (bid == null) {
+            onError("Your bid is not a valid value")
+        } else {
+            when (currentListing) {
+                is ApiResponse.Success -> {
+                    val listing = (currentListing as ApiResponse.Success<Listing>).data
+                    if (bid <= listing.price) {
+                        onError("Your bid needs to be greater than the current one")
+                    } else {
+                        viewModelScope.launch {
+                            //keeps only 2 decimals after floating point
+                            placeBid(listing, String.format("%.2f", bid).toFloat()).collect {
+                                when (it) {
+                                    is ApiResponse.Loading -> {}
+                                    is ApiResponse.Failure -> onError("Could not place bid")
+                                    is ApiResponse.Success -> currentListing = it
+                                }
+                            }
+                        }
+                    }
+                }
+                else -> {}
+            }
         }
     }
 

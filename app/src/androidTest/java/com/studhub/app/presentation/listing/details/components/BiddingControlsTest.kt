@@ -15,6 +15,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class BiddingControlsTest {
@@ -34,7 +35,7 @@ class BiddingControlsTest {
         // Set the ListingImage composable content
         composeTestRule.setContent {
             val price = remember { mutableStateOf("") }
-            BiddingControls(price = price)
+            BiddingControls(price = price, deadline = Date(), onSubmit = {}, hasBid = false)
         }
 
         // Assert that the ListingImage is displayed with the correct content description
@@ -47,7 +48,7 @@ class BiddingControlsTest {
         val toType = "454.45"
         composeTestRule.setContent {
             rememberable = remember { mutableStateOf("") }
-            BiddingControls(price = rememberable!!)
+            BiddingControls(price = rememberable!!, deadline = Date(), onSubmit = {}, hasBid = false)
         }
         composeTestRule.onNodeWithText(str(R.string.bidding_price_label)).performTextInput(toType)
         assertEquals(rememberable!!.value, toType)
@@ -58,7 +59,7 @@ class BiddingControlsTest {
         var test = false;
         composeTestRule.setContent {
             val price = remember { mutableStateOf("") }
-            BiddingControls(price = price, onSubmit = {test = true})
+            BiddingControls(price = price, deadline = Date(), onSubmit = {test = true}, hasBid = false)
         }
         composeTestRule.onNodeWithText(str(R.string.bidding_button)).performClick()
         assert(test)

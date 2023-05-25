@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.listing.CreateListing
@@ -13,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -49,6 +51,8 @@ class CreateListingViewModel @Inject constructor(
         price: Float,
         meetingPoint: MeetingPoint?,
         pictures: MutableList<Uri>,
+        type: ListingType = ListingType.FIXED,
+        deadline: Date = Date(),
         callback: (id: String) -> Unit
     ) {
         val listing = Listing(
@@ -57,7 +61,9 @@ class CreateListingViewModel @Inject constructor(
             categories = categories,
             price = price,
             meetingPoint = meetingPoint,
-            picturesUri = pictures
+            picturesUri = pictures,
+            type = type,
+            biddingDeadline = deadline
         )
 
         viewModelScope.launch {

@@ -29,6 +29,7 @@ import com.studhub.app.R
 import com.studhub.app.core.utils.PriceValidationResult
 import com.studhub.app.core.utils.validatePrice
 import com.studhub.app.domain.model.Category
+import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.MeetingPoint
 import com.studhub.app.presentation.listing.add.components.BiddingSpecifics
 import com.studhub.app.presentation.listing.add.components.CategorySheet
@@ -39,6 +40,7 @@ import com.studhub.app.presentation.ui.common.input.ImagePicker
 import com.studhub.app.presentation.ui.common.input.TextBox
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.TextChip
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +57,10 @@ fun CreateListingScreen(
     val pictures = rememberSaveable { mutableListOf<Uri>() }
     val chosenCategories = remember { mutableStateListOf<Category>() }
     val openCategorySheet = rememberSaveable { mutableStateOf(false) }
-    val date = rememberDatePickerState()
+    val switch = rememberSaveable { mutableStateOf(false) }
+    // special state used for the date picker, there is no .value() property but instead
+    // there is a .selectedDateMillis which is a Long typed timestamp
+    val date: DatePickerState = rememberDatePickerState()
 
 
     val scrollState = rememberScrollState()
@@ -95,6 +100,7 @@ fun CreateListingScreen(
                     price = price,
                     meetingPoint = meetingPoint,
                     pictures = pictures,
+                    checked = switch,
                     onSubmit = {
                         viewModel.createListing(
                             title.value,
@@ -103,6 +109,10 @@ fun CreateListingScreen(
                             price.value.toFloat(),
                             meetingPoint.value,
                             pictures,
+                            type = if (switch.value) ListingType.BIDDING else ListingType.FIXED,
+                            //Create a date out of the timestamp (it's UTC)
+                            deadline =
+                            if (date.selectedDateMillis != null) Date(date.selectedDateMillis!!) else Date(),
                             navigateToListing
                         )
                     },
@@ -119,6 +129,12 @@ fun CreateListingScreen(
     )
 }
 
+/**
+ * The form to create a listing
+ * Params are all the mutable state passed from the parent to be used in the different parts of the
+ * form itself.
+ * @param onSubmit is the handler of the form submission
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListingForm(
@@ -130,9 +146,9 @@ fun ListingForm(
     pictures: MutableList<Uri>,
     onSubmit: () -> Unit,
     openCategorySheet: MutableState<Boolean>,
+    checked: MutableState<Boolean>,
     date: DatePickerState
 ) {
-    val checked = remember { mutableStateOf(false) }
     BasicTextField(
         label = stringResource(R.string.listings_add_form_title),
         rememberedValue = title
@@ -202,6 +218,10 @@ fun ListingForm(
     }
 }
 
+/**
+ * Composable responsible to render the price part of the form
+ * @param rememberedValue the state holding the currently written price.
+ */
 @Composable
 fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableStateOf("") }) {
     Row(
@@ -226,6 +246,13 @@ fun PriceRow(rememberedValue: MutableState<String> = rememberSaveable { mutableS
     }
 }
 
+/**
+ * This is the category picker part. There is a modal drawer that works as a category picker and
+ * the chosen categories are displayed in "Chip" composables. They can be clicked off to be
+ * removed from the chosen list
+ * @param chosen the list state of chosen categories
+ * @param openCategorySheet a boolean state to decide whether the modal drawer is opened or closed.
+ */
 @Composable
 fun CategoryChoice(
     chosen: SnapshotStateList<Category>,

@@ -1,5 +1,6 @@
 package com.studhub.app.di
 
+import com.studhub.app.domain.usecase.listing.PlaceBid
 import android.content.Context
 import androidx.room.Room
 import com.google.firebase.auth.ktx.auth
@@ -23,7 +24,6 @@ import com.studhub.app.domain.usecase.user.GetCurrentUser
 import com.studhub.app.domain.usecase.user.GetUser
 import com.studhub.app.domain.usecase.user.SignOut
 import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
-import com.studhub.app.presentation.listing.details.DetailedListingViewModel
 import com.studhub.app.presentation.listing.details.IDetailedListingViewModel
 import com.studhub.app.presentation.ratings.IUserRatingViewModel
 import dagger.Module
@@ -146,6 +146,10 @@ class AppTestModule {
     @Provides
     fun provideUpdateListingToBidding(listingRepository: ListingRepository): UpdateListingToBidding =
         UpdateListingToBidding(listingRepository)
+
+    @Provides
+    fun providePlaceBid(listingRepository: ListingRepository, authRepository: AuthRepository): PlaceBid =
+        PlaceBid(listingRepository, authRepository)
 
     @Provides
     fun provideGetListingsBySearch(

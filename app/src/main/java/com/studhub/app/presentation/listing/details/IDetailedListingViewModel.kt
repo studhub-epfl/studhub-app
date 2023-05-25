@@ -12,9 +12,11 @@ interface IDetailedListingViewModel {
     val isFavorite: State<Boolean>
     val isBlocked: State<Boolean>
     val startConversationWithResponse: ApiResponse<Conversation>
+    val userId: String
 
     fun contactSeller(seller: User, callback: (conversation: Conversation) -> Unit)
     fun fetchListing(id: String)
+    fun placeBid(bid: Float?, onError: (msg: String) -> Unit)
     fun onFavoriteClicked()
     fun onBlockedClicked()
     fun getIsFavorite()

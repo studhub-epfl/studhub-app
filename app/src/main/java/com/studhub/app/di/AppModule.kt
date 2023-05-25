@@ -1,5 +1,6 @@
 package com.studhub.app.di
 
+import com.studhub.app.domain.usecase.listing.PlaceBid
 import android.content.Context
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
@@ -152,6 +153,10 @@ class AppModule {
     @Provides
     fun provideUpdateListingToBidding(listingRepository: ListingRepository): UpdateListingToBidding =
         UpdateListingToBidding(listingRepository)
+
+    @Provides
+    fun providePlaceBid(listingRepository: ListingRepository, authRepository: AuthRepository): PlaceBid =
+        PlaceBid(listingRepository, authRepository)
 
     @Provides
     fun provideGetListingsBySearch(

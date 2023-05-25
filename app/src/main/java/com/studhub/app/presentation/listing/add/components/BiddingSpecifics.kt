@@ -13,7 +13,16 @@ import androidx.compose.ui.unit.dp
 import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.presentation.ui.theme.StudHubTheme
+import java.util.*
 
+/**
+ * This composable renders the controls and form part responsible to set the type of the listing
+ * and if it's a bidding, to display a date picker
+ *
+ * @param checked a boolean state to decide whether the switch is ticked on or off to display
+ * controls
+ * @param date the date picker state that holds the input data.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BiddingSpecifics(checked: MutableState<Boolean>, date: DatePickerState) {
@@ -36,9 +45,8 @@ fun BiddingSpecifics(checked: MutableState<Boolean>, date: DatePickerState) {
 @Composable
 fun BiddingDatePicker(date: DatePickerState) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        val state = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
         DatePicker(
-            state = state,
+            state = date,
             title = {Text(text = stringResource(R.string.auction_deadline_select))} ,
             modifier = Modifier.padding(16.dp))
     }
@@ -50,7 +58,8 @@ fun BiddingDatePicker(date: DatePickerState) {
 @Composable
 fun BiddingSpecificsPreview() {
     val checked = remember { mutableStateOf(true) }
-    val date = rememberDatePickerState()
+    val date = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    date.selectedDateMillis
     StudHubTheme {
         BiddingSpecifics(checked, date)
     }
