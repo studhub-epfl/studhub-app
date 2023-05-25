@@ -121,5 +121,4 @@ class DetailedListingScreenTest {
         composeTestRule.onNodeWithText("View Meeting Point").assertIsDisplayed()
     }
 
-
 }
