@@ -1,50 +1,75 @@
 package com.studhub.app.presentation.listing.details
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
+import com.studhub.app.data.repository.MockAuthRepositoryImpl
+import com.studhub.app.data.repository.MockConversationRepositoryImpl
+import com.studhub.app.data.repository.MockListingRepositoryImpl
+import com.studhub.app.data.repository.MockUserRepositoryImpl
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
-import com.studhub.app.wrapper.DetailedListingActivity
+import com.studhub.app.domain.usecase.conversation.StartConversationWith
+import com.studhub.app.domain.usecase.listing.GetListing
+import com.studhub.app.domain.usecase.listing.PlaceBid
+import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import javax.inject.Inject
 
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class DetailedListingScreenTest {
+    private val listingRepo = MockListingRepositoryImpl()
+    private val authRepo = MockAuthRepositoryImpl()
+    private val userRepo = MockUserRepositoryImpl()
+    private val convoRepo = MockConversationRepositoryImpl()
 
-    lateinit var listing: Listing
-    lateinit var isFavorite: MutableState<Boolean> // Define as top-level property
-    lateinit var isBlocked: MutableState<Boolean> // Define as top-level property
+    private val getListing = GetListing(listingRepo)
+    private val getFavoriteListings = GetFavoriteListings(userRepo, authRepo)
+    private val addFavoriteListing = AddFavoriteListing(userRepo, authRepo)
+    private val removeFavoriteListing = RemoveFavoriteListing(userRepo, authRepo)
+    private val startConversationWith = StartConversationWith(convoRepo, authRepo)
+    private val addBlockedUser = AddBlockedUser(userRepo, authRepo)
+    private val unblockUser = UnblockUser(userRepo, authRepo)
+    private val getBlockedUsers = GetBlockedUsers(userRepo, authRepo)
+    private val auth = authRepo
+    private val placeBid = PlaceBid(listingRepo, authRepo)
+
+    private val viewModel = DetailedListingViewModel(
+        getListing,
+        getFavoriteListings,
+        addFavoriteListing,
+        removeFavoriteListing,
+        startConversationWith,
+        addBlockedUser,
+        unblockUser,
+        getBlockedUsers,
+        auth,
+        placeBid
+    )
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<DetailedListingActivity>()
+    val composeTestRule = createComposeRule()
 
-
-    @Inject
-    lateinit var viewModel: IDetailedListingViewModel
-
+    lateinit var listing: Listing
 
     @Before
     fun setup() {
         hiltRule.inject()
-        isFavorite = mutableStateOf(true) // Initialize here
-        isBlocked = mutableStateOf(true) // Initialize here
-        val listingId = "hier" // Save the listing ID
+        val listingId = "1234" // Save the listing ID
 
         listing = Listing(
             id = listingId,
@@ -59,66 +84,35 @@ class DetailedListingScreenTest {
             price = 545.45F,
 
             )
+
+        runBlocking {
+            listingRepo.createListing(listing).collect()
+            delay(100)
+        }
+
         composeTestRule.setContent {
-            Details(
-                listing = listing,
-                onContactSellerClick = { },
-                onMeetingPointClick = { },
-                onFavoriteClicked = { isFavorite.value = !isFavorite.value },
-                isFavorite = isFavorite.value,
-                onRateUserClick = { },
-                isBlocked = isBlocked.value,
-                onBlockedClicked = { isBlocked.value = !isBlocked.value },
-                onBidPlaced = {},
-                bid = rememberSaveable {mutableStateOf("")},
-                hasBid = false
+            DetailedListingScreen(
+                viewModel = viewModel,
+                navigateToConversation = {},
+                navigateToRateUser = {},
+                id = listing.id
             )
         }
     }
-    /**@Test
-    fun detailsListingScreenDisplaysAllElements() {
+
+    @Test
+    fun detailedListingScreenMainCallElementsAreDisplayed() {
         composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Remove from favorites").performClick()
         composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Unblock User").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Unblock User").performClick()
-        composeTestRule.onNodeWithContentDescription("Block User").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("price")
-    }**/
-
-    @Test
-    fun detailsListingScreenDisplaysContactSellerButton() {
-        composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
-    }
-
-    @Test
-    fun detailsListingScreenDisplaysFavoriteButton() {
-        composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Remove from favorites").performClick()
-        composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
-    }
-
-    @Test
-    fun detailsListingScreenDisplaysListingName() {
-        composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
-    }
-
-    @Test
-    fun detailsListingScreenDisplaysListingDescription() {
-        composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
-    }
-
-    @Test
-    fun detailsListingScreenDisplaysListingPrice() {
         composeTestRule.onNodeWithTag("price").assertIsDisplayed()
+        composeTestRule.onNodeWithText("View Meeting Point").assertIsDisplayed()
     }
 
-    @Test
-    fun detailsListingScreenDisplaysMeetingPointButton() {
-        composeTestRule.onNodeWithText("View Meeting Point").assertIsDisplayed()
+    @Test fun detailedListingScreenMainCallAddFavouriteDisplaysCorrectElement() {
+        composeTestRule.onNodeWithContentDescription("Add to favorites").performClick()
+        composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
     }
 
 }
