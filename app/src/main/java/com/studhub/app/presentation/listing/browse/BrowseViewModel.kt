@@ -3,6 +3,7 @@ package com.studhub.app.presentation.listing.browse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.usecase.listing.GetListings
 import com.studhub.app.domain.usecase.listing.GetListingsBySearch
@@ -22,10 +23,11 @@ class BrowseViewModel @Inject constructor(
 
 
     fun searchListings(keyword: String,
-                      keyword1: String,
-                      keyword2: String) {
+                      minPrice: String,
+                      maxPrice: String,
+                      categoryChoose: List<Category>) {
         viewModelScope.launch {
-            getListingsBySearch(keyword, keyword1, keyword2).collect {
+            getListingsBySearch(keyword, minPrice, maxPrice,categoryChoose).collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
                     is ApiResponse.Failure -> {}
