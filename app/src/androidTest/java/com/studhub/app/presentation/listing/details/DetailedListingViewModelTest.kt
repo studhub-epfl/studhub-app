@@ -1,7 +1,6 @@
 package com.studhub.app.presentation.listing.details
 
 import androidx.compose.ui.test.*
-import androidx.lifecycle.viewModelScope
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
 import com.studhub.app.core.utils.ApiResponse
@@ -176,6 +175,6 @@ class DetailedListingViewModelTest {
             delay(10)
         }
 
-        assertEquals("Price should match", l.price, 40f )
+        assertEquals("Price should match", l.price, 40f)
     }
 }
