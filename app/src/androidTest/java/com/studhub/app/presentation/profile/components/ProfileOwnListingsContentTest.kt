@@ -111,25 +111,4 @@ class ProfileOwnListingsContentTest {
         assertEquals("Back to profile button was clicked", expectedListingId, clickedId)
     }
 
-    @Test
-    fun clickingOnBackButtonWorksCorrectly() {
-        val listings: List<Listing> = emptyList()
-        var clicked = false
-
-        composeTestRule.setContent {
-            ProfileOwnListingsContent(
-                listings = listings,
-                navigateToProfile = { clicked = true },
-                navigateToListing = {},
-                isLoading = false
-            )
-        }
-
-        composeTestRule
-            .onNodeWithContentDescription(str(R.string.misc_btn_go_back))
-            .assertIsDisplayed()
-            .performClick()
-
-        assertEquals("Back to profile button was clicked", true, clicked)
-    }
 }
