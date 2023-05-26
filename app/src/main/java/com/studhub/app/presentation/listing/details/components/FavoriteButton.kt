@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
+import com.studhub.app.R
 
 @Composable
 fun FavoriteButton(
@@ -30,7 +32,9 @@ fun FavoriteButton(
                 scaleY = 1.3f
             },
             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
-            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites"
+            contentDescription = if (isFavorite) stringResource(R.string.listing_details_remove_favorite) else stringResource(
+                R.string.listing_details_add_favorite
+            )
         )
     }
 }
