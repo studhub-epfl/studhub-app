@@ -4,6 +4,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
+import com.studhub.app.R
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
 import com.studhub.app.data.repository.MockConversationRepositoryImpl
 import com.studhub.app.data.repository.MockListingRepositoryImpl
@@ -104,6 +105,7 @@ class DetailedListingScreenTest {
     fun detailedListingScreenMainCallElementsAreDisplayed() {
         composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Block User").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
         composeTestRule.onNodeWithTag("price").assertIsDisplayed()
@@ -113,6 +115,11 @@ class DetailedListingScreenTest {
     @Test fun detailedListingScreenMainCallAddFavouriteDisplaysCorrectElement() {
         composeTestRule.onNodeWithContentDescription("Add to favorites").performClick()
         composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
+    }
+
+    @Test fun detailedListingScreenMainCallBlockUserDisplaysCorrectElement() {
+        composeTestRule.onNodeWithContentDescription("Block User").performClick()
+        composeTestRule.onNodeWithContentDescription("Unblock User").assertIsDisplayed()
     }
 
 }
