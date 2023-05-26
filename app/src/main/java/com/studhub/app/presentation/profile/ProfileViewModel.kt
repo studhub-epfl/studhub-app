@@ -25,7 +25,7 @@ class ProfileViewModel @Inject constructor(
     private val getFavoriteListings: GetFavoriteListings,
     private val _getOwnListings: GetOwnListings,
     private val getBlockedUsers: GetBlockedUsers,
-    private val unblockUser: UnblockUser
+    private val unblockUser: UnblockUser,
     private val _getOwnDraftListings: GetOwnDraftListings
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
