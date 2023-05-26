@@ -1,0 +1,35 @@
+# Summary for sprint 5
+
+## Samuel (Scrum Master)_
+
+This sprint was short, codes were merged but testing made all much more difficult, it was difficult to synchronize testing coverage with tasks in just one week.
+As Scrum master of this sprint, the work done by the group was good, Based on reviews, comunication and dedication we ALL spent much time on the project this week. The coverage has been improved and since Sprint 4 maintenability has also been improved.
+
+
+
+
+## Edouard **W** 
+
+During this sprint, I focused on implementing the backend functionality and screens for retrieving the blocked users list and providing the ability to unblock them. Additionally, I successfully implemented the functionality in the favorite listing screen, allowing users to navigate to the marked listing upon clicking. However, I made the decision not to prioritize implementing a visually formatted fix for this screen, as I realized it would provide little value compared to the significant work I had already completed, which took more than 8 hours. Throughout the sprint, I encountered the challenge of making decisions on prioritization and optimizing my efforts for maximum impact.
+
+
+## Edouard **M** 
+During this sprint, I finished what we had planned for the cache system which is the draft listing system. But my main focus was on the tests that we all had to add in order to bump up the coverage. Unfortunately I could not complete all my tasks due to other projects in other course AND we could only reach 77% which is below the requirements of the course. On a good note I discovered mockito, which is a wonderful tool.
+
+
+
+## Julien
+During this sprint I made progress towards implementation of the bidding system and the search by categories as well as made tests and removed string literals. The top priority being adding tests meant I had to shift most of my focus on that rather than spend too much time on new features implementation.
+
+
+
+## Raymond
+This sprint I worked on a meeting point routing implementation via google maps: an "open in google maps" button sends the app data to google maps which automatically opens and establishes a route from the current location to the destination. I also worked on improving the overall test coverage of the project to reach the 80% bar.
+
+
+
+## Overall team
+
+We tried to do our best to improve coverage and fix as much things as posible in one week.
+The time taking for this Sprint was very consuming, all the members worked hard. Testing it's surprising, our code coverage increased but not comparable to the time spent'.
+We managed to pump the test coverage up to over 70%.
