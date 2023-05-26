@@ -48,8 +48,8 @@ fun ProfileBlockedScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     UserCard(
                         user = user,
-                        isBlocked = true, // users are in the blockedUsers list, so this should always be true
-                        onBlockClicked = { viewModel.unblockUser(user) } // cf my comment on `onBlockedClicked`
+                        isBlocked = true, // users are always blocked in the blockedUsers list
+                        onBlockClicked = { viewModel.unblockUser(user) }
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Divider()

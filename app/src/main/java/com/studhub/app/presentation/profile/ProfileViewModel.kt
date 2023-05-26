@@ -43,7 +43,6 @@ class ProfileViewModel @Inject constructor(
 
     init {
         getLoggedInUser()
-        getBlocked() // Fetch the blocked users initially
     }
 
     private fun getLoggedInUser() =
