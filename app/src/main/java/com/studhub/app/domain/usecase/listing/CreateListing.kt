@@ -11,7 +11,7 @@ import javax.inject.Inject
 /**
  * Use case for creating a listing in a given [repository]
  *
- * @param [repository] the which the use case will act on
+ * @param [repository] the repository which the use case will act on
  */
 class CreateListing @Inject constructor(
     private val repository: ListingRepository,

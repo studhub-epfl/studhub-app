@@ -24,19 +24,25 @@ class ProfileOwnListingsContentTest {
 
     @Test
     fun emptyListOfListingsDisplayCorrectMessage() {
-        val listings: List<Listing> = emptyList()
-
         composeTestRule.setContent {
             ProfileOwnListingsContent(
-                listings = listings,
+                listings = emptyList(),
+                drafts = emptyList(),
                 navigateToProfile = {},
                 navigateToListing = {},
+                navigateToDraft = {},
                 isLoading = false
             )
         }
 
         composeTestRule
+            .onNodeWithText(str(R.string.profile_own_listings_no_drafts))
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        composeTestRule
             .onNodeWithText(str(R.string.profile_own_listings_no_listings))
+            .performScrollTo()
             .assertIsDisplayed()
     }
 
@@ -45,6 +51,9 @@ class ProfileOwnListingsContentTest {
         val listing1 = Listing(name = "Listing A")
         val listing2 = Listing(name = "Listing B")
         val listing3 = Listing(name = "Listing C")
+        val draft1 = Listing(name = "Draft A")
+        val draft2 = Listing(name = "Draft B")
+        val draft3 = Listing(name = "Draft C")
         val dummyListing = Listing(name = "Dummy")
 
         val listings: List<Listing> = listOf(
@@ -58,11 +67,24 @@ class ProfileOwnListingsContentTest {
             listing3,
         )
 
+        val drafts: List<Listing> = listOf(
+            draft1,
+            draft2,
+            dummyListing, dummyListing, dummyListing, dummyListing,
+            dummyListing, dummyListing, dummyListing, dummyListing,
+            dummyListing, dummyListing, dummyListing, dummyListing,
+            dummyListing, dummyListing, dummyListing, dummyListing,
+            dummyListing, dummyListing, dummyListing, dummyListing,
+            draft3,
+        )
+
         composeTestRule.setContent {
             ProfileOwnListingsContent(
                 listings = listings,
+                drafts = drafts,
                 navigateToProfile = {},
                 navigateToListing = {},
+                navigateToDraft = {},
                 isLoading = false
             )
         }
@@ -81,6 +103,21 @@ class ProfileOwnListingsContentTest {
             .onNodeWithText(listing3.name)
             .performScrollTo()
             .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText(draft1.name)
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText(draft2.name)
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText(draft3.name)
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -93,22 +130,38 @@ class ProfileOwnListingsContentTest {
             Listing(id = expectedListingId, name = listingToClickName),
             Listing(id = "56789", name = "56789"),
         )
+        val drafts = listOf(
+            Listing(id = "d01234", name = "d01234"),
+            Listing(id = expectedListingId, name = "DRAFT$listingToClickName"),
+            Listing(id = "d56789", name = "d56789"),
+        )
 
         composeTestRule.setContent {
             ProfileOwnListingsContent(
                 listings = listings,
+                drafts = drafts,
                 navigateToProfile = {},
                 navigateToListing = { id -> clickedId = id },
+                navigateToDraft = { id -> clickedId = "DRAFT$id"},
                 isLoading = false
             )
         }
 
         composeTestRule
             .onNodeWithText(listingToClickName)
+            .performScrollTo()
             .assertIsDisplayed()
             .performClick()
 
-        assertEquals("Back to profile button was clicked", expectedListingId, clickedId)
+        assertEquals("Should be able to click on listing", expectedListingId, clickedId)
+
+        composeTestRule
+            .onNodeWithText("DRAFT$listingToClickName")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .performClick()
+
+        assertEquals("Should be able to click on draft", "DRAFT$expectedListingId", clickedId)
     }
 
     @Test
@@ -119,8 +172,10 @@ class ProfileOwnListingsContentTest {
         composeTestRule.setContent {
             ProfileOwnListingsContent(
                 listings = listings,
+                drafts = emptyList(),
                 navigateToProfile = { clicked = true },
                 navigateToListing = {},
+                navigateToDraft = {},
                 isLoading = false
             )
         }

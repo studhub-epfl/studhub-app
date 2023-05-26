@@ -1,6 +1,7 @@
 package com.studhub.app.data.repository
 
 import android.util.Log
+import com.google.android.gms.common.api.Api
 import com.google.firebase.database.FirebaseDatabase
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.local.LocalDataSource
@@ -44,8 +45,8 @@ class ListingRepositoryImpl @Inject constructor(
             val listingToPush = listing.copy(
                 id = listingId,
                 picturesUri = null,
-                pictures = listing.picturesUri?.map {
-                    storageHelper.storePicture(it, "listings")
+                pictures = listing.picturesUri?.mapNotNull {
+                    storageHelper.storePicture(it, "listings").ifEmpty { null }
                 } ?: emptyList())
 
             val query = db.child(listingId).setValue(listingToPush)
@@ -53,11 +54,37 @@ class ListingRepositoryImpl @Inject constructor(
             query.await()
 
             if (query.isSuccessful) {
+                // has no effects if the listing was not saved in drafts
+                localDb.removeDraftListing(listing.id)
                 emit(ApiResponse.Success(listingToPush))
             } else {
                 val errorMessage = query.exception?.message.orEmpty()
                 emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
             }
+        }
+    }
+
+    override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            val savedDraft = localDb.saveDraftListing(listing)
+            emit(ApiResponse.Success(savedDraft))
+        } catch (e: Exception) {
+            Log.w("LISTING_REPO", e.message.toString())
+            emit(ApiResponse.Failure("Internal Error"))
+        }
+    }
+
+    override suspend fun getDraftListing(listingId: String): Flow<ApiResponse<Listing?>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            val draftListing = localDb.getDraftListing(listingId)
+            emit(ApiResponse.Success(draftListing))
+        } catch (e: Exception) {
+            Log.w("LISTING_REPO", e.message.toString())
+            emit(ApiResponse.Failure("Internal Error"))
         }
     }
 
@@ -93,6 +120,13 @@ class ListingRepositoryImpl @Inject constructor(
 
     override suspend fun getListing(listingId: String): Flow<ApiResponse<Listing>> = flow {
         emit(ApiResponse.Loading)
+
+        // first check if the listing was saved as a draft in the cache
+        val draft: Listing? = localDb.getDraftListing(listingId)
+        if (draft != null) {
+            emit(ApiResponse.Success(draft))
+            return@flow
+        }
 
         if (!networkStatus.isConnected) {
             emit(ApiResponse.NO_INTERNET_CONNECTION)
@@ -143,6 +177,18 @@ class ListingRepositoryImpl @Inject constructor(
             val errorMessage = query.exception?.message.orEmpty()
             Log.w("LISTING_REPO", errorMessage)
             emit(ApiResponse.Failure("Database Error"))
+        }
+    }
+
+    override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> = flow {
+        emit(ApiResponse.Loading)
+
+        try {
+            val drafts = localDb.getDraftListings(user)
+            emit(ApiResponse.Success(drafts))
+        } catch (e: Exception) {
+            Log.w("LISTING_REPO", e.message.toString())
+            emit(ApiResponse.Failure("Internal Error"))
         }
     }
 

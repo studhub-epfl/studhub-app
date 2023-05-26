@@ -9,6 +9,7 @@ import com.studhub.app.domain.repository.ListingRepository
 import com.studhub.app.domain.usecase.listing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -17,6 +18,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
 import kotlin.random.Random
+import kotlin.random.nextLong
 
 class ListingUseCaseTest {
     private val listingDB = HashMap<String, Listing>()
@@ -30,6 +32,14 @@ class ListingUseCaseTest {
                 listingDB[listing.id] = listing
                 emit(ApiResponse.Success(listing))
             }
+        }
+
+        override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
+            return flowOf(ApiResponse.Success(listing))
+        }
+
+        override suspend fun getDraftListing(listingId: String): Flow<ApiResponse<Listing?>> {
+            return flowOf(ApiResponse.Success(Listing(id = listingId)))
         }
 
         override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
@@ -53,6 +63,17 @@ class ListingUseCaseTest {
 
         override suspend fun getUserListings(user: User): Flow<ApiResponse<List<Listing>>> {
             return flowOf(ApiResponse.Success(listOf(Listing(name = "My listing"))))
+        }
+
+        override suspend fun getUserDraftListings(user: User): Flow<ApiResponse<List<Listing>>> {
+            return flowOf(
+                ApiResponse.Success(
+                    listOf(
+                        Listing(name = "My draft listing 1"),
+                        Listing(name = "My draft listing 2")
+                    )
+                )
+            )
         }
 
         override suspend fun getListingsBySearch(
@@ -199,6 +220,69 @@ class ListingUseCaseTest {
                         "Retrieved listing name matches",
                         "My listing",
                         it.data.first().name
+                    )
+                }
+            }
+        }
+    }
+    @Test
+    fun getDraftListingsUseCaseWorksCorrectly() = runBlocking {
+        val getOwnListings = GetOwnDraftListings(repository, MockAuthRepositoryImpl())
+
+        getOwnListings().collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals("Only 2 entries", 2, it.data.size)
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "My draft listing 1",
+                        it.data.first().name
+                    )
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "My draft listing 2",
+                        it.data.last().name
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun saveDraftListingsUseCaseWorksCorrectly() = runBlocking {
+        val saveDraftListing = SaveDraftListing(repository, MockAuthRepositoryImpl())
+
+        saveDraftListing(Listing(name = "Super listing")).collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals(
+                        "Retrieved listing name matches",
+                        "Super listing",
+                        it.data.name
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun getDraftListingsUseCaseWorksCorreclty() = runBlocking {
+        val getDraftListing = GetDraftListing(repository)
+        val id = "my-listing-${Random.nextLong()}"
+
+        getDraftListing(id).collect {
+            when (it) {
+                is ApiResponse.Loading -> {}
+                is ApiResponse.Failure -> fail()
+                is ApiResponse.Success -> {
+                    assertEquals(
+                        "Retrieved listing id matches",
+                        id,
+                        it.data?.id ?: ""
                     )
                 }
             }

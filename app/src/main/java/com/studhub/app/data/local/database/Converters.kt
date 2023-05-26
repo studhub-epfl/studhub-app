@@ -1,5 +1,6 @@
 package com.studhub.app.data.local.database
 
+import android.net.Uri
 import androidx.room.TypeConverter
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -35,5 +36,16 @@ class Converters {
     @TypeConverter
     fun mapOfStringBoolToString(map: Map<String, Boolean>?): String {
         return Json.encodeToString(map)
+    }
+
+    @TypeConverter
+    fun listOfUrisToString(uris: List<Uri>?): String {
+        return Json.encodeToString(uris?.map { it.toString() })
+    }
+
+    @TypeConverter
+    fun listOfUrisFromString(value: String?): List<Uri> {
+        if (value == null) return emptyList()
+        return Json.decodeFromString<List<String>>(value).map { uri -> Uri.parse(uri) }
     }
 }

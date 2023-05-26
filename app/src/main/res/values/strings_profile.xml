@@ -9,7 +9,10 @@
     <string name="profile_favorites_title">Favorite Listings</string>
     <string name="profile_favorites_no_favs">No favorite items yet</string>
     <string name="profile_own_listings_title">Your Listings</string>
+    <string name="profile_own_listings_drafts_title">Drafts</string>
+    <string name="profile_own_listings_published_title">Published</string>
     <string name="profile_own_listings_no_listings">You have not created any listings yet.</string>
+    <string name="profile_own_listings_no_drafts">You currently have no saved drafts.</string>
     <string name="profile_edit_form_label_firstname">First Name</string>
     <string name="profile_edit_form_label_lastname">Last Name</string>
     <string name="profile_edit_form_label_username">User Name</string>
