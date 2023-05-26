@@ -45,6 +45,7 @@ class ProfileBlockedScreenTest {
 
     @Test
     fun profileButtonBlockedTest() {
-        composeTestRule.onNodeWithText(str(R.string.listing_details_unblock_user)).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText(str(R.string.listing_details_unblock_user))
+            .performScrollTo().assertIsDisplayed().performClick()
     }
 }
