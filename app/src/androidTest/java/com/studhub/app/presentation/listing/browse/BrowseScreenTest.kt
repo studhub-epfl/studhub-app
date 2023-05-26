@@ -75,8 +75,8 @@ class BrowseScreenTest {
     @Test
     fun detailedListingScreenMainCallElementsAreDisplayed() {
         composeTestRule.onNodeWithText("Search...").assertIsDisplayed()
-        composeTestRule.onNodeWithText("MIN....CHF").assertIsDisplayed()
-        composeTestRule.onNodeWithText("MAX....CHF").assertIsDisplayed()
+        composeTestRule.onNodeWithText("min CHF").assertIsDisplayed()
+        composeTestRule.onNodeWithText("max CHF").assertIsDisplayed()
 
     }
 
