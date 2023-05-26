@@ -3,6 +3,7 @@ package com.studhub.app.data.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.local.database.LocalAppDatabase
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
@@ -341,7 +342,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            listingRepo.getListingsBySearch("a key", "0", "10", mapOf()).collect {
+            listingRepo.getListingsBySearch("a key", "0", "10", emptyList(), mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3) && it.data.contains(
@@ -415,7 +416,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke("Product 3", "0", "10").collect {
+            getListingsBySearch.invoke("Product 3", "0", "10", emptyList()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3)
@@ -427,6 +428,48 @@ class ListingRepositoryImplTest {
         }
     }
 
+    @Test
+    fun getListingsBySearchShouldFailOnFewCharacters() {
+        lateinit var listing: Listing
+        lateinit var listing2: Listing
+        runBlocking {
+
+            val product = Listing(
+                description = Random.nextLong().toString(),
+                name = "Product 1",
+                price = 1000F
+            )
+            val product2 = Listing(
+                description = Random.nextLong().toString(),
+                name = "Product 2",
+                price = 1002F
+            )
+
+            listingRepo.createListing(product).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            listingRepo.createListing(product2).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing2 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+        runBlocking {
+            getListingsBySearch.invoke("fe", "0", "1700", emptyList()).collect {
+                when (it) {
+                    is ApiResponse.Success -> {}
+                    is ApiResponse.Failure -> assert(true)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
 
 /*
     @Test
@@ -537,7 +580,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke("randomDescription", "r", "1700").collect {
+            getListingsBySearch.invoke("randomDescription", "r", "1700", emptyList()).collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -608,7 +651,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke("description1", "1002", "1700").collect {
+            getListingsBySearch.invoke("description1", "1002", "1700", emptyList()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing2) && it.data.contains(listing3)
@@ -654,8 +697,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-
-            getListingsBySearch.invoke("", "r", "1700").collect {
+            getListingsBySearch.invoke("", "r", "1700", emptyList()).collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -698,8 +740,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-
-            getListingsBySearch.invoke("e", "0", "1700").collect {
+            getListingsBySearch.invoke("e", "0", "1700", emptyList()).collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -709,7 +750,93 @@ class ListingRepositoryImplTest {
         }
     }
 
+    @Test
+    fun getListingsBySearchShouldaddToListingsIfchosenCategoriesAreNonEmpty() {
+        lateinit var listing: Listing
+        lateinit var listing2: Listing
+        lateinit var listing3: Listing
+        lateinit var listing4: Listing
 
+        val category1 = Category("1", "cat1")
+        val category2 = Category("2", "cat2")
+        val category3 = Category("3", "cat3")
+        val category4 = Category("4", "cat4")
+
+        runBlocking {
+
+
+            val product = Listing(
+                description = "description1",
+                name = "Product 1",
+                price = 1000F,
+                categories = listOf(category1)
+            )
+            val product2 = Listing(
+                description = "description1",
+                name = "Product 2",
+                price = 1002F,
+                categories = listOf(category1, category3)
+            )
+            val product3 = Listing(
+                description = "description1",
+                name = "Product 3",
+                price = 1700F,
+                categories = listOf(category2, category3)
+            )
+            val product4 = Listing(
+                description = "description1",
+                name = "Product 4",
+                price = 1702F,
+                categories = listOf(category2, category4)
+            )
+
+            createListing.invoke(product).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            createListing.invoke(product2).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing2 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            createListing.invoke(product3).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing3 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+            createListing.invoke(product4).collect {
+                when (it) {
+                    is ApiResponse.Success -> listing4 = it.data
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+        runBlocking {
+            getListingsBySearch.invoke(
+                "description1",
+                "0",
+                "10000",
+                listOf(category1, category3)
+            ).collect {
+                when (it) {
+                    is ApiResponse.Success -> assert(
+                        (it.data.contains(listing)) && it.data.contains(listing2) && it.data.contains(
+                            listing3
+                        )
+                                && !(it.data.contains(listing4))
+                    )
+                    is ApiResponse.Failure -> fail(it.message)
+                    is ApiResponse.Loading -> {}
+                }
+            }
+        }
+    }
 }
-
-

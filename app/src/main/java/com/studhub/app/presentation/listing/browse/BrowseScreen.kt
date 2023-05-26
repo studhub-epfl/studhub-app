@@ -12,6 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.presentation.listing.browse.components.RangeBar
 import com.studhub.app.presentation.listing.browse.components.SearchBar
@@ -60,16 +61,37 @@ fun BrowseScreenListings(
     val rangeMax = remember {
         mutableStateOf("")
     }
+    val chosenCategories = remember { mutableStateListOf<Category>() }
+
+
+    val rangeMinVal = rangeMin.value.takeIf { it.isNotEmpty() } ?: "0"
+    val rangeMaxVal = rangeMax.value.takeIf { it.isNotEmpty() } ?: Float.MAX_VALUE.toString()
+
     BigLabel(label = stringResource(R.string.listings_browsing_title))
     Column {
         SearchBar(search = search, onSearch = {
-            viewModel.searchListings(search.value, rangeMin.value, rangeMax.value)
+            viewModel.searchListings(
+                search.value,
+                rangeMinVal,
+                rangeMaxVal,
+                chosenCategories.toList()
+            )
         })
-        RangeBar("MIN....CHF", search = rangeMin, onSearch = {
-            viewModel.searchListings(search.value, rangeMin.value, rangeMax.value)
+        RangeBar(stringResource(R.string.MIN____CHF), search = rangeMin, onSearch = {
+            viewModel.searchListings(
+                search.value,
+                rangeMinVal,
+                rangeMaxVal,
+                chosenCategories.toList()
+            )
         })
-        RangeBar("MAX....CHF", search = rangeMax, onSearch = {
-            viewModel.searchListings(search.value, rangeMin.value, rangeMax.value)
+        RangeBar(stringResource(R.string.MAX____CHF), search = rangeMax, onSearch = {
+            viewModel.searchListings(
+                search.value,
+                rangeMinVal,
+                rangeMaxVal,
+                chosenCategories.toList()
+            )
         })
         LoadListings(listings, navController)
     }

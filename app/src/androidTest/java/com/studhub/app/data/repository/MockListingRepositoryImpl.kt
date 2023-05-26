@@ -1,6 +1,7 @@
 package com.studhub.app.data.repository
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
@@ -67,6 +68,7 @@ class MockListingRepositoryImpl : ListingRepository {
         keyword: String,
         keyword1: String,
         keyword2: String,
+        chosenCategories: List<Category>,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>> {
         return flow {

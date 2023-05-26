@@ -3,6 +3,7 @@ package com.studhub.app.presentation.listing.browse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.usecase.listing.GetListings
 import com.studhub.app.domain.usecase.listing.GetListingsBySearch
@@ -21,11 +22,14 @@ class BrowseViewModel @Inject constructor(
     val listingsState: StateFlow<List<Listing>> = _listingsState
 
 
-    fun searchListings(keyword: String,
-                      keyword1: String,
-                      keyword2: String) {
+    fun searchListings(
+        keyword: String,
+        minPrice: String,
+        maxPrice: String,
+        chosenCategories: List<Category>
+    ) {
         viewModelScope.launch {
-            getListingsBySearch(keyword, keyword1, keyword2).collect {
+            getListingsBySearch(keyword, minPrice, maxPrice, chosenCategories).collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
                     is ApiResponse.Failure -> {}
@@ -41,7 +45,8 @@ class BrowseViewModel @Inject constructor(
             getListings().collect {
                 when (it) {
                     is ApiResponse.Loading -> _listingsState.value = emptyList()
-                    is ApiResponse.Failure -> {/*should not fail*/}
+                    is ApiResponse.Failure -> {/*should not fail*/
+                    }
                     is ApiResponse.Success -> _listingsState.value = it.data
                 }
             }
