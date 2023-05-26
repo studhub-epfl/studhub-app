@@ -1,6 +1,7 @@
 package com.studhub.app.domain.repository
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import kotlinx.coroutines.flow.Flow
@@ -63,6 +64,7 @@ interface ListingRepository {
         keyword: String,
         minPrice: String,
         maxPrice: String,
+        chosenCategories: List<Category>,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>>
 

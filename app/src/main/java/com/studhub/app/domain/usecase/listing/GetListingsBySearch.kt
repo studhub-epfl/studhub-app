@@ -1,6 +1,7 @@
 package com.studhub.app.domain.usecase.listing
 
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.repository.AuthRepository
 import com.studhub.app.domain.repository.ListingRepository
@@ -26,20 +27,24 @@ class GetListingsBySearch @Inject constructor(
      * Retrieves all listings matching the given [keyword] from the [repository]
      *
      * @param [keyword] the value to compare to the listings
+     * @param [minPrice] the minimum Price in order to retrieve listings
+     * @param [maxPrice] the maximum Price in order to retrieve the listings
+     * @param [categoryChoose] the category-based List from which listings are retrieved
      */
     suspend operator fun invoke(
-            keyword: String,
-            minPrice: String,
-            maxPrice: String
-        ):Flow<ApiResponse<List<Listing>>> {
+        keyword: String,
+        minPrice: String,
+        maxPrice: String,
+        chosenCategories: List<Category>
+    ): Flow<ApiResponse<List<Listing>>> {
         if (keyword.isEmpty()) {
             return repository.getListings()
         }
-/*
+
         if (keyword.length < 3) {
             return flowOf(ApiResponse.Failure("Too few characters"))
         }
-        */
+
 
         if (minPrice.toFloatOrNull() == null || maxPrice.toFloatOrNull() == null) {
             return flowOf(ApiResponse.Failure("Input is not a number"))
@@ -49,7 +54,13 @@ class GetListingsBySearch @Inject constructor(
             userRepository.getUser(authRepository.currentUserUid).collect { userQuery ->
                 when (userQuery) {
                     is ApiResponse.Success -> {
-                        repository.getListingsBySearch(keyword, minPrice, maxPrice, userQuery.data.blockedUsers)
+                        repository.getListingsBySearch(
+                            keyword,
+                            minPrice,
+                            maxPrice,
+                            chosenCategories,
+                            userQuery.data.blockedUsers
+                        )
                             .collect { listingQuery ->
                                 when (listingQuery) {
                                     is ApiResponse.Failure -> emit(ApiResponse.Failure(listingQuery.message))

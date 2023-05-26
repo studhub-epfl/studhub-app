@@ -7,10 +7,14 @@ import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.data.local.LocalDataSource
 import com.studhub.app.data.network.NetworkStatus
 import com.studhub.app.data.storage.StorageHelper
+import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.repository.CategoryRepository
 import com.studhub.app.domain.repository.ListingRepository
+import com.studhub.app.domain.usecase.category.GetCategories
+import com.studhub.app.domain.usecase.category.GetCategory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -103,7 +107,6 @@ class ListingRepositoryImpl @Inject constructor(
         if (query.isSuccessful) {
             val listings = mutableListOf<Listing>()
 
-            //val retrievedListing: Listing? = query.result.getValue(Listing::class.java)
             for (listingSnapshot in query.result.children) {
                 val retrievedListing: Listing? = listingSnapshot.getValue(Listing::class.java)
                 if (retrievedListing != null) {
@@ -196,6 +199,7 @@ class ListingRepositoryImpl @Inject constructor(
         keyword: String,
         minPrice: String,
         maxPrice: String,
+        chosenCategories: List<Category>,
         blockedUsers: Map<String, Boolean>
     ): Flow<ApiResponse<List<Listing>>> = flow {
         emit(ApiResponse.Loading)
@@ -212,28 +216,34 @@ class ListingRepositoryImpl @Inject constructor(
         if (query.isSuccessful) {
             val listings = mutableListOf<Listing>()
 
-            /*
-            listing != null && (blockedUsers[listing.seller.id] != true) &&
-                    (listing.name.contains(keyword, true) || listing.description.contains(
-                        keyword,
-                        true
-                    )
-                            || listing.price.toString().contains(keyword, true))
-             */
+
+
             query.result.children.forEach { snapshot ->
                 val listing = snapshot.getValue(Listing::class.java)
-                if (listing != null && (blockedUsers[listing.seller.id] != true) &&
-                    (listing.name.contains(keyword, true) || listing.description.contains(
-                        keyword,
-                        true
-                    )
+                if (listing != null
+                    && chosenCategories.isEmpty()
+                    && (blockedUsers[listing.seller.id] != true)
+                    && (listing.name.contains(keyword, true)
+                            || listing.description.contains(keyword, true))
+                    && listing.price >= minPrice.toFloat()
+                    && listing.price <= maxPrice.toFloat()
+                ) {
+                    listings.add(listing)
+                } else if (listing != null
+                    && chosenCategories.isNotEmpty()
+                    && (blockedUsers[listing.seller.id] != true)
+                    && (listing.name.contains(keyword, true)
+                            || listing.description.contains(keyword, true)
                             || listing.price.toString().contains(keyword, true))
                     && listing.price >= minPrice.toFloat()
-                    && listing.price <= maxPrice.toFloat()) {
-                    listings.add(listing)
+                    && listing.price <= maxPrice.toFloat()
+                ) {
+                    if (chosenCategories.filter { category -> listing.categories.contains(category) }.isNotEmpty()) {
+                        listings.add(listing)
+
+                    }
 
                 }
-
 
             }
             provisionalListing = listings
@@ -243,7 +253,6 @@ class ListingRepositoryImpl @Inject constructor(
             emit(ApiResponse.Failure(errorMessage.ifEmpty { "Firebase error" }))
         }
     }
-
 
 
     override suspend fun updateListing(
