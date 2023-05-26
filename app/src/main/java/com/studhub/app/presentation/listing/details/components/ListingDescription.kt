@@ -9,15 +9,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import com.studhub.app.R
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 
 @Composable
 fun ListingDescription(description: String) {
     Text(
-        text = "Description:",
+        text = stringResource(R.string.listing_details_description),
         style = MaterialTheme.typography.titleMedium,
         color = contentColorFor(MaterialTheme.colorScheme.surface)
     )

@@ -9,4 +9,13 @@
     <string name="listings_browsing_title">Browse all listings</string>
     <string name="listing_add_form_validation_neg_price">Please enter a non-negative price</string>
     <string name="listing_add_form_validation_numeric_price">Please enter a valid price</string>
+    <string name="listing_details_rate_user_label">Rate user</string>
+    <string name="listing_details_contact_seller_label">Contact seller</string>
+    <string name="listing_details_meeting_point_button">View Meeting Point</string>
+    <string name="listing_details_block_user">Block User</string>
+    <string name="listing_details_unblock_user">Unblock User</string>
+    <string name="listing_details_add_favorite">Add to favorites</string>
+    <string name="listing_details_remove_favorite">Remove from favorites</string>
+    <string name="listing_details_description">Description: </string>
+    <string name="listing_details_price">Price: </string>
 </resources>
