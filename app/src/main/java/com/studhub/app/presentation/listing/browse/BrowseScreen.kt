@@ -3,7 +3,9 @@ package com.studhub.app.presentation.listing.browse
 import BrowseContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,8 +16,11 @@ import androidx.navigation.compose.rememberNavController
 import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
+import com.studhub.app.presentation.listing.add.components.CategorySheet
 import com.studhub.app.presentation.listing.browse.components.RangeBar
 import com.studhub.app.presentation.listing.browse.components.SearchBar
+import com.studhub.app.presentation.listing.browse.components.SelectedCategories
+import com.studhub.app.presentation.ui.common.button.PlusButton
 import com.studhub.app.presentation.ui.common.text.BigLabel
 import kotlinx.coroutines.launch
 
@@ -24,11 +29,6 @@ fun BrowseScreen(viewModel: BrowseViewModel = hiltViewModel(), navController: Na
     val scope = rememberCoroutineScope()
     LaunchedEffect(viewModel) {
 
-        /***
-         *  If we want to use the fake listings,
-         *  we can call viewModel.generateSampleListings()
-         *  instead of viewModel.getAllListings()
-         */
         scope.launch {
             viewModel.getCurrentListings()
         }
@@ -62,37 +62,42 @@ fun BrowseScreenListings(
         mutableStateOf("")
     }
     val chosenCategories = remember { mutableStateListOf<Category>() }
+    val isCategorySheetOpen = rememberSaveable { mutableStateOf(false) }
+    val categories by viewModel.categories.collectAsState(emptyList())
 
 
     val rangeMinVal = rangeMin.value.takeIf { it.isNotEmpty() } ?: "0"
     val rangeMaxVal = rangeMax.value.takeIf { it.isNotEmpty() } ?: Float.MAX_VALUE.toString()
 
+    fun onSearch() {
+        viewModel.searchListings(
+            search.value,
+            rangeMinVal,
+            rangeMaxVal,
+            chosenCategories.toList()
+        )
+    }
+
     BigLabel(label = stringResource(R.string.listings_browsing_title))
     Column {
-        SearchBar(search = search, onSearch = {
-            viewModel.searchListings(
-                search.value,
-                rangeMinVal,
-                rangeMaxVal,
-                chosenCategories.toList()
-            )
-        })
-        RangeBar(stringResource(R.string.MIN____CHF), search = rangeMin, onSearch = {
-            viewModel.searchListings(
-                search.value,
-                rangeMinVal,
-                rangeMaxVal,
-                chosenCategories.toList()
-            )
-        })
-        RangeBar(stringResource(R.string.MAX____CHF), search = rangeMax, onSearch = {
-            viewModel.searchListings(
-                search.value,
-                rangeMinVal,
-                rangeMaxVal,
-                chosenCategories.toList()
-            )
-        })
+        SearchBar(search = search, onSearch = {onSearch()})
+        Row (modifier = Modifier.fillMaxWidth()){
+            RangeBar(stringResource(R.string.MIN____CHF), search = rangeMin, onSearch = {
+                viewModel.searchListings(
+                    search.value,
+                    rangeMinVal,
+                    rangeMaxVal,
+                    chosenCategories.toList()
+                )
+            })
+            RangeBar(stringResource(R.string.MAX____CHF), search = rangeMax, onSearch = {onSearch()})
+        }
+        Row {
+            PlusButton(onClick = {isCategorySheetOpen.value = true})
+            Text("Category filter:")
+            SelectedCategories(categories = chosenCategories, onSelect={onSearch()})
+        }
+        CategorySheet(isOpen = isCategorySheetOpen, categories = categories, chosen = chosenCategories)
         LoadListings(listings, navController)
     }
 }

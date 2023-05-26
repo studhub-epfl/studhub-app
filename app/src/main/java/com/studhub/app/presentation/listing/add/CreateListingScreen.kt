@@ -103,6 +103,7 @@ fun CreateListingScreen(
                     if (date.selectedDateMillis != null) Date(date.selectedDateMillis!!) else Date()
                 ) { displayMessage(context, msg) }
             },
+
             openCategorySheet = openCategorySheet,
             date = date
         )
