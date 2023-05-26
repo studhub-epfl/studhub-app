@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.studhub.app.R
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.Spacer
 
 @Composable
@@ -26,14 +27,7 @@ fun VerifyEmailContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier.clickable {
-                reloadUser()
-            },
-            text = stringResource(id = R.string.auth_verify_btn_verified),
-            fontSize = 16.sp,
-            textDecoration = TextDecoration.Underline
-        )
+        BasicFilledButton(onClick = reloadUser, label = stringResource(R.string.auth_verify_btn_verified))
 
         Spacer("small")
 
