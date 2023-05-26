@@ -26,8 +26,8 @@ fun RangeBar(label: String = "",
 ) {
     Surface(
         modifier = Modifier
-            .width(250.dp)
-            .height(60.dp),
+            .width(200.dp)
+            .height(50.dp),
         color = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
         shape = MaterialTheme.shapes.medium,

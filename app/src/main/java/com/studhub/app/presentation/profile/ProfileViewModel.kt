@@ -10,12 +10,10 @@ import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.listing.GetOwnDraftListings
 import com.studhub.app.domain.usecase.listing.GetOwnListings
-import com.studhub.app.domain.usecase.user.GetCurrentUser
-import com.studhub.app.domain.usecase.user.GetFavoriteListings
-import com.studhub.app.domain.usecase.user.SignOut
-import com.studhub.app.domain.usecase.user.UpdateCurrentUserInfo
+import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +24,8 @@ class ProfileViewModel @Inject constructor(
     private val updateCurrentUserInfo: UpdateCurrentUserInfo,
     private val getFavoriteListings: GetFavoriteListings,
     private val _getOwnListings: GetOwnListings,
+    private val getBlockedUsers: GetBlockedUsers,
+    private val unblockUser: UnblockUser,
     private val _getOwnDraftListings: GetOwnDraftListings
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
@@ -42,6 +42,9 @@ class ProfileViewModel @Inject constructor(
 
     private val _userFavorites = MutableSharedFlow<List<Listing>>(replay = 0)
     val userFavorites: SharedFlow<List<Listing>> = _userFavorites
+
+    private val _blockedUsers = MutableSharedFlow<List<User>>(replay = 0)
+    val blockedUsers: SharedFlow<List<User>> = _blockedUsers
 
     init {
         getLoggedInUser()
@@ -86,6 +89,28 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun getBlocked() = viewModelScope.launch {
+        getBlockedUsers().collect {
+            when (it) {
+                is ApiResponse.Success -> {
+                    _blockedUsers.emit(it.data)
+                }
+                else -> {
+                    _blockedUsers.emit(emptyList())
+                }
+            }
+        }
+    }
+
+    fun unblockUser(user: User) {
+        viewModelScope.launch {
+            unblockUser(user.id).collect {
+                if (it is ApiResponse.Success) {
+                    getBlocked() // Refresh the list of blocked users
+                }
+            }
+        }
+    }
 
     fun signOut() = viewModelScope.launch {
         signOutResponse = ApiResponse.Loading

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="MIN....CHF">MIN....CHF</string>
-    <string name="MAX....CHF">MAX....CHF</string>
+    <string name="MIN....CHF">min CHF</string>
+    <string name="MAX....CHF">max CHF</string>
 
 </resources>

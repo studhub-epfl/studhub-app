@@ -48,6 +48,8 @@ class ProfileScreenTest {
 
         composeTestRule.onNodeWithText(str(R.string.profile_btn_display_favs)).assertIsDisplayed()
 
+        composeTestRule.onNodeWithText(str(R.string.profile_btn_display_blocked)).assertIsDisplayed()
+
         composeTestRule.onNodeWithText(MockAuthRepositoryImpl.loggedInUser.userName)
             .assertIsDisplayed()
     }
