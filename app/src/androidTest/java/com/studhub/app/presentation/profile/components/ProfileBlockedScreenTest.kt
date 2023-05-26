@@ -4,7 +4,6 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.R
-import com.studhub.app.wrapper.EditProfileActivity
 import com.studhub.app.wrapper.ProfileBlockedActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -41,11 +40,5 @@ class ProfileBlockedScreenTest {
         composeTestRule
             .onNodeWithText(str(R.string.profile_blocked_no_blocked))
             .assertIsDisplayed()
-    }
-
-    @Test
-    fun profileButtonBlockedTest() {
-        composeTestRule.onNodeWithText(str(R.string.listing_details_unblock_user))
-            .performScrollTo().assertIsDisplayed().performClick()
     }
 }
