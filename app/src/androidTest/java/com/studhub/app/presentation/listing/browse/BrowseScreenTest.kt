@@ -11,13 +11,11 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
-import com.studhub.app.data.repository.MockAuthRepositoryImpl
-import com.studhub.app.data.repository.MockConversationRepositoryImpl
-import com.studhub.app.data.repository.MockListingRepositoryImpl
-import com.studhub.app.data.repository.MockUserRepositoryImpl
+import com.studhub.app.data.repository.*
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.usecase.category.GetCategories
 import com.studhub.app.domain.usecase.conversation.StartConversationWith
 import com.studhub.app.domain.usecase.listing.GetListing
 import com.studhub.app.domain.usecase.listing.GetListings
@@ -43,11 +41,13 @@ class BrowseScreenTest {
     private val listingRepo = MockListingRepositoryImpl()
     private val authRepo = MockAuthRepositoryImpl()
     private val userRepo = MockUserRepositoryImpl()
+    private val categoryRepo = MockCategoryRepositoryImpl()
 
     private val getListings = GetListings(listingRepo)
     private val getListingsBySearch = GetListingsBySearch(listingRepo,authRepo,userRepo)
+    private val getCategories = GetCategories(categoryRepo)
 
-    private val viewModel = BrowseViewModel(getListingsBySearch,getListings)
+    private val viewModel = BrowseViewModel(getListingsBySearch,getListings, getCategories)
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
