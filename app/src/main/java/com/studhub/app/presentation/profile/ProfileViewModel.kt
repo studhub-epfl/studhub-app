@@ -11,7 +11,8 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.domain.usecase.listing.GetOwnListings
 import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +24,6 @@ class ProfileViewModel @Inject constructor(
     private val getFavoriteListings: GetFavoriteListings,
     private val _getOwnListings: GetOwnListings,
     private val getBlockedUsers: GetBlockedUsers,
-    private val addBlockedUser: AddBlockedUser,
     private val unblockUser: UnblockUser
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
@@ -40,10 +40,10 @@ class ProfileViewModel @Inject constructor(
 
     private val _blockedUsers = MutableSharedFlow<List<User>>(replay = 0)
     val blockedUsers: SharedFlow<List<User>> = _blockedUsers
-    var isBlocked = mutableStateOf(false)
 
     init {
         getLoggedInUser()
+        getBlocked() // Fetch the blocked users initially
     }
 
     private fun getLoggedInUser() =
@@ -83,7 +83,6 @@ class ProfileViewModel @Inject constructor(
             when (it) {
                 is ApiResponse.Success -> {
                     _blockedUsers.emit(it.data)
-                    isBlocked.value = (it.data.contains(/**TODO**/User()))
                 }
                 else -> {
                     _blockedUsers.emit(emptyList())
@@ -92,19 +91,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onBlockedClicked() {
+    fun unblockUser(user: User) {
         viewModelScope.launch {
-            if (!isBlocked.value) {
-                addBlockedUser(/**TODO**/"").collect {
-                    if (it is ApiResponse.Success) {
-                        isBlocked.value = true
-                    }
-                }
-            } else {
-                unblockUser(/**TODO**/"").collect {
-                    if (it is ApiResponse.Success) {
-                        isBlocked.value = false
-                    }
+            unblockUser(user.id).collect {
+                if (it is ApiResponse.Success) {
+                    getBlocked() // Refresh the list of blocked users
                 }
             }
         }

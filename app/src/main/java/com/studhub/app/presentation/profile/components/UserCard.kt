@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.user.components
+package com.studhub.app.presentation.profile.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -8,14 +8,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import com.studhub.app.domain.model.User
 import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
 import com.studhub.app.presentation.listing.details.components.BlockButton
+import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @Composable
 fun UserCard(
-    user: User, onBlockClicked: () -> Unit,
+    user: User,
+    onBlockClicked: () -> Unit,
     isBlocked: Boolean,
 ) {
     Card(
@@ -47,6 +51,20 @@ fun UserCard(
                     BlockButton(onBlockClicked = onBlockClicked, isBlocked = isBlocked)
                 }
             }
+        }
+    }
+}
+
+@ExcludeFromGeneratedTestCoverage
+@Preview(showBackground = true)
+@Composable
+fun UserCardPreview() {
+    val user = User(
+        userName = "Edouard",
+    )
+    StudHubTheme {
+        Column {
+            UserCard(user = user, onBlockClicked = {}, isBlocked = false)
         }
     }
 }

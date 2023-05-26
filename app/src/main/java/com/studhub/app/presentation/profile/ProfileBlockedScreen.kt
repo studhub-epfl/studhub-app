@@ -18,10 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
+import com.studhub.app.presentation.profile.components.UserCard
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.presentation.user.UserThumbnailScreen
-import com.studhub.app.presentation.user.UserThumbnailViewModel
-
 
 @Composable
 fun ProfileBlockedScreen(
@@ -48,10 +46,10 @@ fun ProfileBlockedScreen(
             LazyColumn {
                 items(blocked.value) { user ->
                     Spacer(modifier = Modifier.height(6.dp))
-                    UserThumbnailScreen(
-                        viewModel = UserThumbnailViewModel(user = user),
-                        isBlocked = viewModel.isBlocked.value,
-                        onBlockClicked = {viewModel.onBlockedClicked()}
+                    UserCard(
+                        user = user,
+                        isBlocked = true, // users are in the blockedUsers list, so this should always be true
+                        onBlockClicked = { viewModel.unblockUser(user) } // cf my comment on `onBlockedClicked`
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Divider()
