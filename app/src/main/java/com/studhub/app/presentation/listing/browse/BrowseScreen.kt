@@ -65,7 +65,7 @@ fun BrowseScreenListings(
 
 
     val rangeMinVal = rangeMin.value.takeIf { it.isNotEmpty() } ?: "0"
-    val rangeMaxVal = rangeMax.value.takeIf { it.isNotEmpty() } ?: "10000"
+    val rangeMaxVal = rangeMax.value.takeIf { it.isNotEmpty() } ?: Float.MAX_VALUE.toString()
 
     BigLabel(label = stringResource(R.string.listings_browsing_title))
     Column {
