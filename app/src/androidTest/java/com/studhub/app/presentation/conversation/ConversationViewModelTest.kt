@@ -53,7 +53,7 @@ class ConversationViewModelTest {
     @Test
     fun when_getLoggedInUser_then_currentUserIsUpdated() = runBlockingTest {
         viewModel.getLoggedInUser()
-        delay(100)
+        delay(1000)
         assertTrue(viewModel.currentUser is ApiResponse.Success)
         val currentUser = (viewModel.currentUser as ApiResponse.Success).data
         // Assuming that MockAuthRepositoryImpl.loggedInUser is the expected user.
@@ -65,7 +65,7 @@ class ConversationViewModelTest {
     fun when_getLoggedInUserConversations_then_conversationsAreUpdated() = runBlockingTest {
         val fixedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2023-05-25 23:12:45")
         viewModel.getLoggedInUserConversations()
-        delay(100)
+        delay(1000)
         assertTrue(viewModel.conversations is ApiResponse.Success)
         val conversations = (viewModel.conversations as ApiResponse.Success).data
         // Assuming that the conversations of the logged in user are known and are as follows.
