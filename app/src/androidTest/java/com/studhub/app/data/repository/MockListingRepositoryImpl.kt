@@ -7,26 +7,34 @@ import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import java.util.*
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Singleton
 class MockListingRepositoryImpl : ListingRepository {
-    private val listingDB = HashMap<String, Listing>()
+    val listingDB = HashMap<String, Listing>()
+    val localListingCache = HashMap<String, Listing>()
 
     override suspend fun createListing(listing: Listing): Flow<ApiResponse<Listing>> {
         return flow {
-            listingDB[listing.id] = listing
-            emit(ApiResponse.Success(listing))
+            val id = listing.id.ifBlank { Random.nextLong().toString() }
+            val pushed = listing.copy(id = id)
+            listingDB[id] = pushed
+            emit(ApiResponse.Success(pushed))
         }
     }
 
     override suspend fun saveDraftListing(listing: Listing): Flow<ApiResponse<Listing>> {
-        TODO("Not yet implemented")
+        val id = listing.id.ifBlank { Random.nextLong().toString() }
+        val pushed = listing.copy(id = id)
+        localListingCache[id] = pushed
+        return flowOf(ApiResponse.Success(pushed))
     }
 
     override suspend fun getDraftListing(listingId: String): Flow<ApiResponse<Listing?>> {
-        TODO("Not yet implemented")
+        return flowOf(ApiResponse.Success(localListingCache[listingId]))
     }
 
     override suspend fun getListings(): Flow<ApiResponse<List<Listing>>> {
