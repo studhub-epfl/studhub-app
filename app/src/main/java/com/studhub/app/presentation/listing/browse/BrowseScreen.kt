@@ -77,7 +77,7 @@ fun BrowseScreenListings(
                 chosenCategories.toList()
             )
         })
-        RangeBar("MIN....CHF", search = rangeMin, onSearch = {
+        RangeBar(stringResource(R.string.MIN____CHF), search = rangeMin, onSearch = {
             viewModel.searchListings(
                 search.value,
                 rangeMinVal,
@@ -85,7 +85,7 @@ fun BrowseScreenListings(
                 chosenCategories.toList()
             )
         })
-        RangeBar("MAX....CHF", search = rangeMax, onSearch = {
+        RangeBar(stringResource(R.string.MAX____CHF), search = rangeMax, onSearch = {
             viewModel.searchListings(
                 search.value,
                 rangeMinVal,
