@@ -119,6 +119,11 @@
             android:label="Edit Profile Wrapper"
             android:theme="@style/Theme.Studhub" />
         <activity
+            android:name=".wrapper.ProfileBlockedActivity"
+            android:exported="false"
+            android:label="Profile Blocked Wrapper"
+            android:theme="@style/Theme.Studhub" />
+        <activity
             android:name=".wrapper.AuthActivity"
             android:exported="false"
             android:label="Auth Wrapper"

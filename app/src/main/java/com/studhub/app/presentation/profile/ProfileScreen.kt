@@ -16,7 +16,8 @@ fun ProfileScreen(
     navigateToAuthScreen: () -> Unit,
     navigateToEditProfileScreen: () -> Unit,
     navigateToProfileFavorites: () -> Unit,
-    navigateToOwnListings: () -> Unit
+    navigateToOwnListings: () -> Unit,
+    navigateToBlockedUsers: () -> Unit
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -39,7 +40,8 @@ fun ProfileScreen(
                         padding = padding,
                         profile = currentUser.data,
                         navigateToProfileFavorites = navigateToProfileFavorites,
-                        navigateToOwnListings = navigateToOwnListings
+                        navigateToOwnListings = navigateToOwnListings,
+                        navigateToBlockedUsers = navigateToBlockedUsers
                     )
                 },
                 scaffoldState = scaffoldState

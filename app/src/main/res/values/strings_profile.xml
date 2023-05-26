@@ -4,10 +4,13 @@
     <string name="profile_btn_sign_out">Sign out</string>
     <string name="profile_btn_edit_profile">Edit</string>
     <string name="profile_btn_display_favs">Display favorite listings</string>
+    <string name="profile_btn_display_blocked">Display blocked users</string>
     <string name="profile_btn_display_own_listings">Display your listings</string>
     <string name="profile_edit_title">Edit profile information</string>
     <string name="profile_favorites_title">Favorite Listings</string>
+    <string name="profile_blocked_title">Blocked Users</string>
     <string name="profile_favorites_no_favs">No favorite items yet</string>
+    <string name="profile_blocked_no_blocked">No blocked users yet</string>
     <string name="profile_own_listings_title">Your Listings</string>
     <string name="profile_own_listings_drafts_title">Drafts</string>
     <string name="profile_own_listings_published_title">Published</string>

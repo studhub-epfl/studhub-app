@@ -4,6 +4,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
+import com.studhub.app.R
 import com.studhub.app.data.repository.MockAuthRepositoryImpl
 import com.studhub.app.data.repository.MockConversationRepositoryImpl
 import com.studhub.app.data.repository.MockListingRepositoryImpl

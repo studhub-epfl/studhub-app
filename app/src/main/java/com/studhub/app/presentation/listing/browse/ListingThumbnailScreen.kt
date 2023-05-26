@@ -1,8 +1,6 @@
 package com.studhub.app.presentation.listing.browse
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
@@ -10,7 +8,7 @@ import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.domain.model.User
-import com.studhub.app.presentation.ui.browse.ListingCard
+import com.studhub.app.presentation.listing.browse.components.ListingCard
 import com.studhub.app.presentation.ui.theme.StudHubTheme
 
 @Composable

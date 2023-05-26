@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.ui.browse
+package com.studhub.app.presentation.listing.browse.components
 
 
 import androidx.compose.foundation.clickable
@@ -17,9 +17,6 @@ import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
-import com.studhub.app.presentation.listing.browse.components.CategoryAndSellerInfo
-import com.studhub.app.presentation.listing.browse.components.PriceChip
-import com.studhub.app.presentation.listing.browse.components.ThumbnailImage
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,46 +30,48 @@ fun ListingCard(listing: Listing, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer
         )
-    ) {Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(90.dp)
-            .clickable { onClick() }
     ) {
-        ThumbnailImage()
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxHeight()
                 .fillMaxWidth()
+                .height(90.dp)
+                .clickable { onClick() }
         ) {
-            // Item title
-            Text(
-                modifier = Modifier.padding(start = 5.dp),
-                text = listing.name,
-                style = MaterialTheme.typography.labelLarge
-            )
-            // Price chip
-            Column (modifier = Modifier.align(Alignment.BottomStart)){
-                if (listing.type == ListingType.BIDDING) {
-                    Text (
-                        modifier = Modifier.padding(3.dp),
-                        text = stringResource(R.string.bidding_type_indicator),
-                        color = MaterialTheme.colorScheme.secondary)
+            ThumbnailImage()
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+                // Item title
+                Text(
+                    modifier = Modifier.padding(start = 5.dp),
+                    text = listing.name,
+                    style = MaterialTheme.typography.labelLarge
+                )
+                // Price chip
+                Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                    if (listing.type == ListingType.BIDDING) {
+                        Text(
+                            modifier = Modifier.padding(3.dp),
+                            text = stringResource(R.string.bidding_type_indicator),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    PriceChip(
+                        price = listing.price
+                    )
                 }
-                PriceChip(
-                    price = listing.price
+                // Category name and seller
+                CategoryAndSellerInfo(
+                    category = if (listing.categories.isEmpty()) Category() else listing.categories[0],
+                    seller = listing.seller,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 5.dp, bottom = 4.dp)
                 )
             }
-            // Category name and seller
-            CategoryAndSellerInfo(
-                category = if (listing.categories.isEmpty()) Category() else listing.categories[0],
-                seller = listing.seller,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 5.dp, bottom = 4.dp)
-            )
         }
-    }
     }
 
 }
