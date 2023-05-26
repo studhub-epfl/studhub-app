@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
+import com.studhub.app.R
 
 @Composable
 fun BlockButton(
@@ -29,7 +31,9 @@ fun BlockButton(
                 scaleY = 1.3f
             },
             imageVector = if (isBlocked) Icons.Filled.Lock else Icons.Outlined.Lock,
-            contentDescription = if (isBlocked) "Unblock User" else "Block User"
+            contentDescription = if (isBlocked) stringResource(R.string.listing_details_unblock_user) else stringResource(
+                R.string.listing_details_block_user
+            )
         )
     }
 }

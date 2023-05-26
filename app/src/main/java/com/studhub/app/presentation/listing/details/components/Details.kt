@@ -12,6 +12,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
@@ -19,7 +20,22 @@ import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.R
 
+/**
+ * Main composable for the detailed listing screen. It contains nearly all the elements to be displayed.
+ *
+ * @param onMeetingPointClick handler for when the user clicks the meeting point button
+ * @param listing the listing we're displaying details about
+ * @param onContactSellerClick handler for when we click on the contact seller button
+ * @param isFavorite whether or not the listing is a favourite of the viewing user
+ * @param isBlocked whether or not the viewing user blocked the seller of this listing
+ * @param onFavoriteClicked handler for when the user clicks on the favourite button
+ * @param onBlockedClicked handler for when the user clicks on the block button
+ * @param onRateUserClick handler for when the user clicks on the Rate button
+ * @param onBidPlaced handler for when the user clicks on the bid button
+ * @param hasBid whether or not the user detains the current highest bidding on the listing
+ */
 @Composable
 fun Details(
     onMeetingPointClick: () -> Unit,
@@ -50,12 +66,12 @@ fun Details(
             Box(modifier = Modifier.testTag("ContactSellerButton")) {
                 BasicFilledButton(
                     onClick = { onContactSellerClick() },
-                    label = "Contact seller"
+                    label = stringResource(R.string.listing_details_contact_seller_label)
                 )
             }
 
             Box(modifier = Modifier.testTag("RateUserButton")) {
-                BasicFilledButton(onClick = { onRateUserClick() }, label = "Rate user")
+                BasicFilledButton(onClick = { onRateUserClick() }, label = stringResource(R.string.listing_details_rate_user_label))
             }
 
             // "Favorite" button
@@ -103,7 +119,7 @@ fun Details(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text("View Meeting Point")
+                Text(stringResource(R.string.listing_details_meeting_point_button))
             }
         }
     }
