@@ -5,7 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -22,36 +24,50 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.test.espresso.idling.CountingIdlingResource
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.studhub.app.BuildConfig.MAPS_API_KEY
+import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 import kotlin.coroutines.CoroutineContext
+
+
+
 
 class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
 
     private lateinit var mapView: MapView
-    private var confirmButton: Button? = null
+    internal var confirmButton: Button? = null
     private lateinit var searchView: AutoCompleteTextView
-    private lateinit var googleMap: GoogleMap
-    private var selectedLatLng: LatLng? = null
+    lateinit var googleMap: GoogleMap
+    var selectedLatLng: LatLng? = null
     private lateinit var searchButton: Button
     private var viewOnly = false
+    var currentLatLng: LatLng? = null
 
-    val idlingResourceSearchLocation = CountingIdlingResource("Search")
-    val idlingResourceMapClick = CountingIdlingResource("MapClick")
-    val idlingResourceConfirmButton = CountingIdlingResource("ConfirmButton")
+    private val idlingResourceSearchLocation = CountingIdlingResource("Search")
+    private val idlingResourceMapClick = CountingIdlingResource("MapClick")
+    private val idlingResourceConfirmButton = CountingIdlingResource("ConfirmButton")
 
     companion object {
         private const val TAG = "MeetingPointPicker"
@@ -75,6 +91,86 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         setContentView(layout)
         initializeMapView(savedInstanceState)
     }
+
+    fun drawRoute(startLatLng: LatLng, endLatLng: LatLng) {
+        val url = "https://maps.googleapis.com/maps/api/directions/json?" +
+                "origin=${startLatLng.latitude},${startLatLng.longitude}&" +
+                "destination=${endLatLng.latitude},${endLatLng.longitude}&" +
+                "mode=driving&" +
+                "key=${MAPS_API_KEY}" // Replace YOUR_API_KEY with your actual API key
+
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val body = response.body?.string()
+                val json = JSONObject(body!!)
+                val routes = json.getJSONArray("routes")
+                if (routes.length() > 0) {
+                    val route = routes.getJSONObject(0)
+                    val legs = route.getJSONArray("legs")
+                    if (legs.length() > 0) {
+                        val leg = legs.getJSONObject(0)
+                        val steps = leg.getJSONArray("steps")
+
+                        val polylineOptions = PolylineOptions()
+                            .color(Color.BLUE)
+                            .width(10f)
+
+                        for (i in 0 until steps.length()) {
+                            val step = steps.getJSONObject(i)
+                            val points = step.getJSONObject("polyline").getString("points")
+                            val decodedPoints = decodePolyline(points)
+                            for (point in decodedPoints) {
+                                polylineOptions.add(LatLng(point.latitude, point.longitude))
+                            }
+                        }
+
+                        runOnUiThread {
+                            googleMap.addPolyline(polylineOptions)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+        })
+    }
+
+
+
+    private fun enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            googleMap.isMyLocationEnabled = true
+            val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    currentLatLng = LatLng(location.latitude, location.longitude)
+                    selectedLatLng?.let { meetingPointLatLng ->
+                        googleMap.clear()
+                        googleMap.addMarker(MarkerOptions().position(meetingPointLatLng))
+                        drawRoute(currentLatLng!!, meetingPointLatLng)
+                    }
+                }
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
 
     private fun setupSearchBar() {
 
@@ -186,6 +282,8 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                     marginEnd = 16.dpToPx(this@MeetingPointPickerActivity)
                 }
             }
+        } else {
+            confirmButton = null
         }
     }
 
@@ -199,18 +297,56 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             addView(mapView)
         }
 
-        return RelativeLayout(this).apply {
+        val layout = RelativeLayout(this).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            addView(mapViewFrame) // Change this line to add mapViewFrame instead of mapView
+            addView(mapViewFrame)
             addView(searchView)
             addView(searchButton)
             if (!viewOnly) {
+                confirmButton?.layoutParams = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    addRule(RelativeLayout.ALIGN_PARENT_START)
+                    bottomMargin = 16.dpToPx(this@MeetingPointPickerActivity)
+                    marginStart = 16.dpToPx(this@MeetingPointPickerActivity)
+                }
                 addView(confirmButton)
             }
         }
+
+        if (viewOnly) {
+            val googleMapsButton = Button(this).apply {
+                text = "Open in Google Maps"
+                layoutParams = RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+                    addRule(RelativeLayout.ALIGN_PARENT_START)
+                    bottomMargin = 16.dpToPx(this@MeetingPointPickerActivity)
+                    marginStart = 16.dpToPx(this@MeetingPointPickerActivity)
+                }
+            }
+
+            googleMapsButton.setOnClickListener {
+                val gmmIntentUri = Uri.parse(
+                    "https://www.google.com/maps/dir/?api=1&" +
+                            "destination=${selectedLatLng?.latitude},${selectedLatLng?.longitude}"
+                )
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                startActivity(mapIntent)
+            }
+
+            layout.addView(googleMapsButton)
+        }
+
+        return layout
     }
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
@@ -251,11 +387,10 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
                     if (!addresses.isNullOrEmpty()) {
                         val address = addresses[0]
                         val latLng = LatLng(address.latitude, address.longitude)
-                        googleMap.clear()
-                        googleMap.addMarker(MarkerOptions().position(latLng))
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                        // Enable the confirm button
                         selectedLatLng = latLng
+                        drawRouteToMeetingPoint()
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
                         confirmButton?.post {
                             idlingResourceConfirmButton.increment()
                             confirmButton?.isEnabled = true
@@ -274,6 +409,21 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         }
     }
 
+    fun drawRouteToMeetingPoint() {
+        currentLatLng?.let { currentLocationLatLng ->
+            selectedLatLng?.let { meetingPointLatLng ->
+                googleMap.clear()
+                googleMap.addMarker(MarkerOptions().position(meetingPointLatLng))
+                drawRoute(currentLocationLatLng, meetingPointLatLng)
+
+                if (viewOnly) {
+                } else {
+                    confirmButton?.isEnabled = true
+                }
+            }
+        }
+    }
+
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -281,6 +431,7 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             == PackageManager.PERMISSION_GRANTED
         ) {
             setupMap()
+            enableMyLocation()
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -296,6 +447,8 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             val initialLatLng = LatLng(initialLatitude, initialLongitude)
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 15f))
             googleMap.addMarker(MarkerOptions().position(initialLatLng))
+            selectedLatLng = initialLatLng
+            drawRouteToMeetingPoint()
         } else {
             val initialLatLng = LatLng(0.0, 0.0)
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 10f))
@@ -308,6 +461,8 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
             == PackageManager.PERMISSION_GRANTED
         ) {
             googleMap.isMyLocationEnabled = true
+            enableMyLocation()
+            drawRouteToMeetingPoint()
         }
 
         val initialLatLng = LatLng(0.0, 0.0)
@@ -354,49 +509,99 @@ class MeetingPointPickerActivity : AppCompatActivity(), OnMapReadyCallback, Coro
         }
     }
 
-
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onStart() {
         super.onStart()
         mapView.onStart()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onPause() {
         mapView.onPause()
         super.onPause()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onStop() {
         mapView.onStop()
         super.onStop()
     }
 
+    // super functions
+    @ExcludeFromGeneratedTestCoverage
     override fun onDestroy() {
         job.cancel()
         mapView.onDestroy()
         super.onDestroy()
     }
 
-
+    @ExcludeFromGeneratedTestCoverage
     override fun onSaveInstanceState(outState: Bundle) {
         mapView.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 
+    @ExcludeFromGeneratedTestCoverage
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
 }
 
+// basic math function
+@ExcludeFromGeneratedTestCoverage
 private fun Int.dpToPx(context: Context): Int {
     return TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         this.toFloat(),
         context.resources.displayMetrics
     ).toInt()
+}
+
+// Google's polyline decoder
+@ExcludeFromGeneratedTestCoverage
+private fun decodePolyline(encoded: String): List<LatLng> {
+    val poly = ArrayList<LatLng>()
+    var index = 0
+    val len = encoded.length
+    var lat = 0
+    var lng = 0
+
+    while (index < len) {
+        var b: Int
+        var shift = 0
+        var result = 0
+        do {
+            b = encoded[index++].code - 63
+            result = result or (b and 0x1F shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        lat += dlat
+
+        shift = 0
+        result = 0
+        do {
+            b = encoded[index++].code - 63
+            result = result or (b and 0x1F shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        lng += dlng
+
+        val latLng = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+        poly.add(latLng)
+    }
+
+    return poly
 }

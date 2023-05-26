@@ -203,4 +203,5 @@ class AppTestModule {
     fun provideDetailedListingViewModel(): IDetailedListingViewModel = mock(IDetailedListingViewModel::class.java)
 
 
+
 }

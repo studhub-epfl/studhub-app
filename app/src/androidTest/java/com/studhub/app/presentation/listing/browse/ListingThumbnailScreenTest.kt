@@ -1,10 +1,10 @@
 package com.studhub.app.presentation.listing.browse
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.studhub.app.R
 import com.studhub.app.domain.model.Category
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
@@ -12,7 +12,6 @@ import com.studhub.app.domain.model.User
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.studhub.app.R
 
 
 @RunWith(AndroidJUnit4::class)
