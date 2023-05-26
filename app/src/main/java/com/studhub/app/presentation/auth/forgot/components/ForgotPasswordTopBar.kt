@@ -24,7 +24,7 @@ fun ForgotPasswordTopBar(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.ArrowBack,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.misc_btn_go_back),
                 )
             }
         }
