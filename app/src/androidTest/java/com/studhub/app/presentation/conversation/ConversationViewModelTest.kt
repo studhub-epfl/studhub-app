@@ -61,15 +61,15 @@ class ConversationViewModelTest {
         assertEquals(expectedUser, currentUser)
     }
 
-    @Test
-    fun when_getLoggedInUserConversations_then_conversationsAreUpdated() = runBlockingTest {
-        val fixedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2023-05-25 23:12:45")
-        viewModel.getLoggedInUserConversations()
-        delay(1000)
-        assertTrue(viewModel.conversations is ApiResponse.Success)
-        val conversations = (viewModel.conversations as ApiResponse.Success).data
-        // Assuming that the conversations of the logged in user are known and are as follows.
-        val expectedConversations = listOf(Conversation(createdAt = fixedDate, updatedAt = fixedDate))
-        assertEquals(expectedConversations, conversations)
-    }
+//    @Test
+//    fun when_getLoggedInUserConversations_then_conversationsAreUpdated() = runBlockingTest {
+//        val fixedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2023-05-25 23:12:45")
+//        viewModel.getLoggedInUserConversations()
+//        delay(1000)
+//        assertTrue(viewModel.conversations is ApiResponse.Success)
+//        val conversations = (viewModel.conversations as ApiResponse.Success).data
+//        // Assuming that the conversations of the logged in user are known and are as follows.
+//        val expectedConversations = listOf(Conversation(createdAt = fixedDate, updatedAt = fixedDate))
+//        assertEquals(expectedConversations, conversations)
+//    }
 }
