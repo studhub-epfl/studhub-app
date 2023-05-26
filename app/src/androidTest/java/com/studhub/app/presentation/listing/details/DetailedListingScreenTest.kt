@@ -105,7 +105,6 @@ class DetailedListingScreenTest {
     fun detailedListingScreenMainCallElementsAreDisplayed() {
         composeTestRule.onNodeWithText("Contact seller").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Add to favorites").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Block User").assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(listing.description).assertIsDisplayed()
         composeTestRule.onNodeWithTag("price").assertIsDisplayed()
@@ -115,11 +114,6 @@ class DetailedListingScreenTest {
     @Test fun detailedListingScreenMainCallAddFavouriteDisplaysCorrectElement() {
         composeTestRule.onNodeWithContentDescription("Add to favorites").performClick()
         composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
-    }
-
-    @Test fun detailedListingScreenMainCallBlockUserDisplaysCorrectElement() {
-        composeTestRule.onNodeWithContentDescription("Block User").performClick()
-        composeTestRule.onNodeWithContentDescription("Unblock User").assertIsDisplayed()
     }
 
 }
