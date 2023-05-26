@@ -1,4 +1,4 @@
-package com.studhub.app.presentation.listing.details
+package com.studhub.app.presentation.listing.browse
 
 import android.content.Context
 import androidx.compose.ui.test.*
