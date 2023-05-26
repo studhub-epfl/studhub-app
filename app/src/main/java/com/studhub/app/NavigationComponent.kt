@@ -77,7 +77,8 @@ fun AppNavigation(
             Globals.showBottomBar = false
             ProfileOwnListingsScreen(
                 navigateToProfile = { navController.navigate("Profile") },
-                navigateToListing = { id: String -> navController.navigate("Listing/$id") }
+                navigateToListing = { id: String -> navController.navigate("Listing/$id") },
+                navigateToDraft = { id: String -> navController.navigate("Listing/Add/$id")}
             )
         }
 
@@ -129,7 +130,18 @@ fun AppNavigation(
             Globals.showBottomBar = false
             CreateListingScreen(
                 navigateToListing = { id: String -> navController.navigate("Listing/$id") },
-                navigateBack = { navController.popBackStack() })
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("Listing/Add/{draftId}") {
+            Globals.showBottomBar = false
+            val draftId = it.arguments?.getString("draftId")
+            CreateListingScreen(
+                navigateToListing = { id: String -> navController.navigate("Listing/$id") },
+                navigateBack = { navController.popBackStack() },
+                draftId = draftId
+            )
         }
 
         composable("About") {

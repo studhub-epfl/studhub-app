@@ -2,6 +2,7 @@ package com.studhub.app.data.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.data.local.database.LocalAppDatabase
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
 import com.studhub.app.domain.repository.ListingRepository
@@ -18,7 +19,6 @@ import org.junit.runner.RunWith
 import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
-import kotlin.random.nextLong
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -50,6 +50,9 @@ class ListingRepositoryImplTest {
 
     @Inject
     lateinit var updateListingToBidding: UpdateListingToBidding
+
+    @Inject
+    lateinit var localCache: LocalAppDatabase
 
     @Before
     fun init() {
@@ -141,11 +144,19 @@ class ListingRepositoryImplTest {
             }
         }
 
-        assertTrue("All listings are sold by the correct user", listings.all { it.sellerId == fakeUser.id || it.seller.id == fakeUser.id })
+        assertTrue(
+            "All listings are sold by the correct user",
+            listings.all { it.sellerId == fakeUser.id || it.seller.id == fakeUser.id })
         assertEquals("Only 3 listings should have been retrieved", 3, listings.size)
-        assertNotNull("Every created listings are present", listings.firstOrNull { it.name == listing1.name})
-        assertNotNull("Every created listings are present", listings.firstOrNull { it.name == listing2.name})
-        assertNotNull("Every created listings are present", listings.firstOrNull { it.name == listing3.name})
+        assertNotNull(
+            "Every created listings are present",
+            listings.firstOrNull { it.name == listing1.name })
+        assertNotNull(
+            "Every created listings are present",
+            listings.firstOrNull { it.name == listing2.name })
+        assertNotNull(
+            "Every created listings are present",
+            listings.firstOrNull { it.name == listing3.name })
     }
 
     @Test
@@ -165,6 +176,95 @@ class ListingRepositoryImplTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun saveAndGetDraftListingsWorksCorrectly() {
+        val listing1 = Listing(name = "Product 1", sellerId = "me")
+        val listing2 = Listing(name = "Product 2", sellerId = "me")
+        lateinit var savedListing1: Listing
+        lateinit var savedListings: List<Listing>
+
+        // save drafts
+        runBlocking {
+            listingRepo.saveDraftListing(listing1).collect {
+                if (it is ApiResponse.Success)
+                    savedListing1 = it.data
+            }
+            listingRepo.saveDraftListing(listing2).collect()
+        }
+
+        // overwrite listing 1
+        runBlocking {
+            listingRepo.saveDraftListing(savedListing1.copy(name = "Product 1 updated")).collect()
+        }
+
+        runBlocking {
+            listingRepo.getUserDraftListings(User(id = "me")).collect {
+                if (it is ApiResponse.Success)
+                    savedListings = it.data
+            }
+        }
+
+        assertEquals("Only 2 saved drafts", 2, savedListings.size)
+        assertEquals(
+            "Lastly updated draft should come first",
+            "Product 1 updated",
+            savedListings.first().name
+        )
+        assertEquals(
+            "Listing 1's name should have been updated",
+            "Product 1 updated",
+            savedListings.first().name
+        )
+        assertEquals("Earliest draft should come last", listing2.name, savedListings.last().name)
+
+        // clear cache
+        localCache.clearAllTables()
+    }
+
+    @Test
+    fun saveAndGetSingleDraftListingWorksCorrectly() {
+        val listing = Listing(name = "Product 1", sellerId = "me")
+        lateinit var savedListing: Listing
+        lateinit var retrievedListing: Listing
+        var retrievedNullListing: Listing? = null
+        var retrievedNullListingSuccess = false
+
+        // save drafts
+        runBlocking {
+            listingRepo.saveDraftListing(listing).collect {
+                if (it is ApiResponse.Success)
+                    savedListing = it.data
+            }
+        }
+
+        runBlocking {
+            listingRepo.getDraftListing(savedListing.id).collect {
+                if (it is ApiResponse.Success)
+                    retrievedListing = it.data!!
+            }
+            listingRepo.getDraftListing("Non-existent-${Random.nextLong()}").collect {
+                if (it is ApiResponse.Success) {
+                    retrievedNullListing = it.data
+                    retrievedNullListingSuccess = true
+                }
+            }
+        }
+
+        assertEquals(
+            "Retrieved listing name should match the saved one's",
+            listing.name,
+            retrievedListing.name
+        )
+        assertTrue(
+            "Non existent draft retrieval should still be a success",
+            retrievedNullListingSuccess
+        )
+        assertNull("Non existent draft should be null", retrievedNullListing)
+
+        // clear cache
+        localCache.clearAllTables()
     }
 
     @Test
@@ -241,7 +341,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            listingRepo.getListingsBySearch("a key","0","10", mapOf()).collect {
+            listingRepo.getListingsBySearch("a key", "0", "10", mapOf()).collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing3) && it.data.contains(
@@ -254,8 +354,6 @@ class ListingRepositoryImplTest {
             }
         }
     }
-
-
 
 
     @Test
@@ -439,7 +537,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke("randomDescription","r", "1700").collect {
+            getListingsBySearch.invoke("randomDescription", "r", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -510,7 +608,7 @@ class ListingRepositoryImplTest {
             }
         }
         runBlocking {
-            getListingsBySearch.invoke("description1","1002", "1700").collect {
+            getListingsBySearch.invoke("description1", "1002", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> assert(
                         it.data.contains(listing2) && it.data.contains(listing3)
@@ -557,7 +655,7 @@ class ListingRepositoryImplTest {
         }
         runBlocking {
 
-            getListingsBySearch.invoke("","r", "1700").collect {
+            getListingsBySearch.invoke("", "r", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)
@@ -566,6 +664,7 @@ class ListingRepositoryImplTest {
             }
         }
     }
+
     @Test
     fun getListingsByRangeShouldFailOnSmallSearchValues() {
         lateinit var listing: Listing
@@ -600,7 +699,7 @@ class ListingRepositoryImplTest {
         }
         runBlocking {
 
-            getListingsBySearch.invoke("e","0", "1700").collect {
+            getListingsBySearch.invoke("e", "0", "1700").collect {
                 when (it) {
                     is ApiResponse.Success -> {}
                     is ApiResponse.Failure -> assert(true)

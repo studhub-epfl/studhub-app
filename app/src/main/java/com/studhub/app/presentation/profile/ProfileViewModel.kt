@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.studhub.app.core.utils.ApiResponse
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.User
+import com.studhub.app.domain.usecase.listing.GetOwnDraftListings
 import com.studhub.app.domain.usecase.listing.GetOwnListings
 import com.studhub.app.domain.usecase.user.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ class ProfileViewModel @Inject constructor(
     private val _getOwnListings: GetOwnListings,
     private val getBlockedUsers: GetBlockedUsers,
     private val unblockUser: UnblockUser
+    private val _getOwnDraftListings: GetOwnDraftListings
 ) : ViewModel() {
     var signOutResponse by mutableStateOf<ApiResponse<Boolean>>(ApiResponse.Loading)
         private set
@@ -33,6 +35,9 @@ class ProfileViewModel @Inject constructor(
         private set
 
     var ownListings by mutableStateOf<ApiResponse<List<Listing>>>(ApiResponse.Loading)
+        private set
+
+    var ownDraftListings by mutableStateOf<ApiResponse<List<Listing>>>(ApiResponse.Loading)
         private set
 
     private val _userFavorites = MutableSharedFlow<List<Listing>>(replay = 0)
@@ -56,6 +61,13 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _getOwnListings().collect {
                 ownListings = it
+            }
+        }
+
+    fun getOwnDraftListings() =
+        viewModelScope.launch {
+            _getOwnDraftListings().collect {
+                ownDraftListings = it
             }
         }
 

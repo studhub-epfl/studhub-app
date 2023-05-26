@@ -1,12 +1,15 @@
 package com.studhub.app.data.local
 
 import com.studhub.app.data.local.database.LocalAppDatabase
+import com.studhub.app.data.local.entity.DraftListing
 import com.studhub.app.data.local.entity.UnsentMessage
 import com.studhub.app.data.local.entity.UserFavoriteListings
 import com.studhub.app.domain.model.Conversation
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.Message
 import com.studhub.app.domain.model.User
+import kotlin.random.Random
+import java.util.*
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(
@@ -17,6 +20,7 @@ class LocalDataSource @Inject constructor(
     private val messageDao = localDatabase.messageDao()
     private val unsentMessageDao = localDatabase.unsentMessageDao()
     private val listingDao = localDatabase.listingDao()
+    private val draftListingDao = localDatabase.draftListingDao()
     private val userFavListingsDao = localDatabase.userFavListingsDao()
 
     suspend fun getUser(id: String): User? {
@@ -90,6 +94,59 @@ class LocalDataSource @Inject constructor(
                 createdAt = it.createdAt
             )
         }
+    }
+
+    suspend fun saveDraftListing(listing: Listing): Listing {
+        val id = listing.id.ifEmpty { Random.nextLong().toString() }
+        draftListingDao.insertDraftListing(
+            DraftListing(
+                id = id,
+                sellerId = listing.sellerId,
+                name = listing.name,
+                description = listing.description,
+                lastModifiedAt = Date(),
+                price = listing.price,
+                picturesUri = listing.picturesUri ?: emptyList(),
+                type = listing.type,
+                biddingDeadline = listing.biddingDeadline
+            )
+        )
+
+        return listing.copy(id = id)
+    }
+
+    suspend fun getDraftListings(user: User): List<Listing> {
+        return draftListingDao.getDraftListings(user.id).map {
+            Listing(
+                id = it.id,
+                sellerId = it.sellerId,
+                name = it.name,
+                description = it.description,
+                price = it.price,
+                picturesUri = it.picturesUri,
+                type = it.type,
+                biddingDeadline = it.biddingDeadline
+            )
+        }
+    }
+
+    suspend fun getDraftListing(listingId: String): Listing? {
+        val listing = draftListingDao.getDraftListing(listingId) ?: return null
+
+        return Listing(
+            id = listing.id,
+            sellerId = listing.sellerId,
+            name = listing.name,
+            description = listing.description,
+            price = listing.price,
+            picturesUri = listing.picturesUri,
+            type = listing.type,
+            biddingDeadline = listing.biddingDeadline
+        )
+    }
+
+    suspend fun removeDraftListing(listingId: String) {
+        draftListingDao.deleteDraftListing(listingId)
     }
 
     suspend fun getFavListings(userId: String): List<Listing> {

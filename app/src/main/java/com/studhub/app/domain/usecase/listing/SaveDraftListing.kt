@@ -9,16 +9,23 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
- * Use case for retrieving all listings from the logged-in user, from a given [repository]
+ * Use case for saving a draft [Listing] in a given [repository]
  *
  * @param [repository] the repository which the use case will act on
  * @param [authRepository] the repository which the use case will retrieve the logged in user from
  */
-class GetOwnListings @Inject constructor(
+class SaveDraftListing @Inject constructor(
     private val repository: ListingRepository,
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(): Flow<ApiResponse<List<Listing>>> {
-        return repository.getUserListings(User(id = authRepository.currentUserUid))
+    /**
+     * Adds the given draft [listing] to a [repository]
+     *
+     * The seller will be the [User] logged-in to the [authRepository]
+     *
+     * @param [listing] the draft [Listing] to save
+     */
+    suspend operator fun invoke(listing: Listing): Flow<ApiResponse<Listing>> {
+        return repository.saveDraftListing(listing.copy(sellerId = authRepository.currentUserUid))
     }
 }
