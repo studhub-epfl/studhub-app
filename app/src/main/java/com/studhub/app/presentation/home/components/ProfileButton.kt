@@ -3,6 +3,7 @@ package com.studhub.app.presentation.home.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -24,9 +25,9 @@ fun ProfileButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp), // Use a rounded rectangle shape with custom corner radius
-        modifier = modifier.padding(end = 8.dp) // Add horizontal spacing between buttons
-
+        modifier = modifier.padding(end = 8.dp), // Add horizontal spacing between buttons
+        contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        Text(text = stringResource(R.string.home_button_profile))
+        Text(text = stringResource(R.string.home_button_profile),style = MaterialTheme.typography.titleMedium)
     }
 }

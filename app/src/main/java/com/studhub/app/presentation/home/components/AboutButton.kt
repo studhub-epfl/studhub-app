@@ -2,6 +2,7 @@ package com.studhub.app.presentation.home.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,9 +25,9 @@ fun AboutButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp), // Use a rounded rectangle shape with custom corner radius
-        modifier = modifier.padding(end = 8.dp) // Add horizontal spacing between buttons
-
+        modifier = modifier.padding(end = 8.dp), // Add horizontal spacing between buttons
+        contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        Text(text = stringResource(R.string.home_button_about))
+        Text(text = stringResource(R.string.home_button_about), style = MaterialTheme.typography.titleMedium)
     }
 }
