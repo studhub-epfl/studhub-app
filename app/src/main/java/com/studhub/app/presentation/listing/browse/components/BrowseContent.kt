@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -12,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.studhub.app.domain.model.Listing
-import com.studhub.app.presentation.listing.browse.ListingThumbnailScreen
-import com.studhub.app.presentation.listing.browse.ListingThumbnailViewModel
+import com.studhub.app.presentation.listing.browse.components.ListingCard
 
 @Composable
 fun BrowseContent(listings: List<Listing>, navController: NavController) {
@@ -25,16 +23,12 @@ fun BrowseContent(listings: List<Listing>, navController: NavController) {
             modifier = Modifier.padding(start = 8.dp, end = 8.dp)
         ) {
             items(listings) { listing ->
-                Spacer(modifier = Modifier.height(6.dp))
-                ListingThumbnailScreen(
-                    viewModel = ListingThumbnailViewModel(listing = listing),
+                ListingCard(
+                    listing = listing,
                     onClick = {
                         navController.navigate("Listing/${listing.id}")
-                    }
-                )
-
+                    })
                 Spacer(modifier = Modifier.height(6.dp))
-                Divider()
             }
         }
     }

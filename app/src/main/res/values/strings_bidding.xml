@@ -4,7 +4,7 @@
     <string name="auction_deadline_select">Select auction deadline</string>
     <string name="bidding_button">Bid</string>
     <string name="bidding_price_label">Place your bid</string>
-    <string name="bidding_type_indicator">Auction\n\rCurrent bid:</string>
+    <string name="bidding_type_indicator">Current bid:</string>
     <string name ="listing_deadline">This auction closes on : %s</string>
     <string name ="current_bidder_indicator">You have currently the top bid</string>
 </resources>

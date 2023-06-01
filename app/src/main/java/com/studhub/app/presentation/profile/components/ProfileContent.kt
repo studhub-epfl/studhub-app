@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.studhub.app.R
 import com.studhub.app.domain.model.User
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.misc.Avatar
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
@@ -50,68 +51,27 @@ fun ProfileContent(
             Spacer("large")
             Spacer("large")
 
-            OutlinedButton(
+            BasicFilledButton(
                 onClick = { navigateToProfileFavorites() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(vertical = 12.dp),
-                elevation = ButtonDefaults.buttonElevation(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.profile_btn_display_favs),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+                label = stringResource(R.string.profile_btn_display_favs),
+            )
 
-            Spacer("large")
+            Spacer()
 
-            OutlinedButton(
+            BasicFilledButton(
                 onClick = { navigateToBlockedUsers() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(vertical = 12.dp),
-                elevation = ButtonDefaults.buttonElevation(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.profile_btn_display_blocked),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+                label = stringResource(R.string.profile_btn_display_blocked),
+            )
 
-            Spacer("large")
+            Spacer()
 
-            OutlinedButton(
+            BasicFilledButton(
                 onClick = { navigateToOwnListings() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = MaterialTheme.shapes.medium,
-                contentPadding = PaddingValues(vertical = 12.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.profile_btn_display_own_listings),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+                label = stringResource(R.string.profile_btn_display_own_listings),
+            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer()
+
         }
     }
 }

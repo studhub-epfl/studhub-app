@@ -21,14 +21,8 @@ import java.text.DecimalFormat
 @Composable
 fun ListingPrice(price: Float) {
     Text(
-        text = stringResource(R.string.listing_details_price),
-        style = MaterialTheme.typography.titleMedium,
-        color = contentColorFor(MaterialTheme.colorScheme.surface)
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
         text = "${DecimalFormat("#,##0.00").format(price)} CHF",
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.titleMedium,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .fillMaxWidth()

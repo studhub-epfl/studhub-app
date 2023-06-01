@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -14,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.studhub.app.R
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
 import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 import com.studhub.app.presentation.ui.common.container.Carousel
 import com.studhub.app.presentation.ui.common.misc.Spacer
 import com.studhub.app.presentation.ui.common.text.BigLabel
-import com.studhub.app.R
 
 /**
  * Main composable for the detailed listing screen. It contains nearly all the elements to be displayed.
@@ -55,7 +53,7 @@ fun Details(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(8.dp)
             .verticalScroll(scrollState)
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -71,7 +69,10 @@ fun Details(
             }
 
             Box(modifier = Modifier.testTag("RateUserButton")) {
-                BasicFilledButton(onClick = { onRateUserClick() }, label = stringResource(R.string.listing_details_rate_user_label))
+                BasicFilledButton(
+                    onClick = { onRateUserClick() },
+                    label = stringResource(R.string.listing_details_rate_user_label)
+                )
             }
 
             // "Favorite" button
@@ -84,14 +85,13 @@ fun Details(
             }
         }
 
+        Spacer("large")
+
+        Carousel(modifier = Modifier.fillMaxWidth(), pictures = listing.pictures)
 
         Spacer("large")
 
         BigLabel(label = listing.name)
-
-        Spacer("large")
-
-        Carousel(modifier = Modifier.fillMaxWidth(0.8F), pictures = listing.pictures)
 
         Spacer("large")
 
@@ -114,13 +114,22 @@ fun Details(
         Spacer(modifier = Modifier.height(20.dp))
         val meetingPoint = listing.meetingPoint
         if (meetingPoint != null) {
-            Button(
-                onClick = onMeetingPointClick,
+            Row(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text(stringResource(R.string.listing_details_meeting_point_button))
+                BasicFilledButton(
+                    label = stringResource(R.string.listing_details_meeting_point_button),
+                    onClick = onMeetingPointClick,
+                )
             }
         }
+
+        Spacer("large")
+        Spacer("large")
+        Spacer("large")
+        Spacer("large")
+        Spacer("large")
+        Spacer("large")
     }
 }

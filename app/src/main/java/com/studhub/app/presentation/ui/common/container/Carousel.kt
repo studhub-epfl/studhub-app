@@ -6,6 +6,7 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import coil.compose.rememberAsyncImagePainter
@@ -58,6 +59,7 @@ fun <T> Carousel(modifier: Modifier = Modifier, pictures: List<T>) {
                     painter = rememberAsyncImagePainter(pictures[page]),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
             }
         }

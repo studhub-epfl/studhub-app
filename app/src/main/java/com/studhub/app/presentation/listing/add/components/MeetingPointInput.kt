@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.maps.model.LatLng
 import com.studhub.app.MeetingPointPickerActivity
 import com.studhub.app.domain.model.MeetingPoint
+import com.studhub.app.presentation.ui.common.button.BasicFilledButton
 
 
 @Composable
@@ -30,13 +31,12 @@ fun MeetingPointInput(meetingPoint: MutableState<MeetingPoint?>) {
         }
     }
 
-    Button(
+    BasicFilledButton(
+        label = "Set Meeting Point",
         onClick = {
             val intent = Intent(context, MeetingPointPickerActivity::class.java)
             requestLocationLauncher.launch(intent)
         }
-    ) {
-        Text("Set Meeting Point")
-    }
+    )
 
 }

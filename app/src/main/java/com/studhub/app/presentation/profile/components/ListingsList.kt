@@ -21,17 +21,13 @@ fun ListingsList(
         Text(text = emptyText)
     } else {
         listings.map {
-            Spacer("small")
-
             ListingCard(
                 listing = it,
                 onClick = {
                     navigateToListing(it.id)
                 }
             )
-
             Spacer("small")
-            Divider()
         }
     }
 

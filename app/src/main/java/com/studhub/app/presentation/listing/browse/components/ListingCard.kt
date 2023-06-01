@@ -3,29 +3,30 @@ package com.studhub.app.presentation.listing.browse.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.studhub.app.R
 import com.studhub.app.domain.model.Listing
 import com.studhub.app.domain.model.ListingType
+import com.studhub.app.presentation.ui.common.container.Card
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListingCard(listing: Listing, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
-        ),
+            .fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
@@ -34,7 +35,12 @@ fun ListingCard(listing: Listing, onClick: () -> Unit) {
                 .clickable { onClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ThumbnailImage()
+            AsyncImage(
+                model = listing.pictures.firstOrNull() ?: "",
+                contentDescription = listing.name,
+                modifier = Modifier.fillMaxWidth(0.35F),
+                contentScale = ContentScale.FillBounds
+            )
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -42,7 +48,7 @@ fun ListingCard(listing: Listing, onClick: () -> Unit) {
             ) {
                 Text(
                     text = listing.name,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Row(
@@ -57,26 +63,21 @@ fun ListingCard(listing: Listing, onClick: () -> Unit) {
                             modifier = Modifier.padding(end = 4.dp)
                         )
                     }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
                     PriceChip(
                         price = listing.price,
                         modifier = Modifier.padding(end = 4.dp)
                     )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = "Category: " + (if (listing.categories.isEmpty()) "N/A" else listing.categories[0].name),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Seller: ${listing.seller.userName}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                    Spacer(modifier = Modifier.padding(8.dp))
+                    if (listing.categories.isNotEmpty())
+                        Text(
+                            text = listing.categories[0].name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
                 }
             }
         }

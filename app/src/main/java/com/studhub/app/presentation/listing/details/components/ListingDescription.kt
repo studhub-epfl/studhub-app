@@ -19,12 +19,6 @@ import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
 @Composable
 fun ListingDescription(description: String) {
     Text(
-        text = stringResource(R.string.listing_details_description),
-        style = MaterialTheme.typography.titleMedium,
-        color = contentColorFor(MaterialTheme.colorScheme.surface)
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
         text = description,
         style = MaterialTheme.typography.bodySmall,
         modifier = Modifier

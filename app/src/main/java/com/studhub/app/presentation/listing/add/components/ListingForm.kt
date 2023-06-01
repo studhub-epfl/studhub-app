@@ -1,6 +1,7 @@
 package com.studhub.app.presentation.listing.add.components
 
 import android.net.Uri
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePickerState
@@ -83,7 +84,7 @@ fun ListingForm(
 
     MeetingPointInput(meetingPoint = meetingPoint)
 
-    Spacer("large")
+    Spacer()
 
 
     val priceValidationResult = validatePrice(price.value)
@@ -100,26 +101,27 @@ fun ListingForm(
         )
     }
 
-    Spacer()
-
-    BasicFilledButton(
-        label = stringResource(R.string.listings_add_form_save_draft),
-        onClick = {
-            onSaveDraft()
-        }
-    )
-
-    Spacer()
-
     // Check if the category is selected and the price is non-negative
     val isFormValid = (priceValidationResult == PriceValidationResult.VALID) && chosen.isNotEmpty()
-    BasicFilledButton(
-        label = stringResource(R.string.listings_add_form_send),
-        enabled = isFormValid,
-        onClick = {
-            if (isFormValid) {
-                onSubmit()
+    Row(
+        modifier = Modifier.padding(32.dp),
+    ) {
+
+        BasicFilledButton(
+            label = stringResource(R.string.listings_add_form_save_draft),
+            onClick = {
+                onSaveDraft()
             }
-        }
-    )
+        )
+
+        BasicFilledButton(
+            label = stringResource(R.string.listings_add_form_send),
+            enabled = isFormValid,
+            onClick = {
+                if (isFormValid) {
+                    onSubmit()
+                }
+            }
+        )
+    }
 }
