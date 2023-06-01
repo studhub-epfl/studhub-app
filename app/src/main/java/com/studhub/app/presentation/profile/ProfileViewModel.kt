@@ -40,8 +40,8 @@ class ProfileViewModel @Inject constructor(
     var ownDraftListings by mutableStateOf<ApiResponse<List<Listing>>>(ApiResponse.Loading)
         private set
 
-    private val _userFavorites = MutableSharedFlow<List<Listing>>(replay = 0)
-    val userFavorites: SharedFlow<List<Listing>> = _userFavorites
+    var favoriteListings by mutableStateOf<ApiResponse<List<Listing>>>(ApiResponse.Loading)
+        private set
 
     private val _blockedUsers = MutableSharedFlow<List<User>>(replay = 0)
     val blockedUsers: SharedFlow<List<User>> = _blockedUsers
@@ -82,10 +82,7 @@ class ProfileViewModel @Inject constructor(
 
     fun getFavorites() = viewModelScope.launch {
         getFavoriteListings().collect {
-            when (it) {
-                is ApiResponse.Success -> _userFavorites.emit(it.data)
-                else -> _userFavorites.emit(emptyList())
-            }
+            favoriteListings = it
         }
     }
 

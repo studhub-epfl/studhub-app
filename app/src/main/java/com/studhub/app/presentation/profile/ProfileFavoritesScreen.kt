@@ -1,67 +1,53 @@
 package com.studhub.app.presentation.profile
 
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studhub.app.R
-import com.studhub.app.presentation.listing.browse.ListingThumbnailScreen
-import com.studhub.app.presentation.listing.browse.ListingThumbnailViewModel
-import com.studhub.app.presentation.ui.common.text.BigLabel
+import com.studhub.app.core.utils.ApiResponse
+import com.studhub.app.domain.model.Listing
+import com.studhub.app.presentation.profile.components.ListingsList
+import com.studhub.app.presentation.ui.common.container.Screen
 
 
 @Composable
 fun ProfileFavoritesScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    navigateToListing: (id: String) -> Unit
+    navigateToListing: (id: String) -> Unit,
+    navigateToProfile: () -> Unit
 ) {
-    val favorites = viewModel.userFavorites.collectAsState(initial = emptyList())
-    val scrollState = rememberScrollState()
-
     LaunchedEffect(Unit) {
         viewModel.getFavorites()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .horizontalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        BigLabel(label = stringResource(R.string.profile_favorites_title))
+    val isLoading = viewModel.favoriteListings !is ApiResponse.Success
 
-        if (favorites.value.isEmpty()) {
-            BigLabel(label = stringResource(R.string.profile_favorites_no_favs))
-        } else {
-            LazyColumn {
-                items(favorites.value) { listing ->
-                    Spacer(modifier = Modifier.height(6.dp))
-                    ListingThumbnailScreen(
-                        viewModel = ListingThumbnailViewModel(listing = listing),
-                        onClick = {
-                            navigateToListing(listing.id)
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Divider()
-                }
-            }
-        }
-    }
-
+    ProfileFavoritesContent(
+        favorites = if (isLoading) emptyList() else (viewModel.favoriteListings as ApiResponse.Success).data,
+        navigateToListing = navigateToListing,
+        isLoading = isLoading,
+        navigateToProfile = navigateToProfile,
+    )
 }
 
+@Composable
+fun ProfileFavoritesContent(
+    favorites: List<Listing>,
+    navigateToListing: (id: String) -> Unit,
+    isLoading: Boolean,
+    navigateToProfile: () -> Unit
+) {
+    Screen(
+        title = stringResource(R.string.profile_favorites_title),
+        onGoBackClick = navigateToProfile,
+        isLoading = isLoading
+    ) {
+        ListingsList(
+            title = stringResource(R.string.profile_favorites_title),
+            emptyText = stringResource(R.string.profile_favorites_no_favs),
+            listings = favorites,
+            navigateToListing = navigateToListing
+        )
+    }
+}

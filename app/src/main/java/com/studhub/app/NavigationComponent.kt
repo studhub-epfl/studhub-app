@@ -70,7 +70,8 @@ fun AppNavigation(
             Globals.showBottomBar = true
             ProfileFavoritesScreen(navigateToListing = { id: String ->
                 navController.navigate("Listing/$id")
-            })
+            },
+            navigateToProfile = { navController.navigate("Profile") })
         }
 
         composable(route = "Profile/Own-Listings") {
