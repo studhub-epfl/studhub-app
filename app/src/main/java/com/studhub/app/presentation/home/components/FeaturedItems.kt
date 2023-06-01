@@ -7,6 +7,6 @@ import com.studhub.app.R
 
 @Composable
 fun FeaturedItems() {
-    Text(text = stringResource(R.string.home_featured_items_title))
+//    Text(text = stringResource(R.string.home_featured_items_title))
 
 }

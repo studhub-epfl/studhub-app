@@ -5,7 +5,6 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PlusButton(onClick: () -> Unit) {

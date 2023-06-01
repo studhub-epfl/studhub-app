@@ -99,7 +99,6 @@ fun AppNavigation(
                 onConversationClick = { navController.navigate("Conversations") },
                 onBrowseClick = { navController.navigate("Listing") },
                 onAboutClick = { navController.navigate("About") },
-                onCartClick = { navController.navigate("Cart") },
                 onProfileClick = {
                     navController.navigate("Profile")
                 }

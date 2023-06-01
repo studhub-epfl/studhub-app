@@ -16,7 +16,6 @@ class HomeActivity : AppCompatActivity() {
                 onAddListingClick = {},
                 onBrowseClick = {},
                 onAboutClick = {},
-                onCartClick = {},
                 onProfileClick = {},
                 onConversationClick = {}
             )

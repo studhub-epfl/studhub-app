@@ -5,7 +5,7 @@
     <string name="home_welcome_name_message">Welcome to our app %s.</string>
     <string name="home_featured_items_title">Here are some feature items</string>
     <string name="home_button_add_listing">Add Listing</string>
-    <string name="home_button_conversations">Conversations</string>
+    <string name="home_button_conversations">Messages</string>
     <string name="home_button_browse">Browse</string>
     <string name="home_button_cart">Cart</string>
     <string name="home_button_profile">Profile</string>
