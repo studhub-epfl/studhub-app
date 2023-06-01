@@ -111,7 +111,7 @@ fun AppNavigation(
         }
 
         composable("Listing/{id}") { backStackEntry ->
-            Globals.showBottomBar = false
+            Globals.showBottomBar = true
             val id = backStackEntry.arguments?.getString("id")
             if (id == null) {
                 navController.navigate("Listing")
