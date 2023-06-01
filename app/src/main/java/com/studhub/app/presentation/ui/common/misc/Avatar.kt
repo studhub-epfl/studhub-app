@@ -23,12 +23,14 @@ import com.studhub.app.annotations.ExcludeFromGeneratedTestCoverage
  */
 @Composable
 fun <T> Avatar(picture: T) {
-    Image(
-        painter = if (picture != null) rememberAsyncImagePainter(picture) else painterResource(id = R.drawable.ic_launcher_foreground_red),
-        contentDescription = "Avatar",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .size(200.dp)
-            .clip(CircleShape)
-    )
+    if(picture != null) {
+        Image(
+            painter = rememberAsyncImagePainter(picture),
+            contentDescription = "Avatar",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(120.dp)
+                .clip(CircleShape)
+        )
+    }
 }

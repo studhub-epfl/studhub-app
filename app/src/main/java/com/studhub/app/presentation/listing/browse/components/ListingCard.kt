@@ -26,8 +26,6 @@ fun ListingCard(listing: Listing, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer
         ),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.elevatedCardElevation()
     ) {
         Row(
             modifier = Modifier
@@ -75,7 +73,7 @@ fun ListingCard(listing: Listing, onClick: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Seller: ${listing.seller.firstName} ${listing.seller.lastName}",
+                        text = "Seller: ${listing.seller.userName}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.secondary
                     )
